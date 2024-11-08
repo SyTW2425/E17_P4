@@ -1,12 +1,12 @@
-// Ejemplo de product.service.ts
 import { Injectable } from '@angular/core';
 import { Product } from '../models/product.model';
+import { __extends, __assign } from 'tslib';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
-  private products: Product[] = []; // Aquí puedes manejar la lista de productos localmente o desde un backend.
+  private products: Product[] = []; 
 
   getAllProducts(): Product[] {
     return this.products;
@@ -16,5 +16,18 @@ export class ProductService {
     return this.products.find(product => product.id === id);
   }
 
-  // Agrega métodos adicionales como crear, actualizar y eliminar
+  addProduct(newProduct: Product): void {
+    this.products.push(newProduct);
+  }
+
+  updateProduct(updatedProduct: Product): void {
+    const index = this.products.findIndex(product => product.id === updatedProduct.id);
+    if (index !== -1) {
+      this.products[index] = updatedProduct;
+    }
+  }
+
+  deleteProduct(id: number): void {
+    this.products = this.products.filter(product => product.id !== id);
+  }
 }
