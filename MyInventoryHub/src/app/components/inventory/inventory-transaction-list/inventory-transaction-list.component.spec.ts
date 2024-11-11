@@ -1,16 +1,32 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { InventoryTransactionListComponent } from './inventory-transaction-list.component';
+import { InventoryTransactionService } from '../../../services/inventory-transaction.service';
+import { of } from 'rxjs'; // to simulate API/DATA BASE responses
+//import { InventoryTransaction } from '../../../models/inventoryTransaction.model';
+
+// class mock:InventoryTransactionService
+class MockInventoryTransactionService {
+  getAllTransactions() {
+    // returns a transactions array
+    return of([
+      { id: 1, productId: 101, transactionType: 'IN', quantity: 10, transactionDate: new Date(), warehouseId: 1 },
+      { id: 2, productId: 102, transactionType: 'OUT', quantity: 5, transactionDate: new Date(), warehouseId: 1 }
+    ]);
+  }
+}
 
 describe('InventoryTransactionListComponent', () => {
   let component: InventoryTransactionListComponent;
   let fixture: ComponentFixture<InventoryTransactionListComponent>;
-
+  
   beforeEach(async () => {
+    // test config
     await TestBed.configureTestingModule({
-      imports: [InventoryTransactionListComponent]
-    })
-    .compileComponents();
+      declarations: [InventoryTransactionListComponent],
+      providers: [
+        { provide: InventoryTransactionService, useClass: MockInventoryTransactionService }
+      ]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(InventoryTransactionListComponent);
     component = fixture.componentInstance;
@@ -20,4 +36,31 @@ describe('InventoryTransactionListComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should fetch and display transactions on init', () => {
+    //calling initialization logic (ngOnInit)
+    component.ngOnInit();
+    
+    // verifying correct transaction assignment
+    expect(component.transactions.length).toBe(2);
+    expect(component.transactions[0].transactionType).toBe('IN');
+    expect(component.transactions[1].transactionType).toBe('OUT');
+  });
+  /**
+   * This test is verifying that the transactions retrieved by the component are displayed correctly in the view (HTML template). 
+   * The purpose is to ensure that the component not only retrieves the data correctly,
+   * but also renders it properly to the DOM for the user to see.
+   */
+  /** 
+  it('should display transaction details in the template', () => {
+    component.ngOnInit();
+    fixture.detectChanges(); //update component view to show changes
+    
+    // verifying data showing
+    const compiled = fixture.nativeElement;
+    expect(compiled.querySelector('ul').textContent).toContain('IN');
+    expect(compiled.querySelector('ul').textContent).toContain('OUT');
+  });
+  Uncomment when HTML  for this component is ready.
+  */
 });
