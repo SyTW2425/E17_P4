@@ -4,6 +4,8 @@ import { InventoryTransaction } from '../../../models/inventoryTransaction.model
 
 @Component({
   selector: 'app-inventory-transaction-list',
+  standalone: true,
+  imports: [],
   templateUrl: './inventory-transaction-list.component.html',
   styleUrls: ['./inventory-transaction-list.component.css']
 })
