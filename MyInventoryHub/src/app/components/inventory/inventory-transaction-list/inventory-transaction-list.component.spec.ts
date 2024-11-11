@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { InventoryTransactionListComponent } from './inventory-transaction-list.component';
 import { InventoryTransactionService } from '../../../services/inventory-transaction.service';
 
-// Simulación del servicio sin usar observables
+// simulation with a mock class
 class MockInventoryTransactionService {
   getAllTransactions() {
     // Devuelve un array directamente, como el servicio real
@@ -35,11 +35,11 @@ describe('InventoryTransactionListComponent', () => {
   });
 
   it('should fetch and display transactions on init', () => {
-    // Llamada a la lógica de inicialización (ngOnInit)
+    //(ngOnInit)
     component.ngOnInit();
     fixture.detectChanges();
     
-    // Verificar la correcta asignación de transacciones
+    
     expect(component.transactions.length).toBe(2);
     expect(component.transactions[0].transactionType).toBe('IN');
     expect(component.transactions[1].transactionType).toBe('OUT');
