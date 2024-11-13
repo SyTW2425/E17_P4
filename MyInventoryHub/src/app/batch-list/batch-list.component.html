@@ -1,0 +1,23 @@
+<h2>Lista de Lotes</h2>
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>ID Producto</th>
+      <th>Número de Lote</th>
+      <th>Cantidad</th>
+      <th>Fecha de Vencimiento</th>
+      <th>Fecha de Recepción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let batch of batches">
+      <td>{{ batch.id }}</td>
+      <td>{{ batch.productId }}</td>
+      <td>{{ batch.batchNumber }}</td>
+      <td>{{ batch.quantity }}</td>
+      <td>{{ batch.expirationDate | date: 'dd/MM/yyyy' }}</td>
+      <td>{{ batch.receivedDate | date: 'dd/MM/yyyy' }}</td>
+    </tr>
+  </tbody>
+</table>
