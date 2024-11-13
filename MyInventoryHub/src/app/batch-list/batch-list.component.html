@@ -1,24 +1,8 @@
-<!-- Sección de búsqueda -->
-<div class="search-container">
-  <label for="searchField">Search By:</label>
-  <select id="searchField" [(ngModel)]="searchCriteria">
-    <option value="batchId">Batch ID</option>
-    <option value="productId">Product ID</option>
-  </select>
-
-  <input 
-    type="text" 
-    id="searchTerm" 
-    [(ngModel)]="searchTerm" 
-    placeholder="Enter search term" 
-    (input)="filterBatches()" />
-</div>
-
 <!-- Tabla de lotes -->
-<table class="batch-table">
+<table>
   <thead>
     <tr>
-      <th>Batch ID</th>
+      <th>ID</th>
       <th>Batch Number</th>
       <th>Product ID</th>
       <th>Quantity</th>
@@ -43,8 +27,8 @@
   </tbody>
 </table>
 
-<!-- Formulario de edición -->
-<div *ngIf="selectedBatch" class="edit-form">
+<!-- Formulario de edición (solo visible cuando isEditing sea true) -->
+<div *ngIf="isEditing" class="edit-form">
   <h3>Edit Batch</h3>
   <form (ngSubmit)="saveBatch()">
     <div>
