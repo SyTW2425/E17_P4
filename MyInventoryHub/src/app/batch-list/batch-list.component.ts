@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Batch } from '../models/batch.model';
-import { DatePipe } from '@angular/common'; 
+import { DatePipe } from '@angular/common';
 import { CommonModule } from '@angular/common';
-
 
 @Component({
   selector: 'app-batch-list',
@@ -42,5 +41,17 @@ export class BatchListComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {}
-}
 
+  // Método para editar un lote
+  editBatch(batch: Batch): void {
+    // Lógica para editar el lote, por ejemplo, abrir un formulario con la información de este lote
+    console.log('Edit batch', batch);
+  }
+
+  // Método para eliminar un lote
+  deleteBatch(batchId: number): void {
+    // Lógica para eliminar el lote de la lista
+    this.batches = this.batches.filter(batch => batch.id !== batchId);
+    console.log('Batch deleted', batchId);
+  }
+}
