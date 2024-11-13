@@ -1,5 +1,23 @@
+<!-- Selector para elegir el campo de búsqueda -->
+<label for="searchCriteria">Buscar por:</label>
+<select id="searchCriteria" [(ngModel)]="searchCriteria">
+  <option value="id">ID</option>
+  <option value="name">Nombre</option>
+  <option value="description">Descripción</option>
+  <option value="quantity">Cantidad</option>
+  <option value="price">Precio</option>
+  <option value="supplier">Proveedor</option>
+</select>
+
+<!-- Campo de búsqueda -->
+<input type="text" [(ngModel)]="searchTerm" (input)="filterProducts()" placeholder="Buscar..." />
+
+
 <!-- Botón para mostrar el formulario de adición -->
-<button (click)="startAddProduct()">Añadir Producto</button>
+<div>
+  <button (click)="startAddProduct()">Añadir Producto</button>
+</div>
+
 
 <!-- Formulario para añadir un nuevo producto, visible solo si isAdding es true -->
 <div *ngIf="isAdding">

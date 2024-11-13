@@ -9,8 +9,39 @@
   <option value="id">ID</option>
 </select>
 
-<!-- Campo de búsqueda -->
+
+<!-- Campo de búsqueda --> 
 <input type="text" [(ngModel)]="searchTerm" (input)="filterSuppliers()" placeholder="Buscar..." />
+
+<!-- Botón para mostrar el formulario de adición -->
+ <div>
+  <button (click)="startAddSupplier()">Añadir Proveedor</button>
+ </div>
+
+<!-- Formulario para añadir un nuevo proveedor, visible solo si isAdding es true -->
+<div *ngIf="isAdding">
+  <h3>Añadir Nuevo Proveedor</h3>
+  <form (ngSubmit)="addSupplier()">
+    <label for="name">Nombre:</label>
+    <input type="text" [(ngModel)]="newSupplier.name" name="name" required />
+
+    <label for="contactName">Nombre del Contacto:</label>
+    <input type="text" [(ngModel)]="newSupplier.contactName" name="contactName" required />
+
+    <label for="contactEmail">Email:</label>
+    <input type="email" [(ngModel)]="newSupplier.contactEmail" name="contactEmail" required />
+
+    <label for="contactPhone">Teléfono:</label>
+    <input type="text" [(ngModel)]="newSupplier.contactPhone" name="contactPhone" required />
+
+    <label for="address">Dirección:</label>
+    <input type="text" [(ngModel)]="newSupplier.address" name="address" required />
+
+    <button type="submit">Guardar Proveedor</button>
+    <button type="button" (click)="cancelAdd()">Cancelar</button>
+  </form>
+</div>
+
 
 <!-- Tabla de proveedores -->
 <table>

@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   templateUrl: './batch-list.component.html',
   imports: [CommonModule, DatePipe, FormsModule],
-  styleUrls: ['./batch-list.component.css']
+  styleUrls: ['./batch-list.component.css'],
 })
 export class BatchListComponent implements OnInit {
   batches: Batch[] = [
@@ -19,7 +19,7 @@ export class BatchListComponent implements OnInit {
       batchNumber: 'BATCH001',
       quantity: 50,
       expirationDate: new Date('2024-12-31'),
-      receivedDate: new Date('2024-01-15')
+      receivedDate: new Date('2024-01-15'),
     },
     {
       id: 2,
@@ -27,7 +27,7 @@ export class BatchListComponent implements OnInit {
       batchNumber: 'BATCH002',
       quantity: 30,
       expirationDate: new Date('2025-06-30'),
-      receivedDate: new Date('2024-05-10')
+      receivedDate: new Date('2024-05-10'),
     },
     {
       id: 3,
@@ -35,8 +35,8 @@ export class BatchListComponent implements OnInit {
       batchNumber: 'BATCH003',
       quantity: 100,
       expirationDate: new Date('2024-08-20'),
-      receivedDate: new Date('2024-03-01')
-    }
+      receivedDate: new Date('2024-03-01'),
+    },
   ];
 
   searchCriteria: string = 'batchId';
@@ -49,16 +49,17 @@ export class BatchListComponent implements OnInit {
     batchNumber: '',
     quantity: 0,
     expirationDate: new Date(),
-    receivedDate: new Date()
+    receivedDate: new Date(),
   };
 
-  newBatch: Batch = { // Inicializamos el nuevo lote con valores por defecto
+  newBatch: Batch = {
+    // Inicializamos el nuevo lote con valores por defecto
     id: 0,
     productId: 0,
     batchNumber: '',
     quantity: 0,
     expirationDate: new Date(),
-    receivedDate: new Date()
+    receivedDate: new Date(),
   };
 
   isEditing: boolean = false;
@@ -70,18 +71,6 @@ export class BatchListComponent implements OnInit {
     this.filteredBatches = [...this.batches];
   }
 
-  filterBatches(): void {
-    if (this.searchCriteria === 'batchId') {
-      this.filteredBatches = this.batches.filter(batch =>
-        batch.id.toString().includes(this.searchTerm)
-      );
-    } else if (this.searchCriteria === 'productId') {
-      this.filteredBatches = this.batches.filter(batch =>
-        batch.productId.toString().includes(this.searchTerm)
-      );
-    }
-  }
-
   editBatch(batch: Batch): void {
     this.selectedBatch = { ...batch };
     this.isEditing = true;
@@ -89,7 +78,9 @@ export class BatchListComponent implements OnInit {
 
   saveBatch(): void {
     if (this.selectedBatch.id !== 0) {
-      const index = this.batches.findIndex(batch => batch.id === this.selectedBatch.id);
+      const index = this.batches.findIndex(
+        (batch) => batch.id === this.selectedBatch.id
+      );
       if (index !== -1) {
         this.batches[index] = { ...this.selectedBatch };
       }
@@ -100,7 +91,7 @@ export class BatchListComponent implements OnInit {
         batchNumber: '',
         quantity: 0,
         expirationDate: new Date(),
-        receivedDate: new Date()
+        receivedDate: new Date(),
       };
       this.filterBatches();
     }
@@ -114,12 +105,12 @@ export class BatchListComponent implements OnInit {
       batchNumber: '',
       quantity: 0,
       expirationDate: new Date(),
-      receivedDate: new Date()
+      receivedDate: new Date(),
     };
   }
 
   deleteBatch(batchId: number): void {
-    this.batches = this.batches.filter(batch => batch.id !== batchId);
+    this.batches = this.batches.filter((batch) => batch.id !== batchId);
     this.filterBatches();
   }
 
@@ -138,7 +129,7 @@ export class BatchListComponent implements OnInit {
         batchNumber: '',
         quantity: 0,
         expirationDate: new Date(),
-        receivedDate: new Date()
+        receivedDate: new Date(),
       };
       this.isAdding = false; // Oculta el formulario de adición
       this.filterBatches();
@@ -156,7 +147,29 @@ export class BatchListComponent implements OnInit {
       batchNumber: '',
       quantity: 0,
       expirationDate: new Date(),
-      receivedDate: new Date()
+      receivedDate: new Date(),
     };
+  }
+
+  // Filtrar los lotes según el campo seleccionado
+  filterBatches(): void {
+    this.filteredBatches = this.batches.filter((batch) => {
+      if (this.searchCriteria === 'id') {
+        return batch.id.toString().includes(this.searchTerm);
+      } else if (this.searchCriteria === 'productId') {
+        return batch.productId.toString().includes(this.searchTerm);
+      } else if (this.searchCriteria === 'batchNumber') {
+        return batch.batchNumber
+          .toLowerCase()
+          .includes(this.searchTerm.toLowerCase());
+      } else if (this.searchCriteria === 'quantity') {
+        return batch.quantity.toString().includes(this.searchTerm);
+      } else if (this.searchCriteria === 'expirationDate') {
+        return batch.expirationDate.toString().includes(this.searchTerm); // Se puede convertir a cadena para comparar
+      } else if (this.searchCriteria === 'receivedDate') {
+        return batch.receivedDate.toString().includes(this.searchTerm); // Lo mismo para la fecha de recepción
+      }
+      return false; // Si no coincide con ningún campo
+    });
   }
 }

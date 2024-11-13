@@ -1,5 +1,22 @@
+<!-- Selector para elegir el campo de búsqueda -->
+<label for="searchCriteria">Buscar por:</label>
+<select id="searchCriteria" [(ngModel)]="searchCriteria">
+  <option value="id">ID</option>
+  <option value="productId">ID Producto</option>
+  <option value="batchNumber">Número de Lote</option>
+  <option value="quantity">Cantidad</option>
+  <option value="expirationDate">Fecha de Expiración</option>
+  <option value="receivedDate">Fecha de Recepción</option>
+</select>
+
+<!-- Campo de búsqueda -->
+<input type="text" [(ngModel)]="searchTerm" (input)="filterBatches()" placeholder="Buscar..." />
+
+
 <!-- Botón para mostrar el formulario de adición -->
-<button (click)="startAddBatch()">Añadir Batch</button>
+ <div>
+  <button (click)="startAddBatch()">Añadir Batch</button>
+ </div>
 
 <!-- Formulario para añadir un nuevo lote, visible solo si isAdding es true -->
 <div *ngIf="isAdding">
