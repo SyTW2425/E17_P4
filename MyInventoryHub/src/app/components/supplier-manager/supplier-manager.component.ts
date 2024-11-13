@@ -118,7 +118,8 @@ export class SupplierManagerComponent implements OnInit {
 
   // Función para añadir un nuevo proveedor
   addSupplier(): void {
-    if (this.newSupplier.id && this.newSupplier.name) {
+    if (this.newSupplier.name) { // Solo se valida el nombre
+      this.newSupplier.id = this.suppliers.length + 1; // Asignar un nuevo ID único
       this.suppliers.push({ ...this.newSupplier });
       this.newSupplier = {
         id: 0,

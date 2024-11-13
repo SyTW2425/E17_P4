@@ -43,17 +43,8 @@ export class BatchListComponent implements OnInit {
   searchTerm: string = '';
   filteredBatches: Batch[] = [];
 
-  selectedBatch: Batch = {
-    id: 0,
-    productId: 0,
-    batchNumber: '',
-    quantity: 0,
-    expirationDate: new Date(),
-    receivedDate: new Date(),
-  };
-
+  selectedBatch: Batch | null = null;
   newBatch: Batch = {
-    // Inicializamos el nuevo lote con valores por defecto
     id: 0,
     productId: 0,
     batchNumber: '',
@@ -63,7 +54,7 @@ export class BatchListComponent implements OnInit {
   };
 
   isEditing: boolean = false;
-  isAdding: boolean = false; // Controla la visibilidad del formulario de adición
+  isAdding: boolean = false;
 
   constructor() {}
 
@@ -77,83 +68,49 @@ export class BatchListComponent implements OnInit {
   }
 
   saveBatch(): void {
-    if (this.selectedBatch.id !== 0) {
+    if (this.selectedBatch) {
       const index = this.batches.findIndex(
-        (batch) => batch.id === this.selectedBatch.id
+        (batch) => batch.id === this.selectedBatch!.id
       );
       if (index !== -1) {
         this.batches[index] = { ...this.selectedBatch };
       }
       this.isEditing = false;
-      this.selectedBatch = {
-        id: 0,
-        productId: 0,
-        batchNumber: '',
-        quantity: 0,
-        expirationDate: new Date(),
-        receivedDate: new Date(),
-      };
+      this.selectedBatch = null;
       this.filterBatches();
     }
   }
 
   cancelEdit(): void {
     this.isEditing = false;
-    this.selectedBatch = {
-      id: 0,
-      productId: 0,
-      batchNumber: '',
-      quantity: 0,
-      expirationDate: new Date(),
-      receivedDate: new Date(),
-    };
+    this.selectedBatch = null;
   }
 
   deleteBatch(batchId: number): void {
-    // Buscar y eliminar el lote con el ID correspondiente
-    this.filteredBatches = this.filteredBatches.filter(batch => batch.id !== batchId);
-
+    this.batches = this.batches.filter((batch) => batch.id !== batchId);
+    this.filterBatches();
   }
-  
 
-  // Función para iniciar la adición de un nuevo lote
   startAddBatch(): void {
     this.isAdding = true;
   }
 
-  // Función para añadir un nuevo lote
   addBatch(): void {
     if (this.newBatch.id && this.newBatch.batchNumber) {
       this.batches.push({ ...this.newBatch });
-      this.newBatch = {
-        id: 0,
-        productId: 0,
-        batchNumber: '',
-        quantity: 0,
-        expirationDate: new Date(),
-        receivedDate: new Date(),
-      };
-      this.isAdding = false; // Oculta el formulario de adición
+      this.resetNewBatch();
+      this.isAdding = false;
       this.filterBatches();
     } else {
       alert('Por favor, completa todos los campos obligatorios');
     }
   }
 
-  // Función para cancelar la adición de un lote
   cancelAdd(): void {
     this.isAdding = false;
-    this.newBatch = {
-      id: 0,
-      productId: 0,
-      batchNumber: '',
-      quantity: 0,
-      expirationDate: new Date(),
-      receivedDate: new Date(),
-    };
+    this.resetNewBatch();
   }
 
-  // Filtrar los lotes según el campo seleccionado
   filterBatches(): void {
     this.filteredBatches = this.batches.filter((batch) => {
       if (this.searchCriteria === 'id') {
@@ -167,11 +124,22 @@ export class BatchListComponent implements OnInit {
       } else if (this.searchCriteria === 'quantity') {
         return batch.quantity.toString().includes(this.searchTerm);
       } else if (this.searchCriteria === 'expirationDate') {
-        return batch.expirationDate.toString().includes(this.searchTerm); // Se puede convertir a cadena para comparar
+        return batch.expirationDate.toISOString().includes(this.searchTerm);
       } else if (this.searchCriteria === 'receivedDate') {
-        return batch.receivedDate.toString().includes(this.searchTerm); // Lo mismo para la fecha de recepción
+        return batch.receivedDate.toISOString().includes(this.searchTerm);
       }
-      return false; // Si no coincide con ningún campo
+      return false;
     });
+  }
+
+  private resetNewBatch(): void {
+    this.newBatch = {
+      id: 0,
+      productId: 0,
+      batchNumber: '',
+      quantity: 0,
+      expirationDate: new Date(),
+      receivedDate: new Date(),
+    };
   }
 }
