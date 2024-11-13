@@ -1,0 +1,37 @@
+<div class="product-manager">
+  <h2>Product Manager</h2>
+
+  <div>
+    <button (click)="addProduct({id: 3, name: 'Product 3', description: 'Description 3', quantity: 30, price: 200, supplier: 'Supplier 3'})">
+      Add Product
+    </button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Supplier</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let product of products">
+        <td>{{ product.name }}</td>
+        <td>{{ product.description }}</td>
+        <td>{{ product.quantity }}</td>
+        <td>{{ product.price }}</td>
+        <td>{{ product.supplier }}</td>
+        <td>
+          <button (click)="editProduct({id: product.id, name: 'Updated Product', description: 'Updated Description', quantity: 15, price: 120, supplier: 'Updated Supplier'})">
+            Edit
+          </button>
+          <button (click)="deleteProduct(product.id)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

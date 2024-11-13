@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { Batch } from '../models/batch.model';
+import { Batch } from '../../models/batch.model';
 import { DatePipe } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-batch-list',
-  standalone: true,  
+  standalone: true,
   templateUrl: './batch-list.component.html',
-  imports: [CommonModule, DatePipe, FormsModule],  
+  imports: [CommonModule, DatePipe, FormsModule],
   styleUrls: ['./batch-list.component.css']
 })
 export class BatchListComponent implements OnInit {
@@ -39,12 +39,10 @@ export class BatchListComponent implements OnInit {
     }
   ];
 
-  // Variables de búsqueda
   searchCriteria: string = 'batchId';
   searchTerm: string = '';
   filteredBatches: Batch[] = [];
 
-  // Variable para manejar el lote seleccionado para editar
   selectedBatch: Batch = {
     id: 0,
     productId: 0,
@@ -54,16 +52,24 @@ export class BatchListComponent implements OnInit {
     receivedDate: new Date()
   };
 
-  // Variable para controlar la visibilidad del formulario de edición
+  newBatch: Batch = { // Inicializamos el nuevo lote con valores por defecto
+    id: 0,
+    productId: 0,
+    batchNumber: '',
+    quantity: 0,
+    expirationDate: new Date(),
+    receivedDate: new Date()
+  };
+
   isEditing: boolean = false;
+  isAdding: boolean = false; // Controla la visibilidad del formulario de adición
 
   constructor() {}
 
   ngOnInit(): void {
-    this.filteredBatches = [...this.batches]; // Copia de la lista para filtrar
+    this.filteredBatches = [...this.batches];
   }
 
-  // Filtrar los lotes en función de la búsqueda
   filterBatches(): void {
     if (this.searchCriteria === 'batchId') {
       this.filteredBatches = this.batches.filter(batch =>
@@ -76,24 +82,19 @@ export class BatchListComponent implements OnInit {
     }
   }
 
-  // Establecer el lote seleccionado para editar
   editBatch(batch: Batch): void {
-    this.selectedBatch = { ...batch }; // Hacemos una copia del lote para editar
-    this.isEditing = true; // Mostrar el formulario de edición
+    this.selectedBatch = { ...batch };
+    this.isEditing = true;
   }
 
-  // Guardar los cambios del lote editado
   saveBatch(): void {
-    if (this.selectedBatch.id !== 0) { // Verificamos que el ID no sea el valor por defecto
-      // Encontramos el índice del lote en el arreglo original
+    if (this.selectedBatch.id !== 0) {
       const index = this.batches.findIndex(batch => batch.id === this.selectedBatch.id);
       if (index !== -1) {
-        // Actualizamos el lote
         this.batches[index] = { ...this.selectedBatch };
       }
-      // Ocultar el formulario de edición y resetear selectedBatch
       this.isEditing = false;
-      this.selectedBatch = { // Reiniciamos con valores predeterminados
+      this.selectedBatch = {
         id: 0,
         productId: 0,
         batchNumber: '',
@@ -101,15 +102,13 @@ export class BatchListComponent implements OnInit {
         expirationDate: new Date(),
         receivedDate: new Date()
       };
-      this.filterBatches(); // Refiltrar después de la actualización
+      this.filterBatches();
     }
   }
 
-  // Cancelar la edición
   cancelEdit(): void {
-    // Ocultar el formulario de edición y resetear selectedBatch
     this.isEditing = false;
-    this.selectedBatch = { // Reiniciamos con valores predeterminados
+    this.selectedBatch = {
       id: 0,
       productId: 0,
       batchNumber: '',
@@ -119,9 +118,45 @@ export class BatchListComponent implements OnInit {
     };
   }
 
-  // Eliminar un lote
   deleteBatch(batchId: number): void {
     this.batches = this.batches.filter(batch => batch.id !== batchId);
-    this.filterBatches(); // Refiltrar después de eliminar
+    this.filterBatches();
+  }
+
+  // Función para iniciar la adición de un nuevo lote
+  startAddBatch(): void {
+    this.isAdding = true;
+  }
+
+  // Función para añadir un nuevo lote
+  addBatch(): void {
+    if (this.newBatch.id && this.newBatch.batchNumber) {
+      this.batches.push({ ...this.newBatch });
+      this.newBatch = {
+        id: 0,
+        productId: 0,
+        batchNumber: '',
+        quantity: 0,
+        expirationDate: new Date(),
+        receivedDate: new Date()
+      };
+      this.isAdding = false; // Oculta el formulario de adición
+      this.filterBatches();
+    } else {
+      alert('Por favor, completa todos los campos obligatorios');
+    }
+  }
+
+  // Función para cancelar la adición de un lote
+  cancelAdd(): void {
+    this.isAdding = false;
+    this.newBatch = {
+      id: 0,
+      productId: 0,
+      batchNumber: '',
+      quantity: 0,
+      expirationDate: new Date(),
+      receivedDate: new Date()
+    };
   }
 }
