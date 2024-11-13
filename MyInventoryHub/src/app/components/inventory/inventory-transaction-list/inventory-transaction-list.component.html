@@ -1,1 +1,21 @@
-<p>inventory-transaction-list works!</p>
+<div>
+    <h2>Inventory Transactions List</h2>
+    <ul>
+      <li *ngFor="let transaction of transactions">
+        <p>ID: {{ transaction.id }}</p>
+        <p>Product ID: {{ transaction.productId }}</p>
+        <p>Type: {{ transaction.transactionType }}</p>
+        <p>Quantity: {{ transaction.quantity }}</p>
+        <p>Date: {{ transaction.transactionDate | date }}</p>
+        <p>Warehouse ID: {{ transaction.warehouseId }}</p>
+        
+        <!-- Botón para ver detalles -->
+        <button (click)="viewDetails(transaction)">View Details</button>
+      </li>
+    </ul>
+    <!-- Componente de detalles, que se muestra si hay una transacción seleccionada -->
+    <app-inventory-transaction-detail *ngIf="selectedTransactions" 
+      [transaction]="selectedTransactions">
+    </app-inventory-transaction-detail>
+  </div>
+  

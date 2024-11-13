@@ -4,13 +4,16 @@
  * is ready for interaction and rendering.
 */
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { InventoryTransactionService } from '../../../services/inventory-transaction.service';
 import { InventoryTransaction } from '../../../models/inventoryTransaction.model';
+import { InventoryTransactionDetailComponent } from '../inventory-transaction-detail/inventory-transaction-detail.component';
+
 
 @Component({
   selector: 'app-inventory-transaction-list',
   standalone: true,
-  imports: [],
+  imports: [CommonModule, InventoryTransactionDetailComponent],
   templateUrl: './inventory-transaction-list.component.html',
   styleUrls: ['./inventory-transaction-list.component.css']
 })
@@ -20,10 +23,14 @@ import { InventoryTransaction } from '../../../models/inventoryTransaction.model
  */
 export class InventoryTransactionListComponent implements OnInit {
   transactions: InventoryTransaction[] = [];
+  selectedTransactions: InventoryTransaction | null = null;
 
   constructor(private transactionService: InventoryTransactionService) {}
 
   ngOnInit(): void {
     this.transactions = this.transactionService.getAllTransactions();
+  }
+  viewDetails(transaction: InventoryTransaction): void {
+    this.selectedTransactions = transaction;
   }
 }
