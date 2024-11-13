@@ -110,9 +110,11 @@ export class BatchListComponent implements OnInit {
   }
 
   deleteBatch(batchId: number): void {
-    this.batches = this.batches.filter((batch) => batch.id !== batchId);
-    this.filterBatches();
+    // Buscar y eliminar el lote con el ID correspondiente
+    this.filteredBatches = this.filteredBatches.filter(batch => batch.id !== batchId);
+
   }
+  
 
   // Función para iniciar la adición de un nuevo lote
   startAddBatch(): void {

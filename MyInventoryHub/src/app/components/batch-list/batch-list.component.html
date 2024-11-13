@@ -12,11 +12,10 @@
 <!-- Campo de búsqueda -->
 <input type="text" [(ngModel)]="searchTerm" (input)="filterBatches()" placeholder="Buscar..." />
 
-
 <!-- Botón para mostrar el formulario de adición -->
- <div>
+<div>
   <button (click)="startAddBatch()">Añadir Batch</button>
- </div>
+</div>
 
 <!-- Formulario para añadir un nuevo lote, visible solo si isAdding es true -->
 <div *ngIf="isAdding">
@@ -44,7 +43,6 @@
     <button type="button" (click)="cancelAdd()">Cancelar</button>
   </form>
 </div> 
-
 
 <!-- Tabla de lotes -->
 <table>
@@ -74,8 +72,6 @@
     </tr>
   </tbody>
 </table>
-
-
 
 <!-- Formulario de edición (solo visible cuando isEditing sea true) -->
 <div *ngIf="isEditing" class="edit-form">
@@ -135,6 +131,3 @@
     <button type="button" (click)="cancelEdit()">Cancel</button>
   </form>
 </div>
-
-
-
