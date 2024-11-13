@@ -1,3 +1,34 @@
+<!-- Botón para mostrar el formulario de adición -->
+<button (click)="startAddBatch()">Añadir Batch</button>
+
+<!-- Formulario para añadir un nuevo lote, visible solo si isAdding es true -->
+<div *ngIf="isAdding">
+  <h3>Añadir Nuevo Lote</h3>
+  <form (ngSubmit)="addBatch()">
+    <label>ID:</label>
+    <input type="number" [(ngModel)]="newBatch.id" name="newBatchId" required />
+
+    <label>ID Producto:</label>
+    <input type="number" [(ngModel)]="newBatch.productId" name="newBatchProductId" required />
+
+    <label>Número de Lote:</label>
+    <input type="text" [(ngModel)]="newBatch.batchNumber" name="newBatchNumber" required />
+
+    <label>Cantidad:</label>
+    <input type="number" [(ngModel)]="newBatch.quantity" name="newBatchQuantity" required />
+
+    <label>Fecha de Expiración:</label>
+    <input type="date" [(ngModel)]="newBatch.expirationDate" name="newBatchExpirationDate" required />
+
+    <label>Fecha de Recepción:</label>
+    <input type="date" [(ngModel)]="newBatch.receivedDate" name="newBatchReceivedDate" required />
+
+    <button type="submit">Guardar Lote</button>
+    <button type="button" (click)="cancelAdd()">Cancelar</button>
+  </form>
+</div> 
+
+
 <!-- Tabla de lotes -->
 <table>
   <thead>
@@ -26,6 +57,8 @@
     </tr>
   </tbody>
 </table>
+
+
 
 <!-- Formulario de edición (solo visible cuando isEditing sea true) -->
 <div *ngIf="isEditing" class="edit-form">
@@ -86,35 +119,5 @@
   </form>
 </div>
 
-<!-- Botón para mostrar el formulario de adición -->
-<button (click)="startAddBatch()">Añadir Batch</button>
 
-<!-- Formulario para añadir un nuevo lote, visible solo si isAdding es true -->
-<div *ngIf="isAdding">
-  <h3>Añadir Nuevo Lote</h3>
-  <form (ngSubmit)="addBatch()">
-    <label>ID:</label>
-    <input type="number" [(ngModel)]="newBatch.id" name="newBatchId" required />
-
-    <label>ID Producto:</label>
-    <input type="number" [(ngModel)]="newBatch.productId" name="newBatchProductId" required />
-
-    <label>Número de Lote:</label>
-    <input type="text" [(ngModel)]="newBatch.batchNumber" name="newBatchNumber" required />
-
-    <label>Cantidad:</label>
-    <input type="number" [(ngModel)]="newBatch.quantity" name="newBatchQuantity" required />
-
-    <label>Fecha de Expiración:</label>
-    <input type="date" [(ngModel)]="newBatch.expirationDate" name="newBatchExpirationDate" required />
-
-    <label>Fecha de Recepción:</label>
-    <input type="date" [(ngModel)]="newBatch.receivedDate" name="newBatchReceivedDate" required />
-
-    <button type="submit">Guardar Lote</button>
-    <button type="button" (click)="cancelAdd()">Cancelar</button>
-  </form>
-</div>
-
-<!-- Resto del código HTML para mostrar y editar los lotes -->
 
