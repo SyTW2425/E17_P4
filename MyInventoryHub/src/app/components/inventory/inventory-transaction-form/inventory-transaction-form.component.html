@@ -1,1 +1,29 @@
-<p>inventory-transaction-form works!</p>
+<form [formGroup]="transactionForm" (ngSubmit)="onSubmit()">
+    <label for="id">ID</label>
+    <input id="id" formControlName="id" type="number" />
+  
+    <label for="productId">Product ID</label>
+    <input id="productId" formControlName="productId" type="number" />
+  
+    <label for="transactionType">Transaction Type</label>
+    <select id="transactionType" formControlName="transactionType">
+      <option value="IN">IN</option>
+      <option value="OUT">OUT</option>
+      <option value="ADJUSTMENT">ADJUSTMENT</option>
+    </select>
+  
+    <label for="quantity">Quantity</label>
+    <input id="quantity" formControlName="quantity" type="number" />
+  
+    <label for="transactionDate">Transaction Date</label>
+    <input id="transactionDate" formControlName="transactionDate" type="date" />
+  
+    <label for="warehouseId">Warehouse ID</label>
+    <input id="warehouseId" formControlName="warehouseId" type="number" />
+  
+    <label for="notes">Notes</label>
+    <textarea id="notes" formControlName="notes"></textarea>
+  
+    <button type="submit" [disabled]="transactionForm.invalid">Save</button>
+  </form>
+  
