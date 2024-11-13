@@ -1,3 +1,4 @@
+<!-- Sección de búsqueda -->
 <div class="search-container">
   <label for="searchField">Search By:</label>
   <select id="searchField" [(ngModel)]="searchCriteria">
@@ -13,10 +14,11 @@
     (input)="filterBatches()" />
 </div>
 
+<!-- Tabla de lotes -->
 <table class="batch-table">
   <thead>
     <tr>
-      <th>Batch ID</th> 
+      <th>Batch ID</th>
       <th>Batch Number</th>
       <th>Product ID</th>
       <th>Quantity</th>
@@ -27,17 +29,75 @@
   </thead>
   <tbody>
     <tr *ngFor="let batch of filteredBatches">
-      <td>{{ batch.id }}</td> 
+      <td>{{ batch.id }}</td>
       <td>{{ batch.batchNumber }}</td>
       <td>{{ batch.productId }}</td>
       <td>{{ batch.quantity }}</td>
       <td>{{ batch.expirationDate | date }}</td>
       <td>{{ batch.receivedDate | date }}</td>
       <td>
-        <!-- Botones para Editar y Eliminar -->
         <button (click)="editBatch(batch)">Edit</button>
         <button (click)="deleteBatch(batch.id)">Delete</button>
       </td>
     </tr>
   </tbody>
 </table>
+
+<!-- Formulario de edición -->
+<div *ngIf="selectedBatch" class="edit-form">
+  <h3>Edit Batch</h3>
+  <form (ngSubmit)="saveBatch()">
+    <div>
+      <label for="batchNumber">Batch Number</label>
+      <input 
+        type="text" 
+        id="batchNumber" 
+        [(ngModel)]="selectedBatch.batchNumber" 
+        name="batchNumber" 
+        required />
+    </div>
+
+    <div>
+      <label for="productId">Product ID</label>
+      <input 
+        type="number" 
+        id="productId" 
+        [(ngModel)]="selectedBatch.productId" 
+        name="productId" 
+        required />
+    </div>
+
+    <div>
+      <label for="quantity">Quantity</label>
+      <input 
+        type="number" 
+        id="quantity" 
+        [(ngModel)]="selectedBatch.quantity" 
+        name="quantity" 
+        required />
+    </div>
+
+    <div>
+      <label for="expirationDate">Expiration Date</label>
+      <input 
+        type="date" 
+        id="expirationDate" 
+        [(ngModel)]="selectedBatch.expirationDate" 
+        name="expirationDate" 
+        required />
+    </div>
+
+    <div>
+      <label for="receivedDate">Received Date</label>
+      <input 
+        type="date" 
+        id="receivedDate" 
+        [(ngModel)]="selectedBatch.receivedDate" 
+        name="receivedDate" 
+        required />
+    </div>
+
+    <button type="submit">Save</button>
+    <button type="button" (click)="cancelEdit()">Cancel</button>
+  </form>
+</div>

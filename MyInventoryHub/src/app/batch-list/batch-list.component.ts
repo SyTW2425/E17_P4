@@ -39,18 +39,31 @@ export class BatchListComponent implements OnInit {
     }
   ];
 
-  // Variables para la búsqueda
-  searchCriteria: string = 'batchId'; // Por defecto buscar por Batch ID
+  // Variables de búsqueda
+  searchCriteria: string = 'batchId';
   searchTerm: string = '';
   filteredBatches: Batch[] = [];
+
+  // Variable para manejar el lote seleccionado para editar
+  selectedBatch: Batch = {
+    id: 0,
+    productId: 0,
+    batchNumber: '',
+    quantity: 0,
+    expirationDate: new Date(),
+    receivedDate: new Date()
+  };
+
+  // Variable para controlar la visibilidad del formulario de edición
+  isEditing: boolean = false;
 
   constructor() {}
 
   ngOnInit(): void {
-    this.filteredBatches = [...this.batches]; // Inicializar con todos los lotes
+    this.filteredBatches = [...this.batches]; // Copia de la lista para filtrar
   }
 
-  // Filtrar los lotes basados en los criterios de búsqueda
+  // Filtrar los lotes en función de la búsqueda
   filterBatches(): void {
     if (this.searchCriteria === 'batchId') {
       this.filteredBatches = this.batches.filter(batch =>
@@ -63,15 +76,52 @@ export class BatchListComponent implements OnInit {
     }
   }
 
-  // Método para editar un lote
+  // Establecer el lote seleccionado para editar
   editBatch(batch: Batch): void {
-    console.log('Edit batch', batch);
+    this.selectedBatch = { ...batch }; // Hacemos una copia del lote para editar
+    this.isEditing = true; // Mostrar el formulario de edición
   }
 
-  // Método para eliminar un lote
+  // Guardar los cambios del lote editado
+  saveBatch(): void {
+    if (this.selectedBatch.id !== 0) { // Verificamos que el ID no sea el valor por defecto
+      // Encontramos el índice del lote en el arreglo original
+      const index = this.batches.findIndex(batch => batch.id === this.selectedBatch.id);
+      if (index !== -1) {
+        // Actualizamos el lote
+        this.batches[index] = { ...this.selectedBatch };
+      }
+      // Ocultar el formulario de edición y resetear selectedBatch
+      this.isEditing = false;
+      this.selectedBatch = { // Reiniciamos con valores predeterminados
+        id: 0,
+        productId: 0,
+        batchNumber: '',
+        quantity: 0,
+        expirationDate: new Date(),
+        receivedDate: new Date()
+      };
+      this.filterBatches(); // Refiltrar después de la actualización
+    }
+  }
+
+  // Cancelar la edición
+  cancelEdit(): void {
+    // Ocultar el formulario de edición y resetear selectedBatch
+    this.isEditing = false;
+    this.selectedBatch = { // Reiniciamos con valores predeterminados
+      id: 0,
+      productId: 0,
+      batchNumber: '',
+      quantity: 0,
+      expirationDate: new Date(),
+      receivedDate: new Date()
+    };
+  }
+
+  // Eliminar un lote
   deleteBatch(batchId: number): void {
     this.batches = this.batches.filter(batch => batch.id !== batchId);
-    this.filterBatches(); // Volver a filtrar después de eliminar
-    console.log('Batch deleted', batchId);
+    this.filterBatches(); // Refiltrar después de eliminar
   }
 }

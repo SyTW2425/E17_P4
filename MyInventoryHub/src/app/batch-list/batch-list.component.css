@@ -1,45 +1,23 @@
-.search-container {
-  margin-bottom: 20px;
+.edit-form {
+  margin-top: 20px;
+  border: 1px solid #ddd;
+  padding: 15px;
+  background-color: #f9f9f9;
 }
 
-.search-container label {
+.edit-form form div {
+  margin-bottom: 10px;
+}
+
+.edit-form label {
   margin-right: 10px;
 }
 
-.search-container select,
-.search-container input {
-  padding: 5px 10px;
-  margin-right: 10px;
+.edit-form input {
+  padding: 5px;
   font-size: 14px;
 }
 
-.batch-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 20px 0;
-}
-
-.batch-table th,
-.batch-table td {
-  padding: 10px;
-  text-align: left;
-  border: 1px solid #ddd;
-}
-
-.batch-table th {
-  background-color: #f4f4f4;
-}
-
-button {
-  padding: 5px 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 3px;
-  cursor: pointer;
-  margin-right: 5px;
-}
-
-button:hover {
-  background-color: #0056b3;
+.edit-form button {
+  margin-top: 10px;
 }
