@@ -12,17 +12,18 @@
 <!-- Campo de búsqueda -->
 <input type="text" [(ngModel)]="searchTerm" (input)="filterProducts()" placeholder="Buscar..." />
 
-
 <!-- Botón para mostrar el formulario de adición -->
 <div>
   <button (click)="startAddProduct()">Añadir Producto</button>
 </div>
 
-
 <!-- Formulario para añadir un nuevo producto, visible solo si isAdding es true -->
 <div *ngIf="isAdding">
   <h3>Añadir Nuevo Producto</h3>
   <form (ngSubmit)="addProduct()">
+    <label>ID:</label>
+    <input type="number" [(ngModel)]="newProduct.id" name="newProductId" required />
+
     <label>Nombre:</label>
     <input type="text" [(ngModel)]="newProduct.name" name="newProductName" required />
 
@@ -41,7 +42,7 @@
     <button type="submit">Guardar Producto</button>
     <button type="button" (click)="cancelAdd()">Cancelar</button>
   </form>
-</div>
+</div> 
 
 <!-- Tabla de productos -->
 <table>
@@ -57,7 +58,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let product of products">
+    <tr *ngFor="let product of filteredProducts">
       <td>{{ product.id }}</td>
       <td>{{ product.name }}</td>
       <td>{{ product.description }}</td>
@@ -65,8 +66,68 @@
       <td>{{ product.price }}</td>
       <td>{{ product.supplier }}</td>
       <td>
-        <!-- Aquí puedes agregar botones para editar o eliminar -->
+        <button (click)="editProduct(product)">Editar</button>
+        <button (click)="deleteProduct(product.id)">Eliminar</button>
       </td>
     </tr>
   </tbody>
 </table>
+
+<!-- Formulario de edición (solo visible cuando isEditing sea true) -->
+<div *ngIf="isEditing" class="edit-form">
+  <h3>Editar Producto</h3>
+  <form (ngSubmit)="saveEditedProduct()">
+    <div>
+      <label for="name">Nombre</label>
+      <input 
+        type="text" 
+        id="name" 
+        [(ngModel)]="editingProduct.name" 
+        name="name" 
+        required />
+    </div>
+
+    <div>
+      <label for="description">Descripción</label>
+      <input 
+        type="text" 
+        id="description" 
+        [(ngModel)]="editingProduct.description" 
+        name="description" 
+        required />
+    </div>
+
+    <div>
+      <label for="quantity">Cantidad</label>
+      <input 
+        type="number" 
+        id="quantity" 
+        [(ngModel)]="editingProduct.quantity" 
+        name="quantity" 
+        required />
+    </div>
+
+    <div>
+      <label for="price">Precio</label>
+      <input 
+        type="number" 
+        id="price" 
+        [(ngModel)]="editingProduct.price" 
+        name="price" 
+        required />
+    </div>
+
+    <div>
+      <label for="supplier">Proveedor</label>
+      <input 
+        type="text" 
+        id="supplier" 
+        [(ngModel)]="editingProduct.supplier" 
+        name="supplier" 
+        required />
+    </div>
+
+    <button type="submit">Guardar</button>
+    <button type="button" (click)="cancelEdit()">Cancelar</button>
+  </form>
+</div>
