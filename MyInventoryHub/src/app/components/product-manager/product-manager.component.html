@@ -1,37 +1,54 @@
-<div class="product-manager">
-  <h2>Product Manager</h2>
+<!-- Botón para mostrar el formulario de adición -->
+<button (click)="startAddProduct()">Añadir Producto</button>
 
-  <div>
-    <button (click)="addProduct({id: 3, name: 'Product 3', description: 'Description 3', quantity: 30, price: 200, supplier: 'Supplier 3'})">
-      Add Product
-    </button>
-  </div>
+<!-- Formulario para añadir un nuevo producto, visible solo si isAdding es true -->
+<div *ngIf="isAdding">
+  <h3>Añadir Nuevo Producto</h3>
+  <form (ngSubmit)="addProduct()">
+    <label>Nombre:</label>
+    <input type="text" [(ngModel)]="newProduct.name" name="newProductName" required />
 
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-        <th>Quantity</th>
-        <th>Price</th>
-        <th>Supplier</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let product of products">
-        <td>{{ product.name }}</td>
-        <td>{{ product.description }}</td>
-        <td>{{ product.quantity }}</td>
-        <td>{{ product.price }}</td>
-        <td>{{ product.supplier }}</td>
-        <td>
-          <button (click)="editProduct({id: product.id, name: 'Updated Product', description: 'Updated Description', quantity: 15, price: 120, supplier: 'Updated Supplier'})">
-            Edit
-          </button>
-          <button (click)="deleteProduct(product.id)">Delete</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+    <label>Descripción:</label>
+    <input type="text" [(ngModel)]="newProduct.description" name="newProductDescription" required />
+
+    <label>Cantidad:</label>
+    <input type="number" [(ngModel)]="newProduct.quantity" name="newProductQuantity" required />
+
+    <label>Precio:</label>
+    <input type="number" [(ngModel)]="newProduct.price" name="newProductPrice" required />
+
+    <label>Proveedor:</label>
+    <input type="text" [(ngModel)]="newProduct.supplier" name="newProductSupplier" required />
+
+    <button type="submit">Guardar Producto</button>
+    <button type="button" (click)="cancelAdd()">Cancelar</button>
+  </form>
 </div>
+
+<!-- Tabla de productos -->
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Descripción</th>
+      <th>Cantidad</th>
+      <th>Precio</th>
+      <th>Proveedor</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let product of products">
+      <td>{{ product.id }}</td>
+      <td>{{ product.name }}</td>
+      <td>{{ product.description }}</td>
+      <td>{{ product.quantity }}</td>
+      <td>{{ product.price }}</td>
+      <td>{{ product.supplier }}</td>
+      <td>
+        <!-- Aquí puedes agregar botones para editar o eliminar -->
+      </td>
+    </tr>
+  </tbody>
+</table>
