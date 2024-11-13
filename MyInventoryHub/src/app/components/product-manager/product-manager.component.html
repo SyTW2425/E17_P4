@@ -21,9 +21,6 @@
 <div *ngIf="isAdding">
   <h3>Añadir Nuevo Producto</h3>
   <form (ngSubmit)="addProduct()">
-    <label>ID:</label>
-    <input type="number" [(ngModel)]="newProduct.id" name="newProductId" required />
-
     <label>Nombre:</label>
     <input type="text" [(ngModel)]="newProduct.name" name="newProductName" required />
 
@@ -42,7 +39,7 @@
     <button type="submit">Guardar Producto</button>
     <button type="button" (click)="cancelAdd()">Cancelar</button>
   </form>
-</div> 
+</div>
 
 <!-- Tabla de productos -->
 <table>
@@ -63,7 +60,7 @@
       <td>{{ product.name }}</td>
       <td>{{ product.description }}</td>
       <td>{{ product.quantity }}</td>
-      <td>{{ product.price }}</td>
+      <td>{{ product.price | currency }}</td>
       <td>{{ product.supplier }}</td>
       <td>
         <button (click)="editProduct(product)">Editar</button>
@@ -77,57 +74,14 @@
 <div *ngIf="isEditing" class="edit-form">
   <h3>Editar Producto</h3>
   <form (ngSubmit)="saveEditedProduct()">
-    <div>
-      <label for="name">Nombre</label>
-      <input 
-        type="text" 
-        id="name" 
-        [(ngModel)]="editingProduct.name" 
-        name="name" 
-        required />
-    </div>
+    <input type="text" id="name" [(ngModel)]="editingProduct.name" name="name" required />
+    <input type="text" id="description" [(ngModel)]="editingProduct.description" name="description" required />
+    <input type="number" id="quantity" [(ngModel)]="editingProduct.quantity" name="quantity" required />
+    <input type="number" id="price" [(ngModel)]="editingProduct.price" name="price" required />
+    <input type="text" id="supplier" [(ngModel)]="editingProduct.supplier" name="supplier" required />
+    
 
-    <div>
-      <label for="description">Descripción</label>
-      <input 
-        type="text" 
-        id="description" 
-        [(ngModel)]="editingProduct.description" 
-        name="description" 
-        required />
-    </div>
-
-    <div>
-      <label for="quantity">Cantidad</label>
-      <input 
-        type="number" 
-        id="quantity" 
-        [(ngModel)]="editingProduct.quantity" 
-        name="quantity" 
-        required />
-    </div>
-
-    <div>
-      <label for="price">Precio</label>
-      <input 
-        type="number" 
-        id="price" 
-        [(ngModel)]="editingProduct.price" 
-        name="price" 
-        required />
-    </div>
-
-    <div>
-      <label for="supplier">Proveedor</label>
-      <input 
-        type="text" 
-        id="supplier" 
-        [(ngModel)]="editingProduct.supplier" 
-        name="supplier" 
-        required />
-    </div>
-
-    <button type="submit">Guardar</button>
+    <button type="submit">Guardar Cambios</button>
     <button type="button" (click)="cancelEdit()">Cancelar</button>
   </form>
 </div>
