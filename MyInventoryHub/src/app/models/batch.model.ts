@@ -5,5 +5,4 @@ export interface Batch {
   quantity: number;
   expirationDate: Date;
   receivedDate: Date;
-  showDetails?: boolean; // Campo adicional para mostrar/ocultar detalles
 }

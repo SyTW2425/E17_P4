@@ -26,9 +26,6 @@
 <div *ngIf="isAdding">
   <h3>Añadir Nuevo Lote</h3>
   <form (ngSubmit)="addBatch()">
-    <label>ID:</label>
-    <input type="number" [(ngModel)]="newBatch.id" name="newBatchId" required />
-
     <label>ID Producto:</label>
     <input type="number" [(ngModel)]="newBatch.productId" name="newBatchProductId" required />
 
