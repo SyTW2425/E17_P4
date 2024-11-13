@@ -2,12 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { Batch } from '../models/batch.model';
 import { DatePipe } from '@angular/common';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-batch-list',
   standalone: true,  
   templateUrl: './batch-list.component.html',
-  imports: [CommonModule, DatePipe],  
+  imports: [CommonModule, DatePipe, FormsModule],  
   styleUrls: ['./batch-list.component.css']
 })
 export class BatchListComponent implements OnInit {
@@ -38,20 +39,39 @@ export class BatchListComponent implements OnInit {
     }
   ];
 
+  // Variables para la búsqueda
+  searchCriteria: string = 'batchId'; // Por defecto buscar por Batch ID
+  searchTerm: string = '';
+  filteredBatches: Batch[] = [];
+
   constructor() {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.filteredBatches = [...this.batches]; // Inicializar con todos los lotes
+  }
+
+  // Filtrar los lotes basados en los criterios de búsqueda
+  filterBatches(): void {
+    if (this.searchCriteria === 'batchId') {
+      this.filteredBatches = this.batches.filter(batch =>
+        batch.id.toString().includes(this.searchTerm)
+      );
+    } else if (this.searchCriteria === 'productId') {
+      this.filteredBatches = this.batches.filter(batch =>
+        batch.productId.toString().includes(this.searchTerm)
+      );
+    }
+  }
 
   // Método para editar un lote
   editBatch(batch: Batch): void {
-    // Lógica para editar el lote, por ejemplo, abrir un formulario con la información de este lote
     console.log('Edit batch', batch);
   }
 
   // Método para eliminar un lote
   deleteBatch(batchId: number): void {
-    // Lógica para eliminar el lote de la lista
     this.batches = this.batches.filter(batch => batch.id !== batchId);
+    this.filterBatches(); // Volver a filtrar después de eliminar
     console.log('Batch deleted', batchId);
   }
 }

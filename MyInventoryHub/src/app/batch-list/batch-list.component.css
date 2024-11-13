@@ -1,3 +1,18 @@
+.search-container {
+  margin-bottom: 20px;
+}
+
+.search-container label {
+  margin-right: 10px;
+}
+
+.search-container select,
+.search-container input {
+  padding: 5px 10px;
+  margin-right: 10px;
+  font-size: 14px;
+}
+
 .batch-table {
   width: 100%;
   border-collapse: collapse;
