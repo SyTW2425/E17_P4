@@ -1,1 +1,53 @@
-<p>order-form works!</p>
+<div class="order-form">
+    <form [formGroup]="orderForm" (ngSubmit)="submitOrder()">
+      <div>
+        <label for="id">Order ID</label>
+        <input id="id" formControlName="id" type="number" />
+      </div>
+      
+      <div>
+        <label for="supplierId">Supplier ID</label>
+        <input id="supplierId" formControlName="supplierId" type="number" />
+      </div>
+      
+      <div>
+        <label for="orderDate">Order Date</label>
+        <input id="orderDate" formControlName="orderDate" type="date" />
+      </div>
+      
+      <div>
+        <label for="deliveryDate">Delivery Date</label>
+        <input id="deliveryDate" formControlName="deliveryDate" type="date" />
+      </div>
+      
+      <div>
+        <label for="status">Status</label>
+        <select id="status" formControlName="status">
+          <option value="PENDING">Pending</option>
+          <option value="SHIPPED">Shipped</option>
+          <option value="RECEIVED">Received</option>
+          <option value="CANCELLED">Cancelled</option>
+        </select>
+      </div>
+      
+      <div formArrayName="orderItems">
+        <h3>Order Items</h3>
+        <div *ngFor="let item of orderItems.controls; let i = index" [formGroupName]="i">
+          <label>Product ID</label>
+          <input type="number" formControlName="productId" />
+          
+          <label>Quantity</label>
+          <input type="number" formControlName="quantity" />
+          
+          <label>Unit Price</label>
+          <input type="number" formControlName="unitPrice" />
+          
+          <button type="button" (click)="removeOrderItem(i)">Remove Item</button>
+        </div>
+        <button type="button" (click)="addOrderItem()">Add Item</button>
+      </div>
+      
+      <button type="submit" [disabled]="orderForm.invalid">Submit Order</button>
+    </form>
+  </div>
+  

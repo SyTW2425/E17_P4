@@ -1,5 +1,7 @@
+/** 
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+
 
 @Component({
   selector: 'app-root',
@@ -11,7 +13,7 @@ import { RouterOutlet } from '@angular/router';
 export class AppComponent {
   title = 'MyInventoryHub';
 }
-
+*/
 /** 
 import { Component } from '@angular/core';
 import { InventoryTransactionDetailComponent } from './components/inventory/inventory-transaction-detail/inventory-transaction-detail.component';
