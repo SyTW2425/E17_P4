@@ -1,0 +1,27 @@
+<div *ngIf="order">
+    <h2>Detalles de la Orden #{{ order.id }}</h2>
+    <p><strong>Proveedor ID:</strong> {{ order.supplierId }}</p>
+    <p><strong>Fecha de Pedido:</strong> {{ order.orderDate | date }}</p>
+    <p *ngIf="order.deliveryDate"><strong>Fecha de Entrega:</strong> {{ order.deliveryDate | date }}</p>
+    <p><strong>Estado:</strong> {{ order.status }}</p>
+  
+    <h3>Artículos de la Orden</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Producto ID</th>
+          <th>Cantidad</th>
+          <th>Precio Unitario</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of order.orderItems">
+          <td>{{ item.productId }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>{{ item.unitPrice | currency }}</td>
+          <td>{{ item.quantity * item.unitPrice | currency }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
