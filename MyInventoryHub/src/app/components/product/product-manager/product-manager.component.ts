@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Product } from '../../models/product.model'; // Asegúrate de importar la interfaz Product
+import { Product } from '../../../models/product.model'; // Asegúrate de importar la interfaz Product
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 

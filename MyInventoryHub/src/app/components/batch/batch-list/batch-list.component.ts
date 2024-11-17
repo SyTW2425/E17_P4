@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Batch } from '../../models/batch.model'; // Cambiar a Batch
+import { Batch } from '../../../models/batch.model'; // Cambiar a Batch
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
