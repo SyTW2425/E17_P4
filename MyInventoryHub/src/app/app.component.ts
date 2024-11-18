@@ -4,7 +4,7 @@ import { SupplierManagerComponent }from './components/supplier/supplier.componen
 
 @Component({
   selector: 'app-root',
-  standalone: true,
+  standalone: true, 
   imports: [RouterOutlet, SupplierManagerComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
