@@ -1,6 +1,6 @@
 export interface Warehouse {
     id: number;
-    name: string;
+    name: string; 
     location: string;
     capacity: number; // capacidad total del almacén
   }
