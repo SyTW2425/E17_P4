@@ -1,0 +1,105 @@
+<!-- Selector para elegir el campo de búsqueda -->
+<label for="searchCriteria">Buscar por:</label>
+<select id="searchCriteria" [(ngModel)]="searchCriteria">
+  <option value="id">ID</option>
+  <option value="name">Nombre</option>
+  <option value="contactName">Nombre del Contacto</option>
+  <option value="contactEmail">Correo del Contacto</option>
+  <option value="contactPhone">Teléfono del Contacto</option>
+  <option value="address">Dirección</option>
+</select>
+
+<!-- Campo de búsqueda -->
+<input type="text" [(ngModel)]="searchTerm" (input)="filterSuppliers()" placeholder="Buscar..." />
+
+<!-- Botón para mostrar el formulario de adición -->
+<div>
+  <button (click)="startAddSupplier()">Añadir Proveedor</button>
+</div>
+
+<!-- Formulario para añadir un nuevo proveedor, visible solo si isAdding es true -->
+<div *ngIf="isAdding">
+  <h3>Añadir Nuevo Proveedor</h3>
+  <form (ngSubmit)="addSupplier()">
+    <label>Nombre:</label>
+    <input type="text" [(ngModel)]="newSupplier.name" name="newSupplierName" required />
+
+    <label>Nombre del Contacto:</label>
+    <input type="text" [(ngModel)]="newSupplier.contactName" name="newSupplierContactName" required />
+
+    <label>Correo del Contacto:</label>
+    <input type="email" [(ngModel)]="newSupplier.contactEmail" name="newSupplierContactEmail" required />
+
+    <label>Teléfono del Contacto:</label>
+    <input type="text" [(ngModel)]="newSupplier.contactPhone" name="newSupplierContactPhone" required />
+
+    <label>Dirección:</label>
+    <input type="text" [(ngModel)]="newSupplier.address" name="newSupplierAddress" required />
+
+    <button type="submit">Guardar Proveedor</button>
+    <button type="button" (click)="cancelAdd()">Cancelar</button>
+  </form>
+</div> 
+
+<!-- Tabla de proveedores -->
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Nombre del Contacto</th>
+      <th>Correo del Contacto</th>
+      <th>Teléfono del Contacto</th>
+      <th>Dirección</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let supplier of filteredSuppliers">
+      <td>{{ supplier.id }}</td>
+      <td>{{ supplier.name }}</td>
+      <td>{{ supplier.contactName }}</td>
+      <td>{{ supplier.contactEmail }}</td>
+      <td>{{ supplier.contactPhone }}</td>
+      <td>{{ supplier.address }}</td>
+      <td>
+        <button (click)="editSupplier(supplier)">Editar</button>
+        <button (click)="deleteSupplier(supplier.id)">Eliminar</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Formulario de edición (solo visible cuando isEditing sea true) -->
+<div *ngIf="isEditing" class="edit-form">
+  <h3>Editar Proveedor</h3>
+  <form (ngSubmit)="saveSupplier()">
+    <div>
+      <label for="name">Nombre</label>
+      <input type="text" id="name" [(ngModel)]="selectedSupplier.name" name="name" required />
+    </div>
+
+    <div>
+      <label for="contactName">Nombre del Contacto</label>
+      <input type="text" id="contactName" [(ngModel)]="selectedSupplier.contactName" name="contactName" required />
+    </div>
+
+    <div>
+      <label for="contactEmail">Correo del Contacto</label>
+      <input type="email" id="contactEmail" [(ngModel)]="selectedSupplier.contactEmail" name="contactEmail" required />
+    </div>
+
+    <div>
+      <label for="contactPhone">Teléfono del Contacto</label>
+      <input type="text" id="contactPhone" [(ngModel)]="selectedSupplier.contactPhone" name="contactPhone" required />
+    </div>
+
+    <div>
+      <label for="address">Dirección</label>
+      <input type="text" id="address" [(ngModel)]="selectedSupplier.address" name="address" required />
+    </div>
+
+    <button type="submit">Guardar Cambios</button>
+    <button type="button" (click)="cancelEdit()">Cancelar</button>
+  </form>
+</div>
