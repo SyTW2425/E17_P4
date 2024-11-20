@@ -5,9 +5,6 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [];
  */
 
-
-
-
 // para probar landing page
 import { Routes } from '@angular/router';
 import { AboutComponent } from './components/pages/landing-page/about/about.component';
