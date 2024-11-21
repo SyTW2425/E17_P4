@@ -16,7 +16,7 @@
         </div>
         <h1 class="text-center text-white mb-4">Regístrate</h1>
         <p class="text-center text-secondary">Crea una cuenta para gestionar tu inventario.</p>
-        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="p-4 shadow-lg rounded bg-light text-dark">
+        <form class="p-4 shadow-lg rounded bg-dark text-dark" (ngSubmit)="onSubmit()">
             <!-- Nombre -->
             <div class="mb-3">
               <label for="firstName" class="form-label">Nombre</label>
@@ -81,11 +81,11 @@
               <label class="form-label">Selecciona tu Rol</label>
               <div class="form-check">
                 <input type="radio" id="roleEmployee" formControlName="role" value="Empleado" class="form-check-input">
-                <label class="form-check-label" for="roleEmployee">Empleado</label>
+                <label class="form-check-label text-white" for="roleEmployee">Empleado</label>
               </div>
               <div class="form-check">
                 <input type="radio" id="roleOwner" formControlName="role" value="Dueño" class="form-check-input">
-                <label class="form-check-label" for="roleOwner">Dueño</label>
+                <label class="form-check-label text-white" for="roleOwner">Dueño</label>
               </div>
               <div *ngIf="submitted && f['role'].errors" class="text-danger">
                 <div *ngIf="f['role'].errors['required']">Debes seleccionar un rol.</div>
