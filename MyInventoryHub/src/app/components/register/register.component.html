@@ -1,94 +1,143 @@
-<div class="register-container">
-    <div class="card">
-      <div class="card-header">
-        <h2>Sign Up</h2>
-      </div>
-      <div class="card-body">
-        <form [formGroup]="form" (ngSubmit)="onSubmit()">
-          <!-- First Name -->
-          <div class="form-group">
-            <label for="firstName">First Name</label>
+<!-- Main Content -->
+<div class="container py-5">
+    <div class="row justify-content-center align-items-center">
+      <div class="col-lg-5">
+        <h1 class="text-center mb-4">Regístrate</h1>
+        <p class="text-center text-secondary">Crea una cuenta para gestionar tu inventario.</p>
+        <form class="p-4 shadow-lg rounded bg-light text-dark" (ngSubmit)="onSubmit()">
+          <!-- Nombre -->
+          <div class="mb-3">
+            <label for="firstName" class="form-label">Nombre</label>
             <input
               type="text"
               id="firstName"
               formControlName="firstName"
               class="form-control"
-              [ngClass]="{ 'is-invalid': submitted && f['firstName'].errors }"
+              placeholder="Ingresa tu nombre"
+              required
             />
-            <div *ngIf="submitted && f['firstName'].errors" class="invalid-feedback">
-              <div *ngIf="f['firstName'].errors['required']">First Name is required</div>
-            </div>
           </div>
   
-          <!-- Last Name -->
-          <div class="form-group">
-            <label for="lastName">Last Name</label>
+          <!-- Apellidos -->
+          <div class="mb-3">
+            <label for="lastName" class="form-label">Apellidos</label>
             <input
               type="text"
               id="lastName"
               formControlName="lastName"
               class="form-control"
-              [ngClass]="{ 'is-invalid': submitted && f['lastName'].errors }"
+              placeholder="Ingresa tus apellidos"
+              required
             />
-            <div *ngIf="submitted && f['lastName'].errors" class="invalid-feedback">
-              <div *ngIf="f['lastName'].errors['required']">Last Name is required</div>
-            </div>
           </div>
   
-          <!-- Username -->
-          <div class="form-group">
-            <label for="username">Username</label>
+          <!-- Correo Electrónico -->
+          <div class="mb-3">
+            <label for="email" class="form-label">Correo Electrónico</label>
+            <input
+              type="email"
+              id="email"
+              formControlName="email"
+              class="form-control"
+              placeholder="Ingresa tu correo electrónico"
+              required
+            />
+          </div>
+  
+          <!-- Nombre de Usuario -->
+          <div class="mb-3">
+            <label for="username" class="form-label">Nombre de Usuario</label>
             <input
               type="text"
               id="username"
               formControlName="username"
               class="form-control"
-              [ngClass]="{ 'is-invalid': submitted && f['username'].errors }"
+              placeholder="Elige un nombre de usuario"
+              required
             />
-            <div *ngIf="submitted && f['username'].errors" class="invalid-feedback">
-              <div *ngIf="f['username'].errors['required']">Username is required</div>
-            </div>
           </div>
   
-          <!-- Password -->
-          <div class="form-group">
-            <label for="password">Password</label>
+          <!-- Contraseña -->
+          <div class="mb-3">
+            <label for="password" class="form-label">Contraseña</label>
             <input
               type="password"
               id="password"
               formControlName="password"
               class="form-control"
-              [ngClass]="{ 'is-invalid': submitted && f['password'].errors }"
+              placeholder="••••••••"
+              required
             />
-            <div *ngIf="submitted && f['password'].errors" class="invalid-feedback">
-              <div *ngIf="f['password'].errors['required']">Password is required</div>
-              <div *ngIf="f['password'].errors['minlength']">Password must be at least 6 characters</div>
+          </div>
+  
+          <!-- Repetir Contraseña -->
+          <div class="mb-3">
+            <label for="confirmPassword" class="form-label">Repetir Contraseña</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              formControlName="confirmPassword"
+              class="form-control"
+              placeholder="••••••••"
+              required
+            />
+          </div>
+  
+          <!-- Rol (Empleado o Dueño) -->
+          <div class="mb-3">
+            <label class="form-label">Selecciona tu Rol</label>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="radio"
+                id="roleEmployee"
+                formControlName="role"
+                value="Empleado"
+                required
+              />
+              <label class="form-check-label" for="roleEmployee">
+                Empleado
+              </label>
+            </div>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="radio"
+                id="roleOwner"
+                formControlName="role"
+                value="Dueño"
+                required
+              />
+              <label class="form-check-label" for="roleOwner">
+                Dueño
+              </label>
+            </div>
+            <div *ngIf="submitted && !formGroup.get('role')?.value" class="text-danger mt-2">
+              Debes seleccionar un rol.
             </div>
           </div>
   
-          <!-- Submit Button -->
-          <div class="form-group">
-            <button
-              type="submit"
-              class="btn btn-primary"
-              [disabled]="loading"
-            >
-              Sign Up
-            </button>
-            <img
-              *ngIf="loading"
-              src="assets/loading-spinner.gif"
-              alt="Loading..."
-              class="loading-spinner"
-            />
-          </div>
-  
-          <!-- Login Redirect -->
-          <div class="text-center">
-            <a [routerLink]="['../login']" class="btn btn-link">Already have an account? Log in</a>
-          </div>
+          <!-- Botón de Registro -->
+          <button type="submit" class="btn btn-primary w-100" [disabled]="loading">
+            Registrarse
+          </button>
+          <img
+            *ngIf="loading"
+            src="assets/loading-spinner.gif"
+            alt="Cargando..."
+            class="d-block mx-auto mt-3"
+          />
         </form>
+        <p class="text-center mt-3">
+          ¿Ya tienes una cuenta?
+          <a [routerLink]="['../login']" class="text-decoration-none text-primary">Inicia sesión aquí</a>
+        </p>
       </div>
     </div>
   </div>
+  
+  <!-- Footer -->
+  <footer class="bg-dark text-center text-secondary py-3">
+    <p class="mb-0">&copy; 2024 MyInventoryHub. Todos los derechos reservados.</p>
+  </footer>
   

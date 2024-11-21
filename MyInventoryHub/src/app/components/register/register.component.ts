@@ -1,5 +1,5 @@
 import { NgClass, NgFor, NgIf } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink, RouterModule } from '@angular/router';
 import { first } from 'rxjs';
@@ -15,11 +15,13 @@ import { first } from 'rxjs';
     ],
     templateUrl: './register.component.html',
     styleUrls: ['./register.component.css'],
+    encapsulation: ViewEncapsulation.None
   })
   export class RegisterComponent {
     form: FormGroup;
     submitted = false;
     loading = false;
+formGroup: any;
   
     constructor(private formBuilder: FormBuilder) {
       // Initialize the form
