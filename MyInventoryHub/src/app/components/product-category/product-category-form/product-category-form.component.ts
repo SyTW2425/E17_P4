@@ -4,11 +4,10 @@ import { ProductCategory } from '../../../models/productCategory.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
-  selector: 'app-product-category-form',
-  standalone: true,
-  imports: [],
-  templateUrl: './product-category-form.component.html',
-  styleUrl: './product-category-form.component.css'
+    selector: 'app-product-category-form',
+    imports: [],
+    templateUrl: './product-category-form.component.html',
+    styleUrl: './product-category-form.component.css'
 })
 export class ProductCategoryFormComponent {
   categoryForm: FormGroup;

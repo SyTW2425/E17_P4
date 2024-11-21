@@ -3,9 +3,10 @@ import { SalesRecordService } from '../../services/sales-record.service';
 import { SalesRecord } from '../../models/salesRecord.model';
 
 @Component({
-  selector: 'app-sales-record',
-  templateUrl: './sales-record.component.html',
-  styleUrls: ['./sales-record.component.css']
+    selector: 'app-sales-record',
+    templateUrl: './sales-record.component.html',
+    styleUrls: ['./sales-record.component.css'],
+    standalone: false
 })
 export class SalesRecordComponent implements OnInit {
   salesRecords: SalesRecord[] = [];

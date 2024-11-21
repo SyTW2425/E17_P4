@@ -3,12 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-sign-up',
-  templateUrl: './sign-up.component.html',
-  styleUrls: ['./sign-up.component.css'],
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  encapsulation: ViewEncapsulation.None, // O utiliza None si no deseas encapsulación
+    selector: 'app-sign-up',
+    templateUrl: './sign-up.component.html',
+    styleUrls: ['./sign-up.component.css'],
+    imports: [CommonModule, FormsModule],
+    encapsulation: ViewEncapsulation.None
 })
 export class SignUpComponent {
   usernameOrEmail: string = '';  // Campo para nombre de usuario o correo electrónico

@@ -4,11 +4,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-supplier-manager', // Actualizado el selector
-  standalone: true,
-  templateUrl: './supplier-manager.component.html', // Actualizado el nombre del archivo HTML
-  imports: [CommonModule, FormsModule],
-  styleUrls: ['./supplier-manager.component.css'], // Actualizado el nombre del archivo de estilos
+    selector: 'app-supplier-manager',
+    templateUrl: './supplier-manager.component.html', // Actualizado el nombre del archivo HTML
+    imports: [CommonModule, FormsModule],
+    styleUrls: ['./supplier-manager.component.css']
 })
 export class SupplierManagerComponent implements OnInit {
   suppliers: Supplier[] = [

@@ -5,11 +5,10 @@ import { FormsModule } from '@angular/forms';
 
 
 @Component({
-  selector: 'app-batch-list', // Actualiza el selector
-  standalone: true,
-  templateUrl: './batch-list.component.html', // Cambiar el nombre del archivo HTML
-  imports: [CommonModule, FormsModule],
-  styleUrls: ['./batch-list.component.css'], // Cambiar el nombre del archivo de estilos
+    selector: 'app-batch-list',
+    templateUrl: './batch-list.component.html', // Cambiar el nombre del archivo HTML
+    imports: [CommonModule, FormsModule],
+    styleUrls: ['./batch-list.component.css']
 })
 export class BatchListComponent implements OnInit {
   batches: Batch[] = [

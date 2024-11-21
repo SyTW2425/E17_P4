@@ -11,11 +11,10 @@ import { InventoryTransactionDetailComponent } from '../inventory-transaction-de
 
 
 @Component({
-  selector: 'app-inventory-transaction-list',
-  standalone: true,
-  imports: [CommonModule, InventoryTransactionDetailComponent],
-  templateUrl: './inventory-transaction-list.component.html',
-  styleUrls: ['./inventory-transaction-list.component.css']
+    selector: 'app-inventory-transaction-list',
+    imports: [CommonModule, InventoryTransactionDetailComponent],
+    templateUrl: './inventory-transaction-list.component.html',
+    styleUrls: ['./inventory-transaction-list.component.css']
 })
 /**
  * Adds a property that saves a list of all the inventory transactions 

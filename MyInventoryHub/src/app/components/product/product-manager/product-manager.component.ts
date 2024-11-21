@@ -4,11 +4,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-product-manager',
-  standalone: true,
-  templateUrl: './product-manager.component.html',
-  imports: [CommonModule, FormsModule], // Asegúrate de importar FormsModule
-  styleUrls: ['./product-manager.component.css'],
+    selector: 'app-product-manager',
+    templateUrl: './product-manager.component.html',
+    imports: [CommonModule, FormsModule], // Asegúrate de importar FormsModule
+    styleUrls: ['./product-manager.component.css']
 })
 export class ProductManagerComponent implements OnInit {
   products: Product[] = [
