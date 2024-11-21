@@ -39,26 +39,35 @@
     <div class="row justify-content-center align-items-center">
       <div class="col-lg-5">
         <h1 class="text-center mb-4">Bienvenido a MyInventoryHub</h1>
-        <p class="text-center text-secondary">Por favor, inicia sesión para acceder a tu panel de control y gestionar tu inventario de manera eficiente.</p>
-        <form class="p-4 shadow-lg rounded bg-light text-dark">
+        <p class="text-center text-secondary">Por favor, crea una cuenta para acceder a tu panel de control y gestionar tu inventario de manera eficiente.</p>
+        <form class="p-4 shadow-lg rounded bg-light text-dark" (ngSubmit)="signIn()">
+          <div class="mb-3">
+            <label for="username" class="form-label">Nombre de Usuario</label>
+            <input type="text" class="form-control" id="username" [(ngModel)]="username" name="username" placeholder="Ingresa tu nombre de usuario" required>
+          </div>
           <div class="mb-3">
             <label for="email" class="form-label">Correo electrónico</label>
-            <input type="email" class="form-control" id="email" placeholder="nombre@ejemplo.com">
+            <input type="email" class="form-control" id="email" [(ngModel)]="email" name="email" placeholder="nombre@ejemplo.com" required>
           </div>
           <div class="mb-3">
             <label for="password" class="form-label">Contraseña</label>
-            <input type="password" class="form-control" id="password" placeholder="••••••••">
+            <input type="password" class="form-control" id="password" [(ngModel)]="password" name="password" placeholder="••••••••" required>
           </div>
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <div>
-              <input type="checkbox" id="rememberMe">
-              <label for="rememberMe" class="form-check-label">Recuérdame</label>
-            </div>
-            <a href="#" class="text-decoration-none">¿Olvidaste tu contraseña?</a>
+          <div class="mb-3">
+            <label for="phoneNumber" class="form-label">Número de Teléfono (Opcional)</label>
+            <input type="tel" class="form-control" id="phoneNumber" [(ngModel)]="phoneNumber" name="phoneNumber" placeholder="Número de teléfono">
           </div>
-          <button type="submit" class="btn btn-primary w-100">Iniciar sesión</button>
+          <div class="mb-3">
+            <label for="address" class="form-label">Dirección (Opcional)</label>
+            <input type="text" class="form-control" id="address" [(ngModel)]="address" name="address" placeholder="Dirección">
+          </div>
+
+          <!-- Mensaje de error -->
+          <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+          <button type="submit" class="btn btn-primary w-100" [disabled]="!username || !email || !password">Registrarse</button>
         </form>
-        <p class="text-center mt-3">¿No tienes una cuenta? <a href="#" class="text-decoration-none text-primary">Regístrate</a></p>
+        <p class="text-center mt-3">¿Ya tienes una cuenta? <a href="#" class="text-decoration-none text-primary">Iniciar sesión</a></p>
       </div>
     </div>
   </div>

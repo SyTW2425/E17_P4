@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './sign-in.component.html',
   styleUrls: ['./sign-in.component.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule], // Importamos los módulos necesarios
+  imports: [CommonModule, FormsModule],
 })
 export class SignInComponent {
   username: string = '';
