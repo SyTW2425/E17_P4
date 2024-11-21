@@ -1,0 +1,24 @@
+<!-- sign-up.component.html -->
+<div class="container py-5">
+  <div class="row justify-content-center align-items-center">
+    <div class="col-lg-5">
+      <h1 class="text-center mb-4">Bienvenido a MyInventoryHub</h1>
+      <p class="text-center text-secondary">Por favor, regístrate para acceder a tu panel de control y gestionar tu inventario de manera eficiente.</p>
+      <form class="p-4 shadow-lg rounded bg-light text-dark" (ngSubmit)="signUp()">
+        <div class="mb-3">
+          <label for="usernameOrEmail" class="form-label">Nombre de Usuario o Correo Electrónico</label>
+          <input type="text" class="form-control" id="usernameOrEmail" [(ngModel)]="usernameOrEmail" name="usernameOrEmail" placeholder="Ingresa tu nombre de usuario o correo electrónico" required>
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">Contraseña</label>
+          <input type="password" class="form-control" id="password" [(ngModel)]="password" name="password" placeholder="••••••••" required>
+        </div>
+        <!-- Mensaje de error -->
+        <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+        <button type="submit" class="btn btn-primary w-100" [disabled]="!usernameOrEmail || !password">Registrarse</button>
+      </form>
+      <p class="text-center mt-3">¿Ya tienes una cuenta? <a routerLink="/sign-in" class="text-decoration-none text-primary">Iniciar sesión</a></p>
+    </div>
+  </div>
+</div>
