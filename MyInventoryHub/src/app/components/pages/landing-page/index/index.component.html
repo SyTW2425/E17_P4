@@ -1,37 +1,19 @@
-<!DOCTYPE html>
-<html lang="es">
-
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
-    <title>MyInventoryHub - Inventario virtual</title>
-    <!-- Favicon-->
-    <link rel="icon" type="image/x-icon" href="/public/favicon.ico" />
-    <!-- Bootstrap icons-->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
-    <!-- Core theme CSS (includes Bootstrap)-->
-    <link href="./index.component.css" rel="stylesheet" />
-</head>
-
-<body class="d-flex flex-column h-100">
+<div class="d-flex flex-column h-100">
     <main class="flex-shrink-0">
         <!-- Navigation-->
-        <!--<router-outlet></router-outlet>-->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container px-5">
-                <a class="navbar-brand" routerLink="/" routerLinkActive="active">Start Bootstrap</a>
+                <a class="navbar-brand" routerLink="/" routerLinkActive="active">
+                    <img src="/logo.png" alt="Logo" style="width: 30px; height: 30px; margin-right: 10px;">MyInventoryHub</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation"><span
                         class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link" routerLink="/" routerLinkActive="active">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" routerLink="/about" routerLinkActive="active">About</a>
-                        </li>
-                        <li class="nav-item"><a class="nav-link" routerLink="/contact" routerLinkActive="active">Contact</a></li>
+                        <li class="nav-item"><a class="nav-link" routerLink="/" routerLinkActive="active">Inicio</a></li>
+                        <li class="nav-item"><a class="nav-link" routerLink="/about" routerLinkActive="active">Sobre nosotros</a></li>
+                        <li class="nav-item"><a class="nav-link" routerLink="/contact" routerLinkActive="active">Contacto</a></li>
                         <li class="nav-item"><a class="nav-link" routerLink="/faq" routerLinkActive="active">FAQ</a></li>
                     </ul>
                 </div>
@@ -64,37 +46,37 @@
             <div class="container px-5 my-5">
                 <div class="row gx-5">
                     <div class="col-lg-4 mb-5 mb-lg-0">
-                        <h2 class="fw-bolder mb-0">Tu inventario inteligente</h2>
+                        <h2 class="fw-bolder mb-0">Tu inventario<br>   inteligente</h2>
                     </div>
                     <div class="col-lg-8">
                         <div class="row gx-5 row-cols-1 row-cols-md-2">
                             <div class="col mb-5 h-100">
                                 <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i
                                         class="bi bi-graph-up"></i></div>
-                                <h2 class="h5">Featured title</h2>
+                                <h2 class="h5">Visión integral de tu negocio</h2>
                                 <p class="mb-6">Accede a métricas clave de tu negocio: estadísticas de ventas, alertas
                                     de caducidad y más, todo en un solo lugar.</p>
                             </div>
                             <div class="col mb-5 h-100">
                                 <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i
                                         class="bi bi-building"></i></div>
-                                <h2 class="h5">Featured title</h2>
-                                <p class="mb-6">Paragraph of text beneath the heading to explain the heading. Here is
-                                    just a bit more text.</p>
+                                <h2 class="h5">Gestiona todo en un solo lugar</h2>
+                                <p class="mb-6">¿Tienes más de una tienda o más de un almacén? Controlalo todo a la vez desde el mismo sitio.</p>
                             </div>
                             <div class="col mb-5 mb-md-0 h-100">
                                 <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i
                                         class="bi bi-toggles2"></i></div>
-                                <h2 class="h5">Featured title</h2>
-                                <p class="mb-6">Paragraph of text beneath the heading to explain the heading. Here is
-                                    just a bit more text.</p>
+                                <h2 class="h5">Ajustes personalizado</h2>
+                                <p class="mb-6">Toma el control de tus productos, ajusta configuraciones según tus necesidades y personaliza las alertas, las categorías y la gestión de inventarios. 
+                                    Adapta la plataforma a las particularidades de tu negocio y optimiza cada proceso para mejorar la eficiencia. </p>
                             </div>
                             <div class="col h-100">
                                 <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i
-                                        class="bi bi-toggles2"></i></div>
-                                <h2 class="h5">Featured title</h2>
-                                <p class="mb-6">Paragraph of text beneath the heading to explain the heading. Here is
-                                    just a bit more text.</p>
+                                    class="bi bi-file-person-fill"></i></div>
+                                <h2 class="h5">Gestión de inventario para empleados</h2>
+                                <p class="mb-6">Brinda a los empleados acceso a herramientas intuitivas para gestionar y monitorear el inventario, 
+                                    realizar ajustes y controlar el estado de los productos directamente desde la tienda.
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -107,16 +89,16 @@
                 <div class="row gx-5 justify-content-center">
                     <div class="col-lg-10 col-xl-7">
                         <div class="text-center">
-                            <div class="fs-4 mb-4 fst-italic">"Working with Start Bootstrap templates has saved me tons
-                                of development time when building new projects! Starting with a Bootstrap template just
-                                makes things easier!"</div>
+                            <div class="fs-4 mb-4 fst-italic">"Con nuestra aplicación tendrás el control de tu negocio
+                                en la palma de tu mano. Gestionarás de forma integra
+                                    tus productos, dominarás tu negocio.""</div>
                             <div class="d-flex align-items-center justify-content-center">
                                 <img class="rounded-circle me-3" src="https://dummyimage.com/40x40/ced4da/6c757d"
                                     alt="..." />
                                 <div class="fw-bold">
-                                    Tom Ato
+                                Desarrolladores
                                     <span class="fw-bold text-primary mx-1">/</span>
-                                    CEO, Pomodoro
+                                    Equipo de MyInventoryHub
                                 </div>
                             </div>
                         </div>
@@ -259,6 +241,5 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Core theme JS-->
     <script src="js/scripts.js"></script>
-</body>
+</div>
 
-</html>
