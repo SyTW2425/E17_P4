@@ -1,57 +1,33 @@
-.sign-in-container {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+body {
+  font-family: 'Roboto', sans-serif;
+  background-image: linear-gradient(to right, #0d1117, #161b22);
+  min-height: 100vh;
 }
 
-.sign-in-container h2 {
-  text-align: center;
-}
-
-form div {
-  margin-bottom: 15px;
-}
-
-label {
-  display: block;
+h1 {
+  font-size: 2.5rem;
   font-weight: bold;
-  margin-bottom: 5px;
 }
 
-label span {
-  color: red;
-}
-
-input {
-  width: 100%;
-  padding: 8px;
-  box-sizing: border-box;
+form {
   border: 1px solid #ccc;
-  border-radius: 4px;
 }
 
-button {
-  width: 100%;
-  padding: 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+form .form-control {
+  border-radius: 0.375rem;
 }
 
-button:hover {
-  background-color: #0056b3;
+form .btn-primary {
+  background-color: #1f6feb;
+  border-color: #1f6feb;
+  transition: all 0.3s ease;
 }
 
-.error {
-  color: red;
-  margin-top: 10px;
+form .btn-primary:hover {
+  background-color: #1a5cc0;
+  border-color: #1a5cc0;
 }
 
-.success {
-  color: green;
-  margin-top: 10px;
+footer {
+  border-top: 1px solid #ccc;
 }
