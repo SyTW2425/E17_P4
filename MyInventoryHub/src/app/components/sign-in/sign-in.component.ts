@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -6,51 +6,56 @@ import { FormsModule } from '@angular/forms';
     selector: 'app-sign-in',
     templateUrl: './sign-in.component.html',
     styleUrls: ['./sign-in.component.css'],
-    imports: [CommonModule, FormsModule]
+    imports: [CommonModule, FormsModule],
+    standalone: true,
+    encapsulation: ViewEncapsulation.None
 })
 export class SignInComponent {
-  username: string = '';
-  email: string = '';
+  usernameOrEmail: string = '';  // Campo para nombre de usuario o correo electrónico
   password: string = '';
   phoneNumber: string = '';
   address: string = '';
   errorMessage: string = '';
-  successMessage: string = '';
 
   signIn() {
     // Validación de campos obligatorios
-    if (!this.username || !this.email || !this.password) {
+    if (!this.usernameOrEmail || !this.password) {
       this.errorMessage = 'Por favor, completa todos los campos obligatorios.';
-      this.successMessage = '';
       return;
     }
 
-    // Recuperar usuarios almacenados
-    const storedUsers = localStorage.getItem('users');
-    const users = storedUsers ? JSON.parse(storedUsers) : [];
+    // Comprobar si el valor ingresado es un correo electrónico o un nombre de usuario
+    const isEmail = this.isValidEmail(this.usernameOrEmail);
+    const isUsername = !isEmail && this.usernameOrEmail.trim() !== '';
 
-    // Crear un nuevo usuario
-    const newUser = {
-      id: users.length + 1,
-      username: this.username,
-      email: this.email,
+    if (!isEmail && !isUsername) {
+      this.errorMessage = 'Por favor, ingresa un nombre de usuario o un correo electrónico válido.';
+      return;
+    }
+
+    // Aquí puedes agregar la lógica para almacenar el nuevo usuario
+    // o enviar la información al backend para crear la cuenta
+    const user = {
+      username: isEmail ? null : this.usernameOrEmail,  // Si es correo, el nombre de usuario es null
+      email: isEmail ? this.usernameOrEmail : null,    // Si es nombre de usuario, el correo es null
       password: this.password,
-      phoneNumber: this.phoneNumber || null,
-      address: this.address || null,
-      createdAt: new Date(),
+      phoneNumber: this.phoneNumber,
+      address: this.address
     };
 
-    // Guardar el usuario en localStorage
-    users.push(newUser);
-    localStorage.setItem('users', JSON.stringify(users));
+    console.log('Usuario registrado:', user);
 
-    // Mostrar mensaje de éxito y limpiar los campos
-    this.successMessage = 'Usuario registrado exitosamente.';
-    this.errorMessage = '';
-    this.username = '';
-    this.email = '';
+    // Limpiar el formulario después de un registro exitoso
+    this.usernameOrEmail = '';
     this.password = '';
     this.phoneNumber = '';
     this.address = '';
+    this.errorMessage = '';
+  }
+
+  // Método para verificar si el campo ingresado es un correo electrónico
+  isValidEmail(value: string): boolean {
+    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    return emailPattern.test(value);
   }
 }
