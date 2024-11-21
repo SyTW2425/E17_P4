@@ -10,8 +10,7 @@ import { first } from 'rxjs';
     imports: [
       ReactiveFormsModule,
       RouterModule,
-      NgIf,
-      NgClass
+      NgIf
     ],
     templateUrl: './register.component.html',
     styleUrls: ['./register.component.css'],

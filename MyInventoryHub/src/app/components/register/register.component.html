@@ -2,7 +2,10 @@
 <div class="container py-5">
     <div class="row justify-content-center align-items-center">
       <div class="col-lg-5">
-        <h1 class="text-center mb-4">Regístrate</h1>
+        <div class="text-center mb-4">
+            <img src="/logo.png" alt="Logo de la app" class="img-fluid" style="max-width: 100px; height: auto;" />
+        </div>
+        <h1 class="text-center text-white mb-4">Regístrate</h1>
         <p class="text-center text-secondary">Crea una cuenta para gestionar tu inventario.</p>
         <form class="p-4 shadow-lg rounded bg-light text-dark" (ngSubmit)="onSubmit()">
           <!-- Nombre -->
@@ -128,7 +131,7 @@
             class="d-block mx-auto mt-3"
           />
         </form>
-        <p class="text-center mt-3">
+        <p class="text-center text-white mt-3">
           ¿Ya tienes una cuenta?
           <a [routerLink]="['../login']" class="text-decoration-none text-primary">Inicia sesión aquí</a>
         </p>
