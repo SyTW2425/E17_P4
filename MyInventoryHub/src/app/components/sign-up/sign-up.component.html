@@ -1,24 +1,56 @@
-<!-- sign-up.component.html -->
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="#">MyInventoryHub</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="#">Inicio</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Sobre Nosotros</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Contacto</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">FAQ</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
 <div class="container py-5">
   <div class="row justify-content-center align-items-center">
     <div class="col-lg-5">
-      <h1 class="text-center mb-4">Bienvenido a MyInventoryHub</h1>
-      <p class="text-center text-secondary">Por favor, regístrate para acceder a tu panel de control y gestionar tu inventario de manera eficiente.</p>
+      <h1 class="text-center mb-4">Iniciar Sesión</h1>
+      <p class="text-center text-secondary">Accede a tu cuenta para gestionar tu inventario.</p>
       <form class="p-4 shadow-lg rounded bg-light text-dark" (ngSubmit)="signUp()">
         <div class="mb-3">
           <label for="usernameOrEmail" class="form-label">Nombre de Usuario o Correo Electrónico</label>
-          <input type="text" class="form-control" id="usernameOrEmail" [(ngModel)]="usernameOrEmail" name="usernameOrEmail" placeholder="Ingresa tu nombre de usuario o correo electrónico" required>
+          <input type="text" class="form-control" id="usernameOrEmail" [(ngModel)]="usernameOrEmail" name="usernameOrEmail" placeholder="Ingresa tu nombre o correo" required>
         </div>
         <div class="mb-3">
           <label for="password" class="form-label">Contraseña</label>
           <input type="password" class="form-control" id="password" [(ngModel)]="password" name="password" placeholder="••••••••" required>
         </div>
+
         <!-- Mensaje de error -->
         <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
 
-        <button type="submit" class="btn btn-primary w-100" [disabled]="!usernameOrEmail || !password">Registrarse</button>
+        <button type="submit" class="btn btn-primary w-100" [disabled]="!usernameOrEmail || !password">Iniciar Sesión</button>
       </form>
-      <p class="text-center mt-3">¿Ya tienes una cuenta? <a routerLink="/sign-in" class="text-decoration-none text-primary">Iniciar sesión</a></p>
+      <p class="text-center mt-3">¿No tienes una cuenta? <a href="#" class="text-decoration-none text-primary">Regístrate aquí</a></p>
     </div>
   </div>
 </div>
+
+<!-- Footer -->
+<footer class="bg-dark text-center text-secondary py-3">
+  <p class="mb-0">&copy; 2024 MyInventoryHub. Todos los derechos reservados.</p>
+</footer>
