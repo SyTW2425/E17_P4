@@ -1,24 +1,27 @@
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
-  <div class="container">
-    <a class="navbar-brand fw-bold" href="#">MyInventoryHub</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="#">Inicio</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Sobre Nosotros</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Contacto</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">FAQ</a>
-        </li>
+<!-- Breadcrumb -->
+<!-- <nav aria-label="breadcrumb" class="breadcrumb-container mb-4 p-3 shadow-sm rounded">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <a [routerLink]="['/']" class="text-decoration-none">Inicio</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Registro</li>
+  </ol>
+</nav> -->
+
+<!-- Navigation-->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container px-5">
+    <a class="navbar-brand" routerLink="/" routerLinkActive="active">
+      <img src="/logo.png" alt="Logo" style="width: 30px; height: 30px; margin-right: 10px;">MyInventoryHub</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span
+        class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" routerLink="/" routerLinkActive="active">Inicio</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="/about" routerLinkActive="active">Sobre nosotros</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="/contact" routerLinkActive="active">Contacto</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="/faq" routerLinkActive="active">FAQ</a></li>
       </ul>
     </div>
   </div>
@@ -27,25 +30,32 @@
 <!-- Main Content -->
 <div class="container py-5">
   <div class="row justify-content-center align-items-center">
+    <div class="text-center mb-4">
+      <img src="/logo.png" alt="Logo de la app" class="img-fluid" style="max-width: 100px; height: auto;" />
+    </div>
     <div class="col-lg-5">
       <h1 class="text-center mb-4">Iniciar Sesión</h1>
       <p class="text-center text-secondary">Accede a tu cuenta para gestionar tu inventario.</p>
-      <form class="p-4 shadow-lg rounded bg-light text-dark" (ngSubmit)="signIn()">
+      <form class="p-4 shadow-lg rounded bg-dark text-dark" (ngSubmit)="signIn()">
         <div class="mb-3">
           <label for="usernameOrEmail" class="form-label">Nombre de Usuario o Correo Electrónico</label>
-          <input type="text" class="form-control" id="usernameOrEmail" [(ngModel)]="usernameOrEmail" name="usernameOrEmail" placeholder="Ingresa tu nombre o correo" required>
+          <input type="text" class="form-control" id="usernameOrEmail" [(ngModel)]="usernameOrEmail"
+            name="usernameOrEmail" placeholder="Ingresa tu nombre o correo" required>
         </div>
         <div class="mb-3">
           <label for="password" class="form-label">Contraseña</label>
-          <input type="password" class="form-control" id="password" [(ngModel)]="password" name="password" placeholder="••••••••" required>
+          <input type="password" class="form-control" id="password" [(ngModel)]="password" name="password"
+            placeholder="••••••••" required>
         </div>
 
         <!-- Mensaje de error -->
         <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
 
-        <button type="submit" class="btn btn-primary w-100" [disabled]="!usernameOrEmail || !password">Iniciar Sesión</button>
+        <button type="submit" class="btn btn-primary w-100" [disabled]="!usernameOrEmail || !password">Iniciar
+          Sesión</button>
       </form>
-      <p class="text-center mt-3">¿No tienes una cuenta? <a href="#" class="text-decoration-none text-primary">Regístrate aquí</a></p>
+      <p class="text-center mt-3">¿No tienes una cuenta? <a href="#"
+          class="text-decoration-none text-primary">Regístrate aquí</a></p>
     </div>
   </div>
 </div>
