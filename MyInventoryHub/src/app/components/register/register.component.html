@@ -1,0 +1,111 @@
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" class="breadcrumb-container mb-4 p-3 shadow-sm rounded">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a [routerLink]="['/']" class="text-decoration-none">Inicio</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">Registro</li>
+    </ol>
+  </nav>
+<!-- Main Content -->
+<div class="container py-5">
+    <div class="row justify-content-center align-items-center">
+      <div class="col-lg-5">
+        <div class="text-center mb-4">
+            <img src="/logo.png" alt="Logo de la app" class="img-fluid" style="max-width: 100px; height: auto;" />
+        </div>
+        <h1 class="text-center text-white mb-4">Regístrate</h1>
+        <p class="text-center text-secondary">Crea una cuenta para gestionar tu inventario.</p>
+        <form class="p-4 shadow-lg rounded bg-dark text-dark" (ngSubmit)="onSubmit()">
+            <!-- Nombre -->
+            <div class="mb-3">
+              <label for="firstName" class="form-label">Nombre</label>
+              <input type="text" id="firstName" formControlName="firstName" class="form-control" placeholder="Ingresa tu nombre">
+              <div *ngIf="submitted && f['firstName'].errors" class="text-danger">
+                <div *ngIf="f['firstName'].errors['required']">El nombre es obligatorio.</div>
+                <div *ngIf="f['firstName'].errors['pattern']">El nombre debe contener solo letras.</div>
+              </div>
+            </div>
+          
+            <!-- Apellidos -->
+            <div class="mb-3">
+              <label for="lastName" class="form-label">Apellidos</label>
+              <input type="text" id="lastName" formControlName="lastName" class="form-control" placeholder="Ingresa tus apellidos">
+              <div *ngIf="submitted && f['lastName'].errors" class="text-danger">
+                <div *ngIf="f['lastName'].errors['required']">Los apellidos son obligatorios.</div>
+                <div *ngIf="f['lastName'].errors['pattern']">Los apellidos deben contener solo letras.</div>
+              </div>
+            </div>
+          
+            <!-- Correo Electrónico -->
+            <div class="mb-3">
+              <label for="email" class="form-label">Correo Electrónico</label>
+              <input type="email" id="email" formControlName="email" class="form-control" placeholder="Ingresa tu correo electrónico">
+              <div *ngIf="submitted && f['email'].errors" class="text-danger">
+                <div *ngIf="f['email'].errors['required']">El correo es obligatorio.</div>
+                <div *ngIf="f['email'].errors['email']">El correo no es válido.</div>
+              </div>
+            </div>
+          
+            <!-- Nombre de Usuario -->
+            <div class="mb-3">
+              <label for="username" class="form-label">Nombre de Usuario</label>
+              <input type="text" id="username" formControlName="username" class="form-control" placeholder="Elige un nombre de usuario">
+              <div *ngIf="submitted && f['username'].errors" class="text-danger">
+                <div *ngIf="f['username'].errors['required']">El nombre de usuario es obligatorio.</div>
+              </div>
+            </div>
+          
+            <!-- Contraseña -->
+            <div class="mb-3">
+              <label for="password" class="form-label">Contraseña</label>
+              <input type="password" id="password" formControlName="password" class="form-control" placeholder="••••••••">
+              <div *ngIf="submitted && f['password'].errors" class="text-danger">
+                <div *ngIf="f['password'].errors['required']">La contraseña es obligatoria.</div>
+                <div *ngIf="f['password'].errors['minlength']">La contraseña debe tener al menos 7 caracteres.</div>
+              </div>
+            </div>
+          
+            <!-- Repetir Contraseña -->
+            <div class="mb-3">
+              <label for="confirmPassword" class="form-label">Repetir Contraseña</label>
+              <input type="password" id="confirmPassword" formControlName="confirmPassword" class="form-control" placeholder="••••••••">
+              <div *ngIf="submitted && f['confirmPassword'].errors" class="text-danger">
+                <div *ngIf="f['confirmPassword'].errors['required']">Repetir contraseña es obligatorio.</div>
+                <div *ngIf="form.errors?.['mismatch']">Las contraseñas no coinciden.</div>
+              </div>
+            </div>
+          
+            <!-- Rol -->
+            <div class="mb-3">
+              <label class="form-label">Selecciona tu Rol</label>
+              <div class="form-check">
+                <input type="radio" id="roleEmployee" formControlName="role" value="Empleado" class="form-check-input">
+                <label class="form-check-label text-white" for="roleEmployee">Empleado</label>
+              </div>
+              <div class="form-check">
+                <input type="radio" id="roleOwner" formControlName="role" value="Dueño" class="form-check-input">
+                <label class="form-check-label text-white" for="roleOwner">Dueño</label>
+              </div>
+              <div *ngIf="submitted && f['role'].errors" class="text-danger">
+                <div *ngIf="f['role'].errors['required']">Debes seleccionar un rol.</div>
+              </div>
+            </div>
+          
+            <!-- Botón de Registro -->
+            <button type="submit" class="btn btn-primary w-100" [disabled]="loading">Registrarse</button>
+            <img *ngIf="loading" src="assets/loading-spinner.gif" alt="Cargando..." class="d-block mx-auto mt-3">
+          </form>          
+        <p class="text-center text-white mt-3">
+          ¿Ya tienes una cuenta?
+          <a [routerLink]="['../login']" class="text-decoration-none text-primary">Inicia sesión aquí</a>
+        </p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Footer -->
+  <footer class="bg-dark text-center text-secondary py-3">
+    <p class="mb-0">&copy; 2024 MyInventoryHub. Todos los derechos reservados.</p>
+  </footer>
+  
