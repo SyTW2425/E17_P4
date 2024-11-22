@@ -3,11 +3,10 @@ import { ProductCategoryService } from '../../../services/product-category.servi
 import { ProductCategory } from '../../../models/productCategory.model';
 
 @Component({
-  selector: 'app-product-category-list',
-  standalone: true,
-  imports: [],
-  templateUrl: './product-category-list.component.html',
-  styleUrl: './product-category-list.component.css'
+    selector: 'app-product-category-list',
+    imports: [],
+    templateUrl: './product-category-list.component.html',
+    styleUrl: './product-category-list.component.css'
 })
 export class ProductCategoryListComponent implements OnInit {
   categories: ProductCategory[] = [];

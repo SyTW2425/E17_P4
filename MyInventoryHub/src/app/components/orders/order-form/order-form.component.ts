@@ -6,11 +6,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-order-form',
-  standalone: true,
-  imports:[CommonModule, ReactiveFormsModule],
-  templateUrl: './order-form.component.html',
-  styleUrls: ['./order-form.component.css']
+    selector: 'app-order-form',
+    imports: [CommonModule, ReactiveFormsModule],
+    templateUrl: './order-form.component.html',
+    styleUrls: ['./order-form.component.css']
 })
 export class OrderFormComponent implements OnInit {
   orderForm: FormGroup;

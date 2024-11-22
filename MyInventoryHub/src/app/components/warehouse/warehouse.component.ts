@@ -3,9 +3,10 @@ import { WarehouseService } from '../../services/warehouse.service';
 import { Warehouse } from '../../models/warehouse.model';
 
 @Component({
-  selector: 'app-warehouse',
-  templateUrl: './warehouse.component.html',
-  styleUrls: ['./warehouse.component.css']
+    selector: 'app-warehouse',
+    templateUrl: './warehouse.component.html',
+    styleUrls: ['./warehouse.component.css'],
+    standalone: false
 })
 export class WarehouseComponent implements OnInit {
   warehouses: Warehouse[] = [];

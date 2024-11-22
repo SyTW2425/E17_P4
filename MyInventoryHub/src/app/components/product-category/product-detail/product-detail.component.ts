@@ -4,11 +4,10 @@ import { ProductCategoryService } from '../../../services/product-category.servi
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-product-detail',
-  standalone: true,
-  imports: [],
-  templateUrl: './product-detail.component.html',
-  styleUrl: './product-detail.component.css'
+    selector: 'app-product-detail',
+    imports: [],
+    templateUrl: './product-detail.component.html',
+    styleUrl: './product-detail.component.css'
 })
 export class ProductCategoryDetailComponent implements OnInit {
   category: ProductCategory | undefined;

@@ -5,11 +5,10 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-inventory-transaction-form',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './inventory-transaction-form.component.html',
-  styleUrls: ['./inventory-transaction-form.component.css']
+    selector: 'app-inventory-transaction-form',
+    imports: [CommonModule, ReactiveFormsModule],
+    templateUrl: './inventory-transaction-form.component.html',
+    styleUrls: ['./inventory-transaction-form.component.css']
 })
 export class InventoryTransactionFormComponent {
   @Input() transaction: InventoryTransaction | null = null;

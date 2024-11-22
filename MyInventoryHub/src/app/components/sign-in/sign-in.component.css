@@ -1,0 +1,97 @@
+@import './new_stiles.css';
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background-image: linear-gradient(to right, #0d1117, #161b22) !important;
+  min-height: 100vh;
+  color: white; /* Cambia el color del texto del cuerpo a blanco */
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: white; /* Cambia el color del texto de los títulos a blanco */
+}
+
+form {
+  border: 1px solid #ccc;
+}
+
+form .form-control {
+  border-radius: 0.375rem;
+  background-color: #212529; /* Fondo gris oscuro */
+  color: white; /* Color del texto blanco */
+  border: 1px solid #444; /* Borde ligeramente visible */
+}
+
+form .form-control::placeholder {
+  color: #aaa; /* Color del placeholder */
+}
+
+form .form-control:focus {
+  background-color: #1a1d21; /* Gris más oscuro al enfocar */
+  border-color: #1f6feb; /* Borde azul al enfocar */
+}
+
+form .btn-primary {
+  background-color: #1f6feb;
+  border-color: #1f6feb;
+  transition: all 0.3s ease;
+}
+
+form .btn-primary:hover {
+  background-color: #1a5cc0;
+  border-color: #1a5cc0;
+}
+
+footer {
+  border-top: 1px solid #ccc;
+  color: white; /* Color blanco para el texto del pie */
+}
+
+form {
+  background-color: #212529; /* Fondo oscuro para el formulario completo */
+  color: white; /* Texto blanco */
+  border-radius: 0.375rem; /* Bordes redondeados */
+  padding: 20px; /* Espaciado dentro del formulario */
+  border: 1px solid #444; /* Borde gris oscuro */
+}
+
+form .form-label {
+  color: white; /* Texto del label en blanco */
+}
+
+form .form-control {
+  background-color: #212529; /* Fondo gris oscuro en los inputs */
+  color: white; /* Texto blanco en los inputs */
+  border: 1px solid #444; /* Borde gris oscuro en los inputs */
+  border-radius: 0.375rem; /* Bordes redondeados en los inputs */
+  padding: 10px; /* Espaciado interno para los inputs */
+}
+
+form .form-control::placeholder {
+  color: #aaa; /* Color del placeholder más claro */
+}
+
+form .form-control:focus {
+  background-color: #1a1d21; /* Fondo más oscuro al enfocar el input */
+  border-color: #1f6feb; /* Borde azul al enfocar */
+}
+
+form .btn-primary {
+  background-color: #1f6feb;
+  border-color: #1f6feb;
+  transition: all 0.3s ease;
+}
+
+form .btn-primary:hover {
+  background-color: #1a5cc0;
+  border-color: #1a5cc0;
+}
+
+footer {
+  background-color: #161b22; /* Fondo oscuro para el footer */
+  color: white; /* Texto blanco en el footer */
+  border-top: 1px solid #444; /* Borde superior del footer */
+  padding: 10px 0; /* Espaciado en el footer */
+}

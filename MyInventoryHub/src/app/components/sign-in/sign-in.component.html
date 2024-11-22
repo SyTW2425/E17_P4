@@ -1,0 +1,48 @@
+
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" class="breadcrumb-container mb-4 p-3 shadow-sm rounded">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <a [routerLink]="['/']" class="text-decoration-none">Inicio</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Iniciar Sesión</li>
+  </ol>
+</nav>
+
+<!-- Main Content -->
+<div class="container py-5">
+  <div class="row justify-content-center align-items-center">
+    <div class="text-center mb-4">
+      <img src="/logo.png" alt="Logo de la app" class="img-fluid" style="max-width: 100px; height: auto;" />
+    </div>
+    <div class="col-lg-5">
+      <h1 class="text-center mb-4">Iniciar Sesión</h1>
+      <p class="text-center text-secondary">Accede a tu cuenta para gestionar tu inventario.</p>
+      <form class="p-4 shadow-lg rounded bg-dark text-dark" (ngSubmit)="signIn()">
+        <div class="mb-3">
+          <label for="usernameOrEmail" class="form-label">Nombre de Usuario o Correo Electrónico</label>
+          <input type="text" class="form-control" id="usernameOrEmail" [(ngModel)]="usernameOrEmail"
+            name="usernameOrEmail" placeholder="Ingresa tu nombre o correo" required>
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">Contraseña</label>
+          <input type="password" class="form-control" id="password" [(ngModel)]="password" name="password"
+            placeholder="••••••••" required>
+        </div>
+
+        <!-- Mensaje de error -->
+        <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+        <button type="submit" class="btn btn-primary w-100" [disabled]="!usernameOrEmail || !password">Iniciar
+          Sesión</button>
+      </form>
+      <p class="text-center mt-3">¿No tienes una cuenta? <a href="#"
+          class="text-decoration-none text-primary">Regístrate aquí</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-dark text-center text-secondary py-3">
+  <p class="mb-0">&copy; 2024 MyInventoryHub. Todos los derechos reservados.</p>
+</footer>

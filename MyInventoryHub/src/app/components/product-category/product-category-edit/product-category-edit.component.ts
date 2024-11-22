@@ -5,11 +5,10 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
-  selector: 'app-product-category-edit',
-  standalone: true,
-  imports: [],
-  templateUrl: './product-category-edit.component.html',
-  styleUrl: './product-category-edit.component.css'
+    selector: 'app-product-category-edit',
+    imports: [],
+    templateUrl: './product-category-edit.component.html',
+    styleUrl: './product-category-edit.component.css'
 })
 export class ProductCategoryEditComponent implements OnInit {
   categoryForm: FormGroup;
