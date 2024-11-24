@@ -2,7 +2,7 @@
 const express = require('express'); // Framework para construir el servidor
 const mongoose = require('mongoose'); // Base de datos
 const cors = require('cors'); // Solicitudes desde frontend
-const bcrypt = require('bcrypt'); // Encriptar contraseñas
+const bcrypt = require('bcryptjs'); // Encriptar contraseñas
 const jwt = require('jsonwebtoken'); // Manejar tokens JWT
 require('dotenv').config(); // Se cargan variables de entorno desde .env
 
@@ -15,8 +15,8 @@ app.use(express.json()); // Para analizar JSON en las solicitudes
 
 // Conexión a MongoDB
 mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+  /*useNewUrlParser: true,
+  //useUnifiedTopology: true,*/ //deprecated?
 }).then(() => {
   console.log('Conectado a MongoDB');
 }).catch((err) => {
