@@ -1,10 +1,10 @@
-// Importacion de las dependencias principales
-const express = require('express'); //framework para contruir el servidor
-const mongoose = require('mongoose'); //base de datos
-const cors = require('cors'); //solicitudes desde frontend
-const bcrypt = require('bcrypt'); //encriptar contraseñas
-const jwt = require('jsonwebtoken'); //manejar tokers jwt
-require('dotenv').config(); // se cargan variables de entorno desde .env
+// Importación de las dependencias principales
+const express = require('express'); // Framework para construir el servidor
+const mongoose = require('mongoose'); // Base de datos
+const cors = require('cors'); // Solicitudes desde frontend
+const bcrypt = require('bcrypt'); // Encriptar contraseñas
+const jwt = require('jsonwebtoken'); // Manejar tokens JWT
+require('dotenv').config(); // Se cargan variables de entorno desde .env
 
 // Inicializa la aplicación Express
 const app = express();
@@ -13,8 +13,8 @@ const app = express();
 app.use(cors()); // Permitir solicitudes desde diferentes orígenes
 app.use(express.json()); // Para analizar JSON en las solicitudes
 
-// Conexión a MongoDB 
-mongoose.connect('mongodb://127.0.0.1:27017/inventoryApp', {
+// Conexión a MongoDB
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }).then(() => {
