@@ -11,12 +11,16 @@ import { AboutComponent } from './components/pages/landing-page/about/about.comp
 import { ContactComponent } from './components/pages/landing-page/contact/contact.component';
 import { FaqComponent } from './components/pages/landing-page/faq/faq.component';
 import { IndexComponent } from './components/pages/landing-page/index/index.component';
+import { SignInComponent } from './components/sign-in/sign-in.component';
+import { RegisterComponent } from './components/register/register.component';
 
 export const routes: Routes = [
   { path: '', component: IndexComponent },
   { path: 'about', component: AboutComponent },
   { path: 'contact', component: ContactComponent },
   { path: 'faq', component: FaqComponent },
+  { path: 'signin', component: SignInComponent },
+  { path: 'register', component: RegisterComponent },
   { path: '**', redirectTo: '' } // Redirección en caso de ruta no encontrada
 ];
 
