@@ -42,7 +42,7 @@ app.post('/api/register', async (req, res) => {
 });
 
 // Ruta para iniciar sesión
-app.post('/api/login', async (req, res) => {
+app.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
