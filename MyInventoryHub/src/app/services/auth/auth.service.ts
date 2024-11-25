@@ -24,10 +24,10 @@ export class AuthService {
 
   // Login de usuario
   login(email: string, password: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login`, { email, password })
-      .pipe(
-        catchError(this.handleError)
-      );
+    return this.http.post(`${this.apiUrl}/login`, { email, password });
+     // .pipe(
+       // catchError(this.handleError)
+      //);
   }
 
   // Guardar el token en el localStorage
