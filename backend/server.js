@@ -26,6 +26,9 @@ mongoose.connect(process.env.MONGO_URI, {
 // Definición de rutas (esto viene después de la conexión)
 const User = require('./models/User');
 
+const authRoutes = require('./routes/auth.routes');
+app.use('/api/auth', authRoutes);
+
 // Ruta para registrar un usuario
 app.post('/api/register', async (req, res) => {
   const { email, password } = req.body;
