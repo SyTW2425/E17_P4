@@ -30,7 +30,7 @@ const User = require('./models/User');
 //app.use('/api/auth', authRoutes);
 
 // Ruta para registrar un usuario
-app.post('/api/register', async (req, res) => {
+/*app.post('/api/register', async (req, res) => {
   const {firstName,lastName,username, email, password, role} = req.body;
   // Verificar que estamos recibiendo los datos correctamente
   console.log('Datos recibidos:', req.body);
@@ -41,6 +41,54 @@ app.post('/api/register', async (req, res) => {
     await newUser.save(); // Guarda el usuario en la base de datos
     res.status(201).json({ message: 'Usuario registrado', user: newUser });
   } catch (error) {
+    res.status(500).json({ message: 'Error al registrar usuario', error });
+  }
+});*/
+
+app.post('/api/register', async (req, res) => {
+  const { firstName,lastName,username, email, password, role } = req.body;
+
+  // Verificar que estamos recibiendo los datos correctamente
+  console.log('Datos recibidos:', req.body);
+
+  if (!firstName || !lastName|| !username || !email || !password || !role) {
+    return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
+  }
+
+  try {
+    // Verificar si el correo ya está registrado
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ message: 'El correo ya está registrado.' });
+    }
+
+    // Encriptar la contraseña
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Crear el nuevo usuario
+    const newUser = new User({
+      firstName,
+      lastName,
+      username,
+      email,
+      password: hashedPassword,
+      role,
+    });
+
+    // Guardar el usuario en la base de datos
+    await newUser.save();
+
+    // Generar un token JWT
+    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    // Responder con éxito
+    res.status(201).json({
+      message: 'Usuario registrado exitosamente',
+      user: { id: newUser._id, username: newUser.username, email: newUser.email, role: newUser.role },
+      token,
+    });
+  } catch (error) {
+    console.error('Error al registrar usuario:', error);
     res.status(500).json({ message: 'Error al registrar usuario', error });
   }
 });

@@ -15,20 +15,21 @@ export class AuthService {
   constructor(private http: HttpClient, private router: Router) { }
 
   // Registro de usuario
-  register(email: string, password: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, { email, password })
-      .pipe(
-        catchError(this.handleError)
-      );
+  registerUser(userData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/register`, userData);
   }
 
   // Login de usuario
   login(email: string, password: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login`, { email, password });
+    return this.http.post<{ token: string }>('http://localhost:3000/login', { email, password });
      // .pipe(
        // catchError(this.handleError)
       //);
   }
+  /*loginUser(userData: { email: string; password: string }) {
+    return this.http.post<{ token: string }>('http://localhost:3000/login', userData);
+  }*/
+  
 
   // Guardar el token en el localStorage
   saveToken(token: string): void {
