@@ -21,22 +21,21 @@ export const routes: Routes = [
   { path: 'about', component: AboutComponent },
   { path: 'contact', component: ContactComponent },
   { path: 'faq', component: FaqComponent },
-  { path: 'dashboard', component: LayoutComponent,
-    children: [
-        {
-            path: '',
-            component: DashboardComponent
-        },
-        {
-            path: 'profile',
-            component: ProfileComponent
-        },
-        {
-            path: 'tables',
-            component: TablesComponent
-        }
-    ]
-   },
+  {
+    path: 'dashboard',
+    component: LayoutComponent,
+    children: [{ path: '', component: DashboardComponent }],
+  },
+  {
+    path: 'profile',
+    component: LayoutComponent,
+    children: [{ path: '', component: ProfileComponent }],
+  },
+  {
+    path: 'tables',
+    component: LayoutComponent,
+    children: [{ path: '', component: TablesComponent }],
+  },
   { path: '**', redirectTo: '' } // Redirección en caso de ruta no encontrada
 ];
 
