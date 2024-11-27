@@ -31,12 +31,12 @@ const User = require('./models/User');
 
 // Ruta para registrar un usuario
 app.post('/api/register', async (req, res) => {
-  const {username, email, password } = req.body;
+  const {firstName,lastName,username, email, password, role} = req.body;
   // Verificar que estamos recibiendo los datos correctamente
   console.log('Datos recibidos:', req.body);
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ email, password: hashedPassword });
+    const newUser = new User({ firstName,lastName,username,email, password: hashedPassword, role });
     newUser.markModified("User");
     await newUser.save(); // Guarda el usuario en la base de datos
     res.status(201).json({ message: 'Usuario registrado', user: newUser });
