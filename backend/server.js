@@ -41,7 +41,7 @@ function authorizeRole(role) {
     next();
   };
 }
-
+// para el uso de las pruebas
 const mongoURI = process.env.NODE_ENV === 'test' ? process.env.MONGO_URI_TEST : process.env.MONGO_URI;
 
 // Conexión a MongoDB

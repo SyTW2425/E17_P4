@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const request = require('supertest');
-const app = require('../server'); // Asegúrate de que `app` está exportado correctamente
-const User = require('../models/User'); // Importa el modelo de usuario
+const app = require('../server'); 
+const User = require('../models/User'); 
 
 // Configuración de la base de datos de pruebas
 beforeAll(async () => {
@@ -22,7 +22,7 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
-  // Opcional: Limpia la colección también después de cada prueba
+  //Limpia la colección también después de cada prueba
   await User.deleteMany({});
 });
 
