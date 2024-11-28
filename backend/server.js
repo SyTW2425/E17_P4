@@ -26,25 +26,6 @@ mongoose.connect(process.env.MONGO_URI, {
 // Definición de rutas (esto viene después de la conexión)
 const User = require('./models/User');
 
-//const authRoutes = require('./routes/auth.routes');
-//app.use('/api/auth', authRoutes);
-
-// Ruta para registrar un usuario
-/*app.post('/api/register', async (req, res) => {
-  const {firstName,lastName,username, email, password, role} = req.body;
-  // Verificar que estamos recibiendo los datos correctamente
-  console.log('Datos recibidos:', req.body);
-  try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ firstName,lastName,username,email, password: hashedPassword, role });
-    newUser.markModified("User");
-    await newUser.save(); // Guarda el usuario en la base de datos
-    res.status(201).json({ message: 'Usuario registrado', user: newUser });
-  } catch (error) {
-    res.status(500).json({ message: 'Error al registrar usuario', error });
-  }
-});*/
-
 app.post('/api/register', async (req, res) => {
   const { firstName,lastName,username, email, password, role } = req.body;
 

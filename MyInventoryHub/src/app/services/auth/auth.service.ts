@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';  // Usamos throwError desde 'rxjs'
+import { Observable, throwError, tap } from 'rxjs';  // Usamos throwError desde 'rxjs'
 import { Router } from '@angular/router';
 import { catchError } from 'rxjs/operators';
 
@@ -21,10 +21,19 @@ export class AuthService {
 
   // Login de usuario
   login(email: string, password: string): Observable<any> {
-    return this.http.post<{ token: string }>('http://localhost:3000/login', { email, password });
-     // .pipe(
-       // catchError(this.handleError)
-      //);
+    return this.http.post<{ token: string }>('http://localhost:3000/login', { email, password }).pipe(
+      tap((response: any) => {
+        const token = response.token;
+        if (token) {
+          localStorage.setItem('token', token); // Guarda el token
+          console.log('Token almacenado en localStorage');
+        }
+      }),
+      catchError((error) => {
+        console.error('Error en el inicio de sesión', error);
+        return throwError(() => error);
+      })
+    );
   }
   /*loginUser(userData: { email: string; password: string }) {
     return this.http.post<{ token: string }>('http://localhost:3000/login', userData);
