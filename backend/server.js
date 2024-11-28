@@ -13,6 +13,35 @@ const app = express();
 app.use(cors()); // Permitir solicitudes desde diferentes orígenes
 app.use(express.json()); // Para analizar JSON en las solicitudes
 
+// Middleware para verificar el token
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ message: 'Acceso denegado: Token requerido' });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ message: 'Token inválido o expirado' });
+    }
+    req.user = user; // Almacena los datos del token en req.user
+    next();
+  });
+}
+module.exports = { authenticateToken }; //por si se quiere llevar la logica a otro archivo
+
+//middleware para veririficar roles
+function authorizeRole(role) {
+  return (req, res, next) => {
+    if (req.user.role !== role) {
+      return res.status(403).json({ message: 'Acceso denegado: Rol no autorizado' });
+    }
+    next();
+  };
+}
+
 // Conexión a MongoDB
 mongoose.connect(process.env.MONGO_URI, {
   /*useNewUrlParser: true,
@@ -23,9 +52,9 @@ mongoose.connect(process.env.MONGO_URI, {
   console.error('Error al conectar a MongoDB:', err);
 });
 
-// Definición de rutas (esto viene después de la conexión)
+//models
 const User = require('./models/User');
-
+//endpoints
 app.post('/api/register', async (req, res) => {
   const { firstName,lastName,username, email, password, role } = req.body;
 
@@ -60,7 +89,8 @@ app.post('/api/register', async (req, res) => {
     await newUser.save();
 
     // Generar un token JWT
-    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ id: User._id, email: User.email, role: User.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
 
     // Responder con éxito
     res.status(201).json({
@@ -89,7 +119,7 @@ app.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Contraseña incorrecta' });
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ id: User._id, email: User.email, role: User.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
     res.json({ token });
   } catch (error) {
     res.status(500).json({ message: 'Error al iniciar sesión', error });
