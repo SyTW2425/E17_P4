@@ -42,8 +42,10 @@ function authorizeRole(role) {
   };
 }
 
+const mongoURI = process.env.NODE_ENV === 'test' ? process.env.MONGO_URI_TEST : process.env.MONGO_URI;
+
 // Conexión a MongoDB
-mongoose.connect(process.env.MONGO_URI, {
+mongoose.connect(/*process.env.MONGO_URI*/mongoURI, {
   /*useNewUrlParser: true,
   //useUnifiedTopology: true,*/ //deprecated?
 }).then(() => {
@@ -108,6 +110,10 @@ app.post('/api/register', async (req, res) => {
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
+  }
+
   try {
     const user = await User.findOne({ email }); // Busca el usuario en la base de datos
     if (!user) {
@@ -126,8 +132,20 @@ app.post('/login', async (req, res) => {
   }
 });
 
+// Exportar app para pruebas
+module.exports = app;
+/*
 // Inicia el servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
+*/
+
+// Solo inicia el servidor si no se está ejecutando en un entorno de pruebas
+if (process.env.NODE_ENV !== 'test') {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Servidor corriendo en el puerto ${PORT}`);
+  });
+}
