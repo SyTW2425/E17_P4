@@ -1,23 +1,23 @@
-import { Component, ViewEncapsulation} from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';  // Importa RouterModule
-
+import { RouterModule, Router } from '@angular/router';  // Importa Router para redirección
+import { AuthService } from '../../services/auth/auth.service'; // Importa el servicio de autenticación
 
 @Component({
-    selector: 'app-sign-in',
-    templateUrl: './sign-in.component.html',
-    styleUrls: ['./sign-in.component.css'],
-    imports: [CommonModule, FormsModule, RouterModule],
-    standalone: true,
-    encapsulation: ViewEncapsulation.None
+  selector: 'app-sign-in',
+  templateUrl: './sign-in.component.html',
+  styleUrls: ['./sign-in.component.css'],
+  imports: [CommonModule, FormsModule, RouterModule],
+  standalone: true,
+  encapsulation: ViewEncapsulation.None,
 })
 export class SignInComponent {
-  usernameOrEmail: string = '';  // Campo para nombre de usuario o correo electrónico
+  usernameOrEmail: string = ''; // Campo para nombre de usuario o correo electrónico
   password: string = '';
-  phoneNumber: string = '';
-  address: string = '';
   errorMessage: string = '';
+
+  constructor(private authService: AuthService, private router: Router) {}
 
   signIn() {
     // Validación de campos obligatorios
@@ -26,38 +26,19 @@ export class SignInComponent {
       return;
     }
 
-    // Comprobar si el valor ingresado es un correo electrónico o un nombre de usuario
-    const isEmail = this.isValidEmail(this.usernameOrEmail);
-    const isUsername = !isEmail && this.usernameOrEmail.trim() !== '';
+    // Enviar credenciales al servicio de autenticación
+    this.authService.login(this.usernameOrEmail, this.password).subscribe({
+      next: (response) => {
+        // Guardar el token recibido en el localStorage
+        this.authService.saveToken(response.token);
 
-    if (!isEmail && !isUsername) {
-      this.errorMessage = 'Por favor, ingresa un nombre de usuario o un correo electrónico válido.';
-      return;
-    }
-
-    // Aquí puedes agregar la lógica para almacenar el nuevo usuario
-    // o enviar la información al backend para crear la cuenta
-    const user = {
-      username: isEmail ? null : this.usernameOrEmail,  // Si es correo, el nombre de usuario es null
-      email: isEmail ? this.usernameOrEmail : null,    // Si es nombre de usuario, el correo es null
-      password: this.password,
-      phoneNumber: this.phoneNumber,
-      address: this.address
-    };
-
-    console.log('Usuario registrado:', user);
-
-    // Limpiar el formulario después de un registro exitoso
-    this.usernameOrEmail = '';
-    this.password = '';
-    this.phoneNumber = '';
-    this.address = '';
-    this.errorMessage = '';
-  }
-
-  // Método para verificar si el campo ingresado es un correo electrónico
-  isValidEmail(value: string): boolean {
-    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    return emailPattern.test(value);
+        // Redirigir a la página principal (o al dashboard)
+        this.router.navigate(['']);
+      },
+      error: (error) => {
+        console.error('Error en el inicio de sesión:', error);
+        this.errorMessage = error.error?.message || 'Error al iniciar sesión. Inténtalo de nuevo.';
+      },
+    });
   }
 }

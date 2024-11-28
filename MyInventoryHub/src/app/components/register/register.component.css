@@ -31,6 +31,7 @@ body {
   form .form-control:focus {
     background-color: #1a1d21; /* Gris más oscuro al enfocar */
     border-color: #1f6feb; /* Borde azul al enfocar */
+    color: #ffffff
   }
   
   form .btn-primary {
@@ -74,7 +75,7 @@ body {
   }
   
   form .form-control:focus {
-    background-color: #1a1d21; /* Fondo más oscuro al enfocar el input */
+    background-color: #1a1d21; /* Fondo más oscuro al enfocar el input 
     border-color: #1f6feb; /* Borde azul al enfocar */
   }
   

@@ -15,6 +15,8 @@ import LayoutComponent from './shared/components/layout/layout.component';
 import DashboardComponent from './business/dashboard/dashboard.component';
 import ProfileComponent from './business/profile/profile.component';
 import TablesComponent from './business/tables/tables.component';
+import { SignInComponent } from './components/sign-in/sign-in.component';
+import { RegisterComponent } from './components/register/register.component';
 
 export const routes: Routes = [
   { path: '', component: IndexComponent },
@@ -36,6 +38,8 @@ export const routes: Routes = [
     component: LayoutComponent,
     children: [{ path: '', component: TablesComponent }],
   },
+  { path: 'signin', component: SignInComponent },
+  { path: 'register', component: RegisterComponent },
   { path: '**', redirectTo: '' } // Redirección en caso de ruta no encontrada
 ];
 
