@@ -3,6 +3,15 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError, tap } from 'rxjs';  // Usamos throwError desde 'rxjs'
 import { Router } from '@angular/router';
 import { catchError } from 'rxjs/operators';
+import { jwtDecode } from 'jwt-decode';
+
+export interface DecodedToken {
+  id: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  role?: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +47,7 @@ export class AuthService {
   /*loginUser(userData: { email: string; password: string }) {
     return this.http.post<{ token: string }>('http://localhost:3000/login', userData);
   }*/
-  
+
 
   // Guardar el token en el localStorage
   saveToken(token: string): void {
@@ -60,13 +69,22 @@ export class AuthService {
   // Cerrar sesión
   logout(): void {
     this.currentUserToken = null;
-    localStorage.removeItem('jwtToken');
-    this.router.navigate(['/login']); // Redirigir al login después de cerrar sesión
+    localStorage.removeItem('token');  // Elimina el token de localStorage
+    this.router.navigate(['']);  // Redirige al usuario al login
   }
 
-  // Manejo de errores
-  private handleError(error: any): Observable<any> {
-    console.error('Ocurrió un error:', error);
-    return throwError(error);  // Usamos throwError para emitir el error
+  decodeToken(): DecodedToken | null {
+    const token = this.getToken();
+    if (!token) return null;
+
+    try {
+      const decoded = jwtDecode<DecodedToken>(token);
+      console.log('Token decodificado:', decoded); // Inspeccionar contenido
+      return decoded;
+    } catch (error) {
+      console.error('Error al decodificar el token:', error);
+      return null;
+    }
   }
+
 }

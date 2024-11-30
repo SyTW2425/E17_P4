@@ -33,7 +33,7 @@ export class SignInComponent {
         this.authService.saveToken(response.token);
 
         // Redirigir a la página principal (o al dashboard)
-        this.router.navigate(['']);
+        this.router.navigate(['/dashboard']);
       },
       error: (error) => {
         console.error('Error en el inicio de sesión:', error);

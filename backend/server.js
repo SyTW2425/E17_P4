@@ -91,8 +91,17 @@ app.post('/api/register', async (req, res) => {
     await newUser.save();
 
     // Generar un token JWT
-    const token = jwt.sign({ id: User._id, email: User.email, role: User.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
+    const token = jwt.sign(
+      {
+        id: newUser._id, 
+        email: newUser.email, 
+        role: newUser.role,
+        firstName: newUser.firstName,  
+        lastName: newUser.lastName     
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
 
     // Responder con éxito
     res.status(201).json({
@@ -125,7 +134,18 @@ app.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Contraseña incorrecta' });
     }
 
-    const token = jwt.sign({ id: User._id, email: User.email, role: User.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign(
+      {
+        id: user._id, 
+        email: user.email,
+        role: user.role,
+        firstName: user.firstName,  
+        lastName: user.lastName     
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+    
     res.json({ token });
   } catch (error) {
     res.status(500).json({ message: 'Error al iniciar sesión', error });
