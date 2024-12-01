@@ -48,6 +48,15 @@
             <option *ngFor="let warehouse of warehouses" [value]="warehouse.id">{{ warehouse.name }}</option>
           </select>
         </div>
+        <div>
+            <label for="image" class="block text-sm font-medium text-gray-700 mb-1">Foto del Producto</label>
+            <input
+              type="file"
+              id="image"
+              (change)="onFileSelect($event)"
+              accept="image/*"
+              class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+          </div>
         <button
           type="submit"
           class="w-full py-2 px-4 bg-indigo-600 text-white font-medium rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
@@ -61,6 +70,7 @@
       <table class="min-w-full border-collapse border border-gray-200">
         <thead class="bg-gray-100">
             <tr>
+              <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Foto</th>  
               <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Nombre</th>
               <th class="px-4 py-2 border border-gray-300 text-left font-semibold">ID</th>
               <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Nivel de Stock</th>
@@ -69,19 +79,30 @@
               <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Precio</th>
               <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Categoría</th>
               <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Proveedor</th>
-              <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Capacidad Máxima</th>
-              <th class="px-4 py-2 border border-gray-300 text-left font-semibold">ID Almacén</th>
+              <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Capacidad</th>
+              <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Almacén</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let product of products" class="even:bg-gray-50">
+                <td class="px-4 py-2 border border-gray-300">
+                    <img
+                      [src]="product.imageUrl"
+                      alt="Foto del Producto"
+                      class="h-16 w-16 object-cover rounded-md">
+                  </td>
               <td class="px-4 py-2 border border-gray-300">{{ product.name }}</td>
               <td class="px-4 py-2 border border-gray-300">{{ product.id }}</td>
               <td class="px-4 py-2 border border-gray-300">
                 <div class="w-full bg-gray-200 rounded-md">
                   <div
                     [style.width.%]="(product.stock / product.maxCapacity) * 100"
-                    class="bg-indigo-600 h-2 rounded-md">
+                    [ngClass]="{
+                        'bg-green-500': (product.stock / product.maxCapacity) > 0.6,
+                        'bg-yellow-500': (product.stock / product.maxCapacity) > 0.3 && (product.stock / product.maxCapacity) <= 0.6,
+                        'bg-red-500': (product.stock / product.maxCapacity) <= 0.3
+                      }"
+                    class="h-2 rounded-md">
                   </div>
                 </div>
                 <span>{{ ((product.stock / product.maxCapacity) * 100).toFixed(0) }}%</span>

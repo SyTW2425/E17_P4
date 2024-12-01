@@ -12,6 +12,7 @@ interface Product {
     supplier: string;
     maxCapacity: number;
     warehouseId: number;
+    imageUrl: string;
 }
 
 @Component({
@@ -23,40 +24,44 @@ interface Product {
 })
 export default class TablesComponent {
   productForm: FormGroup;
+  selectedFile: File | null = null;
   showForm = false;
   products: Product[] = [
     {
       id: 1,
       name: 'Producto A',
       description: 'Descripción del Producto A',
-      stock: 40,
+      stock: 50,
       category: 'Categoría 1',
       price: 10.5,
       supplier: 'Proveedor X',
       maxCapacity: 100,
-      warehouseId: 1
+      warehouseId: 1,
+      imageUrl: 'coca.png'
     },
     {
       id: 2,
       name: 'Producto B',
       description: 'Descripción del Producto B',
-      stock: 75,
+      stock: 15,
       category: 'Categoría 2',
       price: 20.0,
       supplier: 'Proveedor Y',
       maxCapacity: 150,
-      warehouseId: 2
+      warehouseId: 2,
+      imageUrl: 'aquarius.png'
     },
     {
       id: 3,
       name: 'Producto C',
       description: 'Descripción del Producto C',
-      stock: 30,
+      stock: 40,
       category: 'Categoría 1',
       price: 15.0,
       supplier: 'Proveedor Z',
       maxCapacity: 50,
-      warehouseId: 1
+      warehouseId: 1,
+      imageUrl: 'lays.png'
     }
   ];
   warehouses = [
@@ -79,7 +84,12 @@ export default class TablesComponent {
       warehouseId: ['', Validators.required]
     });
   }
-
+  onFileSelect(event: Event) {
+    const fileInput = event.target as HTMLInputElement;
+    if (fileInput.files && fileInput.files.length > 0) {
+      this.selectedFile = fileInput.files[0];
+    }
+  }
   toggleForm() {
     this.showForm = !this.showForm;
   }
