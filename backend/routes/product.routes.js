@@ -5,7 +5,7 @@ const { authenticateToken, authorizeRole } = require('../server');
 const router = express.Router();
 
 // Crear un producto (Solo para usuarios con rol "Dueño")
-router.post('/', authenticateToken, authorizeRole('Dueño'), async (req, res) => {
+router.post('/api/products', authenticateToken, authorizeRole('Dueño'), async (req, res) => {
   const { id, name, description, stock, category, price, supplier, warehouseId } = req.body;
 
   if (!id || !name || !description || stock === undefined || !category || price === undefined || !supplier || !warehouseId) {
