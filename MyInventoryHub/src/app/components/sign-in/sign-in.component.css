@@ -45,6 +45,13 @@ form .btn-primary:hover {
   border-color: #1a5cc0;
 }
 
+.logo-centrado {
+  display: block;
+  margin: 0 auto;
+  max-width: 100px;
+  height: auto;
+}
+
 footer {
   border-top: 1px solid #ccc;
   color: white; /* Color blanco para el texto del pie */
