@@ -1,10 +1,11 @@
 const express = require('express');
 const Product = require('../models/Product');
 const { authenticateToken, authorizeRole } = require('../server');
+
 const router = express.Router();
 
-// Crear un producto
-router.post('/products', authenticateToken, authorizeRole('Dueño'), async (req, res) => {
+// Crear un producto (Solo para usuarios con rol "Dueño")
+router.post('/', authenticateToken, authorizeRole('Dueño'), async (req, res) => {
   const { id, name, description, stock, category, price, supplier, warehouseId } = req.body;
 
   if (!id || !name || !description || stock === undefined || !category || price === undefined || !supplier || !warehouseId) {
@@ -30,19 +31,25 @@ router.post('/products', authenticateToken, authorizeRole('Dueño'), async (req,
   }
 });
 
-// Listar productos por almacén
 router.get('/warehouses/:id/products', authenticateToken, async (req, res) => {
-  const warehouseId = parseInt(req.params.id, 10);
-
-  try {
-    const products = await Product.find({ warehouseId });
-    if (!products.length) {
-      return res.status(404).json({ message: 'No se encontraron productos para este almacén.' });
+    const warehouseId = parseInt(req.params.id, 10); // Convertir a número
+    console.log('warehouseId recibido en el endpoint:', warehouseId); // Log para verificar el valor
+  
+    try {
+      const products = await Product.find({ warehouseId });
+      console.log('Productos encontrados en la consulta:', products); // Log para verificar los resultados
+  
+      if (!products || products.length === 0) {
+        console.log('No se encontraron productos para este almacén.');
+        return res.status(404).json({ message: 'No se encontraron productos para este almacén.' });
+      }
+  
+      res.status(200).json(products);
+    } catch (error) {
+      console.error('Error al obtener productos:', error);
+      res.status(500).json({ message: 'Error al obtener los productos.', error });
     }
-    res.status(200).json(products);
-  } catch (error) {
-    res.status(500).json({ message: 'Error al obtener los productos.', error });
-  }
-});
+  });
+  
 
 module.exports = router;
