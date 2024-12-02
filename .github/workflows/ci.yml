@@ -34,3 +34,9 @@ jobs:
         run: |
           cd MyInventoryHub
           npm install
+          
+      # Paso 5: Ejecutar los tests en modo headless
+      - name: Run tests
+        run: |
+          cd MyInventoryHub
+          npm test
