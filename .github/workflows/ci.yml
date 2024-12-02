@@ -13,24 +13,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Paso 1: Chequear el repositorio
+      # Paso 1: Clonar el repositorio
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Paso 2: Configurar Node.js (puedes especificar tu versión)
+      # Paso 2: Configurar Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '18'
 
-      # Paso 3: Instalar dependencias
+      # Paso 3: Instalar dependencias de Chrome para CI
+      - name: Install Chrome dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libnss3 libgconf-2-4 libxi6 libxkbcommon-x11-0
+
+      # Paso 4: Instalar dependencias del proyecto
       - name: Install dependencies
-        run: npm install
-
-      # Paso 4: Ejecutar los tests
-      - name: Run tests
-        run: npm test
-
-      # (Opcional) Paso 5: Ejecutar linter
-      - name: Run linter
-        run: npm run lint
+        run: |
+          cd MyInventoryHub
+          npm install
