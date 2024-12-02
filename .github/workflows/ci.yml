@@ -3,10 +3,10 @@ name: CI Pipeline
 on:
   push:
     branches:
-      - main
+      - spr4#3
   pull_request:
     branches:
-      - main
+      - spr4#3
 
 jobs:
   build-and-test:
