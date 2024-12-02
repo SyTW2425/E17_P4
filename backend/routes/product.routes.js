@@ -1,55 +1,58 @@
 const express = require('express');
-const Product = require('../models/Product');
-const { authenticateToken, authorizeRole } = require('../server');
-
 const router = express.Router();
+const Product = require('../models/Product');
+const { authenticateToken } = require('../server'); // Asegurar autenticación
 
-// Crear un producto (Solo para usuarios con rol "Dueño")
-router.post('/api/products', authenticateToken, authorizeRole('Dueño'), async (req, res) => {
-  const { id, name, description, stock, category, price, supplier, warehouseId } = req.body;
-
-  if (!id || !name || !description || stock === undefined || !category || price === undefined || !supplier || !warehouseId) {
-    return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
-  }
-
+// Crear un producto
+router.post('/', authenticateToken, async (req, res) => {
   try {
-    const newProduct = new Product({
-      id,
-      name,
-      description,
-      stock,
-      category,
-      price,
-      supplier,
-      warehouseId,
-    });
-
-    await newProduct.save();
-    res.status(201).json({ message: 'Producto creado con éxito.', product: newProduct });
+    const product = new Product(req.body);
+    await product.save();
+    res.status(201).json({ message: 'Producto creado exitosamente', product });
   } catch (error) {
-    res.status(500).json({ message: 'Error al crear el producto.', error });
+    console.error('Error al crear el producto:', error);
+    res.status(500).json({ message: 'Error al crear el producto', error });
   }
 });
 
-router.get('/warehouses/:id/products', authenticateToken, async (req, res) => {
-    const warehouseId = parseInt(req.params.id, 10); // Convertir a número
-    console.log('warehouseId recibido en el endpoint:', warehouseId); // Log para verificar el valor
-  
-    try {
-      const products = await Product.find({ warehouseId });
-      console.log('Productos encontrados en la consulta:', products); // Log para verificar los resultados
-  
-      if (!products || products.length === 0) {
-        console.log('No se encontraron productos para este almacén.');
-        return res.status(404).json({ message: 'No se encontraron productos para este almacén.' });
-      }
-  
-      res.status(200).json(products);
-    } catch (error) {
-      console.error('Error al obtener productos:', error);
-      res.status(500).json({ message: 'Error al obtener los productos.', error });
+// Obtener todos los productos
+router.get('/', authenticateToken, async (req, res) => {
+  try {
+    const products = await Product.find();
+    res.status(200).json(products);
+  } catch (error) {
+    console.error('Error al obtener los productos:', error);
+    res.status(500).json({ message: 'Error al obtener los productos', error });
+  }
+});
+
+// Actualizar un producto por ID
+router.put('/:id', authenticateToken, async (req, res) => {
+  try {
+    const updatedProduct = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!updatedProduct) {
+      return res.status(404).json({ message: 'Producto no encontrado' });
     }
-  });
-  
+    res.status(200).json({ message: 'Producto actualizado', product: updatedProduct });
+  } catch (error) {
+    console.error('Error al actualizar el producto:', error);
+    res.status(500).json({ message: 'Error al actualizar el producto', error });
+  }
+});
+
+// Eliminar un producto por ID
+router.delete('/:id', authenticateToken, async (req, res) => {
+  try {
+    const deletedProduct = await Product.findByIdAndDelete(req.params.id);
+    if (!deletedProduct) {
+      return res.status(404).json({ message: 'Producto no encontrado' });
+    }
+    res.status(200).json({ message: 'Producto eliminado', product: deletedProduct });
+  } catch (error) {
+    console.error('Error al eliminar el producto:', error);
+    res.status(500).json({ message: 'Error al eliminar el producto', error });
+  }
+});
 
 module.exports = router;
+

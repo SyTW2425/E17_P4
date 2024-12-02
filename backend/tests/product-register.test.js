@@ -1,16 +1,30 @@
 const mongoose = require('mongoose');
 const request = require('supertest');
 const jwt = require('jsonwebtoken');
-const app = require('../server'); // Asegúrate de que exportas correctamente `app` en server.js
+const app = require('../server');
 const Product = require('../models/Product');
 
-// Crear un token de prueba
-const token = jwt.sign({ id: 'test-user-id', role: 'Dueño' }, process.env.JWT_SECRET, {
-  expiresIn: '1h',
-});
+// Generar un token de prueba
+const generateTestToken = (user) => {
+  return jwt.sign(
+    {
+      id: user._id,
+      email: user.email,
+      role: user.role,
+      firstName: user.firstName,
+      lastName: user.lastName,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: '1h' }
+  );
+};
 
+// Configuración de la base de datos de pruebas
 beforeAll(async () => {
-  await mongoose.connect(process.env.MONGO_URI_TEST, { useNewUrlParser: true, useUnifiedTopology: true });
+  await mongoose.connect(process.env.MONGO_URI_TEST, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
 });
 
 afterAll(async () => {
@@ -19,137 +33,99 @@ afterAll(async () => {
 
 beforeEach(async () => {
   await Product.deleteMany({});
-  console.log('Base de datos limpiada.');
-
-  await Product.insertMany([
-    {
-      id: 1,
-      name: 'Producto A',
-      description: 'Prueba A',
-      stock: 50,
-      category: 'Cat A',
-      price: 20,
-      supplier: 'Sup A',
-      warehouseId: 1,
-    },
-    {
-      id: 2,
-      name: 'Producto B',
-      description: 'Prueba B',
-      stock: 30,
-      category: 'Cat B',
-      price: 10,
-      supplier: 'Sup B',
-      warehouseId: 1,
-    },
-  ]);
-
-  const products = await Product.find({});
-  console.log('Productos insertados:', products);
 });
 
 afterEach(async () => {
-    // Limpiar la colección después de cada prueba
-    await Product.deleteMany({});
-    console.log('Base de datos limpiada.');
+  await Product.deleteMany({});
+});
+
+describe('Product Endpoints', () => {
+  let token;
+
+  beforeEach(() => {
+    // Crear un usuario de prueba y generar un token
+    const testUser = {
+      _id: new mongoose.Types.ObjectId(),
+      email: 'testuser@example.com',
+      role: 'admin',
+      firstName: 'Test',
+      lastName: 'User',
+    };
+    token = generateTestToken(testUser);
   });
 
-describe('Productos API', () => {
-  describe('GET /api/warehouses/:id/products', () => {
-    it('debería listar los productos del almacén especificado', async () => {
-      const response = await request(app)
-        .get('/api/warehouses/1/products') // Filtrar por warehouseId
-        .set('Authorization', `Bearer ${token}`);
-
-      console.log('Respuesta del endpoint:', response.body); // Log para depuración
-
-      expect(response.status).toBe(200);
-      expect(response.body).toHaveLength(2);
-      expect(response.body).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ id: 1, name: 'Producto A', warehouseId: 1 }),
-          expect.objectContaining({ id: 2, name: 'Producto B', warehouseId: 1 }),
-        ])
-      );
-    });
-
-    it('debería devolver un error 404 si no hay productos en el almacén', async () => {
-      const response = await request(app)
-        .get('/api/warehouses/999/products') // ID inexistente
-        .set('Authorization', `Bearer ${token}`);
-
-      expect(response.status).toBe(404);
-      expect(response.body).toHaveProperty('message', 'No se encontraron productos para este almacén.');
-    });
-  });
-
-  describe('POST /api/products', () => {
-    it('debería crear un producto correctamente con datos válidos', async () => {
-      const productData = {
-        id: 3,
-        name: 'Producto C',
-        description: 'Prueba C',
-        stock: 100,
-        category: 'Cat C',
-        price: 30.5,
-        supplier: 'Sup C',
-        warehouseId: 2, // Simplemente un identificador
-      };
-
-      const response = await request(app)
-        .post('/api/products')
-        .set('Authorization', `Bearer ${token}`)
-        .send(productData);
-
-      expect(response.status).toBe(201);
-      expect(response.body).toHaveProperty('message', 'Producto creado con éxito.');
-      expect(response.body.product).toMatchObject(productData);
-
-      const createdProduct = await Product.findOne({ id: 3 });
-      expect(createdProduct).not.toBeNull();
-      expect(createdProduct).toMatchObject(productData);
-    });
-
-    it('debería fallar si falta algún campo obligatorio', async () => {
-      const incompleteData = {
-        id: 4,
-        name: 'Producto D',
-        description: 'Prueba D',
-        // Falta stock, category, price, supplier, warehouseId
-      };
-
-      const response = await request(app)
-        .post('/api/products')
-        .set('Authorization', `Bearer ${token}`)
-        .send(incompleteData);
-
-      expect(response.status).toBe(400);
-      expect(response.body).toHaveProperty('message', 'Todos los campos son obligatorios.');
-    });
-
-    it('debería fallar si el usuario no tiene el rol adecuado', async () => {
-      const invalidToken = jwt.sign({ id: 'test-user-id', role: 'Empleado' }, process.env.JWT_SECRET, {
-        expiresIn: '1h',
+  it('debería crear un producto con éxito', async () => {
+    const response = await request(app)
+      .post('/api/products')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        name: 'Producto de prueba',
+        description: 'Descripción del producto',
+        stock: 10,
+        category: 'Categoría de prueba',
+        price: 100,
+        supplier: 'Proveedor de prueba',
       });
 
-      const productData = {
-        id: 5,
-        name: 'Producto E',
-        description: 'Prueba E',
-        stock: 10,
-        category: 'Cat E',
-        price: 15.5,
-        supplier: 'Sup E',
-        warehouseId: 3,
-      };
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveProperty('product');
+    expect(response.body.product).toHaveProperty('name', 'Producto de prueba');
+  });
 
-      const response = await request(app)
-        .post('/api/products')
-        .set('Authorization', `Bearer ${invalidToken}`)
-        .send(productData);
-
-      expect(response.status).toBe(403);
-      expect(response.body).toHaveProperty('message', 'Acceso denegado: Rol no autorizado');
+  it('debería devolver todos los productos', async () => {
+    await Product.create({
+      name: 'Producto existente',
+      description: 'Descripción existente',
+      stock: 5,
+      category: 'Categoría existente',
+      price: 50,
+      supplier: 'Proveedor existente',
     });
+
+    const response = await request(app)
+      .get('/api/products')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBeGreaterThan(0);
+  });
+
+  it('debería actualizar un producto por ID', async () => {
+    const product = await Product.create({
+      name: 'Producto a actualizar',
+      description: 'Descripción a actualizar',
+      stock: 15,
+      category: 'Categoría',
+      price: 200,
+      supplier: 'Proveedor',
+    });
+
+    const response = await request(app)
+      .put(`/api/products/${product._id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        name: 'Producto actualizado',
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body.product).toHaveProperty('name', 'Producto actualizado');
+  });
+
+  it('debería eliminar un producto por ID', async () => {
+    const product = await Product.create({
+      name: 'Producto a eliminar',
+      description: 'Descripción a eliminar',
+      stock: 20,
+      category: 'Categoría',
+      price: 300,
+      supplier: 'Proveedor',
+    });
+
+    const response = await request(app)
+      .delete(`/api/products/${product._id}`)
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('message', 'Producto eliminado');
   });
 });

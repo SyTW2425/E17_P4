@@ -14,22 +14,20 @@ app.use(cors()); // Permitir solicitudes desde diferentes orígenes
 app.use(express.json()); // Para analizar JSON en las solicitudes
 
 // Middleware para verificar el token
-function authenticateToken(req, res, next) {
+const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
-
-  if (!token) {
-    return res.status(401).json({ message: 'Acceso denegado: Token requerido' });
-  }
+  if (!token) return res.status(403).json({ message: 'Token requerido' });
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) {
-      return res.status(403).json({ message: 'Token inválido o expirado' });
+      console.error('Error al verificar token:', err);
+      return res.status(403).json({ message: 'Token no válido' });
     }
-    req.user = user; // Almacena los datos del token en req.user
+    req.user = user;
     next();
   });
-}
+};
 module.exports = { authenticateToken }; //por si se quiere llevar la logica a otro archivo
 
 //middleware para veririficar roles
@@ -152,15 +150,13 @@ app.post('/login', async (req, res) => {
   }
 });
 
+// Rutas de productos
+const productRoutes = require('./routes/product.routes');
+app.use('/api/products', productRoutes);
+
 // Exportar app para pruebas
 module.exports = app;
-/*
-// Inicia el servidor
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en el puerto ${PORT}`);
-});
-*/
+
 
 // Solo inicia el servidor si no se está ejecutando en un entorno de pruebas
 if (process.env.NODE_ENV !== 'test') {
