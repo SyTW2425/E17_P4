@@ -38,6 +38,10 @@
           <input type="number" id="price" formControlName="price" class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
         </div>
         <div>
+          <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Precio Mínimo</label>
+          <input type="number" id="price" formControlName="price" class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+        </div>
+        <div>
           <label for="supplier" class="block text-sm font-medium text-gray-700 mb-1">Proveedor</label>
           <input type="text" id="supplier" formControlName="supplier" class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
         </div>
@@ -64,9 +68,26 @@
         </button>
       </form>
     </div>
+    <!-- Filtro por almacén -->
+    <div class="mb-6">
+      <label for="filterWarehouse" class="block text-lg font-medium text-gray-700 mb-2">
+        Filtrar por almacén
+      </label>
+      <select
+        id="filterWarehouse"
+        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+        [(ngModel)]="selectedWarehouse"
+        (change)="filterByWarehouse()"
+      >
+        <option [ngValue]="null" selected>Todos los almacenes</option>
+        <option *ngFor="let warehouse of warehouses" [value]="warehouse.id">
+          {{ warehouse.name }}
+        </option>
+      </select>
+    </div>
   
     <!-- Tabla de Productos -->
-    <div class="overflow-x-auto">
+    <div class="overflow-x-auto" *ngIf="filteredProducts.length > 0">
       <table class="min-w-full border-collapse border border-gray-200">
         <thead class="bg-gray-100">
             <tr>
@@ -81,10 +102,11 @@
               <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Proveedor</th>
               <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Capacidad</th>
               <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Almacén</th>
+              <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Precio Mínimo</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let product of products" class="even:bg-gray-50">
+            <tr *ngFor="let product of filteredProducts" class="even:bg-gray-50">
                 <td class="px-4 py-2 border border-gray-300">
                     <img
                       [src]="product.imageUrl"
@@ -114,10 +136,11 @@
               <td class="px-4 py-2 border border-gray-300">{{ product.supplier }}</td>
               <td class="px-4 py-2 border border-gray-300">{{ product.maxCapacity }}</td>
               <td class="px-4 py-2 border border-gray-300">{{ product.warehouseId }}</td>
+              <td class="px-4 py-2 border border-gray-300">{{ product.minPrice | currency  }}</td>
             </tr>
           </tbody>          
       </table>
     </div>
-    <p *ngIf="products.length === 0" class="text-center text-gray-500 mt-4">No hay productos disponibles.</p>
+    <p *ngIf="filteredProducts.length === 0" class="text-center text-gray-500 mt-4">No hay productos disponibles.</p>
   </div>
   

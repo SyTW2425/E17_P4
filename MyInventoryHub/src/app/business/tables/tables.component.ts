@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
 
 interface Product {
     id: number;
@@ -13,12 +13,18 @@ interface Product {
     maxCapacity: number;
     warehouseId: number;
     imageUrl: string;
+    minPrice: number;
+}
+
+interface Warehouse {
+  id: number;
+  name: string;
 }
 
 @Component({
   selector: 'app-tables',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, ReactiveFormsModule],
+  imports: [CommonModule, CurrencyPipe, ReactiveFormsModule, FormsModule],
   templateUrl: './tables.component.html',
   styleUrls: ['./tables.component.css']
 })
@@ -37,7 +43,8 @@ export default class TablesComponent {
       supplier: 'Proveedor X',
       maxCapacity: 100,
       warehouseId: 1,
-      imageUrl: 'coca.png'
+      imageUrl: 'coca.png',
+      minPrice: 8.5,
     },
     {
       id: 2,
@@ -49,7 +56,8 @@ export default class TablesComponent {
       supplier: 'Proveedor Y',
       maxCapacity: 150,
       warehouseId: 2,
-      imageUrl: 'aquarius.png'
+      imageUrl: 'aquarius.png',
+      minPrice: 16.0,
     },
     {
       id: 3,
@@ -61,15 +69,17 @@ export default class TablesComponent {
       supplier: 'Proveedor Z',
       maxCapacity: 50,
       warehouseId: 1,
-      imageUrl: 'lays.png'
+      imageUrl: 'lays.png',
+      minPrice: 11.5,
     }
   ];
-  warehouses = [
+  warehouses: Warehouse[] = [
     { id: 1, name: 'Almacén 1' },
     { id: 2, name: 'Almacén 2' },
     { id: 3, name: 'Almacén 3' }
   ];
-  selectedWarehouseId: number | null = null;
+  selectedWarehouse: number | null = null;  
+  filteredProducts: Product[] = [...this.products];
 
   constructor(private fb: FormBuilder) {
     this.productForm = this.fb.group({
@@ -81,9 +91,21 @@ export default class TablesComponent {
       price: ['', Validators.required],
       supplier: [''],
       maxCapacity: ['', Validators.required],
-      warehouseId: ['', Validators.required]
+      warehouseId: ['', Validators.required],
+      minPrice: ['', Validators.required]
     });
   }
+
+  filterByWarehouse() {
+    if (this.selectedWarehouse !== null && this.selectedWarehouse !== undefined) {
+      this.filteredProducts = this.products.filter(
+        product => product.warehouseId === Number(this.selectedWarehouse)
+      );
+    } else {
+      this.filteredProducts = [...this.products];
+    }
+  }
+
   onFileSelect(event: Event) {
     const fileInput = event.target as HTMLInputElement;
     if (fileInput.files && fileInput.files.length > 0) {
