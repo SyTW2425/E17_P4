@@ -63,6 +63,9 @@ const User = require('./models/User');
 const productRoutes = require('./routes/product.routes');
 app.use('/api/products', productRoutes);
 
+const warehouseRoutes = require('./routes/warehouse.routes'); 
+app.use('/api/warehouses', warehouseRoutes); 
+
 // Endpoint para registrar usuarios
 app.post('/api/register', async (req, res) => {
   const { firstName, lastName, username, email, password, role } = req.body;
