@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
     selector: 'app-product-manager',
     templateUrl: './product-manager.component.html',
+    standalone: true,
     imports: [CommonModule, FormsModule], // Asegúrate de importar FormsModule
     styleUrls: ['./product-manager.component.css']
 })

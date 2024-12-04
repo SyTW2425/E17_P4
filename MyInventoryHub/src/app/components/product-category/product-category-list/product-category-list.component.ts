@@ -4,6 +4,7 @@ import { ProductCategory } from '../../../models/productCategory.model';
 
 @Component({
     selector: 'app-product-category-list',
+    standalone: true,
     imports: [],
     templateUrl: './product-category-list.component.html',
     styleUrl: './product-category-list.component.css'

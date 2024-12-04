@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
     selector: 'app-product-category-edit',
+    standalone: true,
     imports: [],
     templateUrl: './product-category-edit.component.html',
     styleUrl: './product-category-edit.component.css'

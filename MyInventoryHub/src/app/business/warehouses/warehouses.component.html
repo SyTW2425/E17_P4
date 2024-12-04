@@ -1,0 +1,54 @@
+<div *ngIf="showForm">
+  <form [formGroup]="warehouseForm" (ngSubmit)="createWarehouse()">
+    <label for="name">Nombre:</label>
+    <input id="name" formControlName="name" type="text">
+    
+    <label for="address">Dirección:</label>
+    <input id="address" formControlName="address" type="text">
+    
+    <label for="city">Ciudad:</label>
+    <input id="city" formControlName="city" type="text">
+    
+    <label for="country">País:</label>
+    <input id="country" formControlName="country" type="text">
+    
+    <label for="capacity">Capacidad:</label>
+    <input id="capacity" formControlName="capacity" type="number">
+    
+    <label for="currentStock">Stock Actual:</label>
+    <input id="currentStock" formControlName="currentStock" type="number">
+    
+    <label for="manager">Responsable:</label>
+    <input id="manager" formControlName="manager" type="text">
+    
+    <label for="contactNumber">Número de Contacto:</label>
+    <input id="contactNumber" formControlName="contactNumber" type="text">
+    
+    <label for="isActive">Activo:</label>
+    <input id="isActive" formControlName="isActive" type="checkbox">
+    
+    <button type="submit" [disabled]="!warehouseForm.valid">Crear Almacén</button>
+  </form>
+</div>
+
+<button (click)="toggleForm()">Agregar Almacén</button>
+
+<div *ngIf="warehouses.length > 0">
+  <h3>Seleccionar un Almacén</h3>
+  <select (change)="selectWarehouse($event)">
+    <option *ngFor="let warehouse of warehouses" [value]="warehouse.id">{{ warehouse.name }}</option>
+  </select>
+</div>
+
+<div *ngIf="selectedWarehouse">
+  <h3>Detalles del Almacén Seleccionado</h3>
+  <p>Nombre: {{ selectedWarehouse.name }}</p>
+  <p>Dirección: {{ selectedWarehouse.location.address }}</p>
+  <p>Ciudad: {{ selectedWarehouse.location.city }}</p>
+  <p>País: {{ selectedWarehouse.location.country }}</p>
+  <p>Capacidad: {{ selectedWarehouse.capacity }}</p>
+  <p>Stock Actual: {{ selectedWarehouse.currentStock }}</p>
+  <p>Responsable: {{ selectedWarehouse.manager }}</p>
+  <p>Contacto: {{ selectedWarehouse.contactNumber }}</p>
+  <p>Activo: {{ selectedWarehouse.isActive ? 'Sí' : 'No' }}</p>
+</div>

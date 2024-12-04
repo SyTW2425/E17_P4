@@ -1,0 +1,62 @@
+<!-- <div class="warehouse-manager">
+  <h2>Gestión de Almacenes</h2>
+
+  <!-- Botón para mostrar/ocultar el formulario de creación de almacenes -->
+  <button (click)="toggleCreateForm()">
+    {{ showCreateForm ? 'Ocultar Formulario' : 'Crear Nuevo Almacén' }}
+  </button>
+
+  <!-- Formulario para crear un nuevo almacén -->
+  <div *ngIf="showCreateForm">
+    <form (ngSubmit)="createWarehouse()" #warehouseForm="ngForm">
+      <div>
+        <label for="id">ID:</label>
+        <input type="text" id="id" [(ngModel)]="newWarehouse.id" name="id" required />
+      </div>
+      <div>
+        <label for="name">Nombre:</label>
+        <input type="text" id="name" [(ngModel)]="newWarehouse.name" name="name" required />
+      </div>
+      <div>
+        <label for="location">Ubicación:</label>
+        <input type="text" id="location" [(ngModel)]="newWarehouse.location" name="location" required />
+      </div>
+      <div>
+        <label for="capacity">Capacidad:</label>
+        <input type="number" id="capacity" [(ngModel)]="newWarehouse.capacity" name="capacity" required />
+      </div>
+      <div>
+        <label for="currentStock">Stock Actual:</label>
+        <input type="number" id="currentStock" [(ngModel)]="newWarehouse.currentStock" name="currentStock" required />
+      </div>
+      <div>
+        <label for="manager">Encargado:</label>
+        <input type="text" id="manager" [(ngModel)]="newWarehouse.manager" name="manager" required />
+      </div>
+      <div>
+        <label for="contactNumber">Contacto:</label>
+        <input type="text" id="contactNumber" [(ngModel)]="newWarehouse.contactNumber" name="contactNumber" required />
+      </div>
+      <button type="submit">Crear Almacén</button>
+    </form>
+  </div>
+
+  <!-- Desplegable para listar y seleccionar almacenes -->
+  <div *ngIf="warehouses && warehouses.length > 0">
+    <label for="warehouseSelect">Seleccionar Almacén:</label>
+    <select id="warehouseSelect" [(ngModel)]="selectedWarehouseId" (change)="onWarehouseSelect($event)">
+      <option *ngFor="let warehouse of warehouses" [value]="warehouse.id">
+        {{ warehouse.name }} - {{ warehouse.location }}
+      </option>
+    </select>
+  </div>
+  <div *ngIf="warehouses && warehouses.length === 0">
+    <p>No tienes almacenes registrados.</p>
+  </div>
+
+  <!-- Componentes para manejar productos -->
+  <div class="product-management">
+    <h3>Gestión de Productos</h3>
+    <!-- <app-product-manager></app-product-manager> -->
+  </div>
+</div> -->
