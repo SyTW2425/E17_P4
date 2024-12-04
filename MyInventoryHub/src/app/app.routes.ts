@@ -18,6 +18,7 @@ import TablesComponent from './business/tables/tables.component';
 import { SignInComponent } from './components/sign-in/sign-in.component';
 import { RegisterComponent } from './components/register/register.component';
 import WarehouseManagementComponent from './business/warehouses/warehouses.component';
+import { TablesContainerComponent } from './business/tables/tables-container/tables-container.component';
 
 export const routes: Routes = [
   { path: '', component: IndexComponent },
@@ -35,19 +36,17 @@ export const routes: Routes = [
     children: [{ path: '', component: ProfileComponent }],
   },
   {
-    path: 'tables',
+    path: 'tables',  // Solo en esta ruta se cargan ambos componentes
     component: LayoutComponent,
-    children: [{ path: '', component: TablesComponent }],
-  },
-  {
-    path: 'warehouse',
-    component: LayoutComponent,
-    children: [{ path: '', component: WarehouseManagementComponent }],
+    children: [
+      { path: '', component: TablesContainerComponent }  // Componente contenedor para Tables y Warehouse
+    ],
   },
   { path: 'signin', component: SignInComponent },
   { path: 'register', component: RegisterComponent },
-  { path: '**', redirectTo: '' } // Redirección en caso de ruta no encontrada
+  { path: '**', redirectTo: '' }, // Redirección en caso de ruta no encontrada
 ];
+
 
 /*
 export const routes: Routes  = [

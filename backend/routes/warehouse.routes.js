@@ -1,8 +1,11 @@
 const express = require('express');
 const Warehouse = require('../models/Warehouse');
 const { authenticateToken, authorizeRole } = require('../server');
+const { getUserWarehouses } = require('../controllers/warehouseController');
+
 
 const router = express.Router();
+
 
 // Crear un almacén (Solo para usuarios con rol "Dueño")
 router.post('/', authenticateToken, authorizeRole('Dueño'), async (req, res) => {
@@ -33,7 +36,11 @@ router.post('/', authenticateToken, authorizeRole('Dueño'), async (req, res) =>
 // Obtener todos los almacenes (Disponible para cualquier usuario autenticado)
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    const warehouses = await Warehouse.find();
+    const userId = req.user.id; // ID del usuario autenticado
+    const warehouses = await Warehouse.find({ owner: userId }); // Filtrar por propietario
+    if (!warehouses.length) {
+      return res.status(404).json({ message: 'No tienes almacenes registrados.' });
+    }
     res.status(200).json(warehouses);
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener los almacenes.', error });
