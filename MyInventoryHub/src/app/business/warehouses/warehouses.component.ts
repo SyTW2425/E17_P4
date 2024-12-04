@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
@@ -11,7 +11,7 @@ import {
 interface Warehouse {
   id: number;
   name: string;
-  location: {
+  location: { 
     address: string;
     city: string;
     country: string;
@@ -30,20 +30,15 @@ interface Warehouse {
   templateUrl: './warehouses.component.html',
   styleUrls: ['./warehouses.component.css'],
 })
-export default class WarehouseManagerComponent {
-  nextId = 3;
+export default class WarehouseManagerComponent implements OnInit {
   warehouseForm: FormGroup;
   showForm = false;
   warehouses: Warehouse[] = [
     {
       id: 1,
-      name: 'Almacén A',
-      location: {
-        address: 'Calle Falsa 123',
-        city: 'Santa Cruz',
-        country: 'España',
-      },
-      capacity: 200,
+      name: 'Almacén 1',
+      location: { address: 'Calle Ficticia 123', city: 'Ciudad A', country: 'País A' },
+      capacity: 500,
       currentStock: 150,
       manager: 'Juan Pérez',
       contactNumber: '123456789',
@@ -51,20 +46,30 @@ export default class WarehouseManagerComponent {
     },
     {
       id: 2,
-      name: 'Almacén B',
-      location: {
-        address: 'Avenida Principal 456',
-        city: 'La Laguna',
-        country: 'España',
-      },
-      capacity: 300,
-      currentStock: 180,
-      manager: 'Ana López',
+      name: 'Almacén 2',
+      location: { address: 'Avenida Ficticia 456', city: 'Ciudad B', country: 'País B' },
+      capacity: 600,
+      currentStock: 300,
+      manager: 'Ana Gómez',
       contactNumber: '987654321',
       isActive: true,
     },
+    {
+      id: 3,
+      name: 'Almacén 3',
+      location: { address: 'Calle Real 789', city: 'Ciudad C', country: 'País C' },
+      capacity: 700,
+      currentStock: 400,
+      manager: 'Carlos López',
+      contactNumber: '112233445',
+      isActive: false,
+    },
   ];
-  selectedWarehouse: any;
+  filteredWarehouses: Warehouse[] = [];
+  selectedWarehouse: Warehouse | null = null;
+
+  // Simulando que el usuario es un "manager"
+  currentUserRole: string = 'manager'; // Este valor debe venir de tu sistema de autenticación
 
   constructor(private fb: FormBuilder) {
     this.warehouseForm = this.fb.group({
@@ -81,25 +86,30 @@ export default class WarehouseManagerComponent {
     });
   }
 
-  toggleForm() {
+  ngOnInit(): void {
+    this.loadWarehouses();
+  }
+
+  // Cargar los almacenes solo para los managers
+  loadWarehouses(): void {
+    if (this.currentUserRole === 'manager') {
+      // Los managers solo ven los almacenes activos
+      this.filteredWarehouses = this.warehouses.filter(warehouse => warehouse.isActive);
+    } else {
+      // Si el usuario no es un manager, mostrar todos los almacenes
+      // this.filteredWarehouses = [...this.warehouses];
+      console.log("usuario no es manager")
+    }
+  }
+
+  toggleForm(): void {
     this.showForm = !this.showForm;
   }
 
-  // // Función para cargar almacenes (si tienes alguno en el localStorage o base de datos)
-  // loadWarehouses(): void {
-  //   // Aquí puedes cargar datos de un servidor o localStorage
-  //   const storedWarehouses = JSON.parse(localStorage.getItem('warehouses') || '[]');
-  //   this.warehouses = storedWarehouses;
-
-  //   // Establecer el siguiente ID para que sea el próximo disponible
-  //   this.nextId = this.warehouses.length ? Math.max(...this.warehouses.map(w => w.id)) + 1 : 1;
-  // }
-
-  // Función para crear un nuevo almacén
   createWarehouse(): void {
     if (this.warehouseForm.valid) {
       const newWarehouse: Warehouse = {
-        id: this.nextId++, // Incremento automático del ID
+        id: this.warehouseForm.value.id, 
         name: this.warehouseForm.value.name,
         location: {
           address: this.warehouseForm.value.address,
@@ -112,29 +122,21 @@ export default class WarehouseManagerComponent {
         contactNumber: this.warehouseForm.value.contactNumber,
         isActive: this.warehouseForm.value.isActive,
       };
-
-      // Agregar el nuevo almacén a la lista
-      this.warehouses.push(newWarehouse);
-
-      // Guardar en localStorage o base de datos
-      localStorage.setItem('warehouses', JSON.stringify(this.warehouses));
-
-      // Limpiar el formulario
+  
+      this.warehouses.push(newWarehouse); // Añade el nuevo almacén a la lista
+      this.loadWarehouses(); // Recarga los almacenes filtrados
       this.warehouseForm.reset();
       this.showForm = false;
     }
   }
 
-  selectWarehouse() {
+  selectWarehouse(): void {
     if (this.selectedWarehouse) {
       console.log('Almacén seleccionado:', this.selectedWarehouse);
     }
   }
 
-  // Este método debería asignar el almacén completo al seleccionar uno
   onWarehouseSelect(warehouseId: number): void {
-    this.selectedWarehouse = this.warehouses.find(
-      (wh) => wh.id === warehouseId
-    );
+    this.selectedWarehouse = this.filteredWarehouses.find((wh) => wh.id === warehouseId) || null;
   }
 }

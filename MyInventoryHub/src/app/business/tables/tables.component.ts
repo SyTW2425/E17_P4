@@ -112,6 +112,7 @@ export default class TablesComponent {
       this.selectedFile = fileInput.files[0];
     }
   }
+  
   toggleForm() {
     this.showForm = !this.showForm;
   }

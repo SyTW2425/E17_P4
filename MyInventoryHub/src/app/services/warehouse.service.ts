@@ -1,33 +1,74 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Warehouse } from '../models/warehouse.model';
-import { __extends, __assign } from 'tslib';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class WarehouseService {
-  private warehouses: Warehouse[] = []; 
+  private apiUrl = 'http://localhost:3000/api/warehouses'; // URL del backend
 
-  getAllWarehouses(): Warehouse[] {
-    return this.warehouses;
-  }
+  constructor(private http: HttpClient) {}
 
-  getWarehouseById(id: number): Warehouse | undefined {
-    return this.warehouses.find(warehouse => warehouse.id === id);
-  }
-
-  addWarehouse(newWarehouse: Warehouse): void {
-    this.warehouses.push(newWarehouse);
-  }
-
-  updateWarehouse(updatedWarehouse: Warehouse): void {
-    const index = this.warehouses.findIndex(warehouse => warehouse.id === updatedWarehouse.id);
-    if (index !== -1) {
-      this.warehouses[index] = updatedWarehouse;
+  /**
+   * Obtiene los almacenes del usuario autenticado.
+   * Incluye el token en los encabezados para la autenticación.
+   */
+  getUserWarehouses(): Observable<any> {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  
+    if (token) {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${token}`,
+      });
+      return this.http.get(`${this.apiUrl}`, { headers });
+    } else {
+      return new Observable((observer) => {
+        observer.error('Token no disponible');
+      });
     }
   }
+  
+  
+  
 
-  deleteWarehouse(id: number): void {
-    this.warehouses = this.warehouses.filter(warehouse => warehouse.id !== id);
+  /**
+   * Crea un nuevo almacén.
+   * Envía el almacén al backend y devuelve el almacén creado.
+   */
+  addWarehouse(newWarehouse: Warehouse): Observable<Warehouse> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${localStorage.getItem('token')}`, // Token JWT del usuario
+      'Content-Type': 'application/json',
+    });
+    return this.http.post<Warehouse>(this.apiUrl, newWarehouse, { headers });
+  }
+
+  /**
+   * Actualiza un almacén existente.
+   * Envía el almacén actualizado al backend.
+   */
+  updateWarehouse(updatedWarehouse: Warehouse): Observable<Warehouse> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${localStorage.getItem('token')}`, // Token JWT del usuario
+      'Content-Type': 'application/json',
+    });
+    return this.http.put<Warehouse>(
+      `${this.apiUrl}/${updatedWarehouse.id}`,
+      updatedWarehouse,
+      { headers }
+    );
+  }
+
+  /**
+   * Elimina un almacén.
+   * Envía la solicitud de eliminación al backend.
+   */
+  deleteWarehouse(id: number): Observable<void> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${localStorage.getItem('token')}`, // Token JWT del usuario
+    });
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers });
   }
 }
