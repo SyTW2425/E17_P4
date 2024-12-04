@@ -1,54 +1,106 @@
-<div *ngIf="showForm">
-  <form [formGroup]="warehouseForm" (ngSubmit)="createWarehouse()">
-    <label for="name">Nombre:</label>
-    <input id="name" formControlName="name" type="text">
-    
-    <label for="address">Dirección:</label>
-    <input id="address" formControlName="address" type="text">
-    
-    <label for="city">Ciudad:</label>
-    <input id="city" formControlName="city" type="text">
-    
-    <label for="country">País:</label>
-    <input id="country" formControlName="country" type="text">
-    
-    <label for="capacity">Capacidad:</label>
-    <input id="capacity" formControlName="capacity" type="number">
-    
-    <label for="currentStock">Stock Actual:</label>
-    <input id="currentStock" formControlName="currentStock" type="number">
-    
-    <label for="manager">Responsable:</label>
-    <input id="manager" formControlName="manager" type="text">
-    
-    <label for="contactNumber">Número de Contacto:</label>
-    <input id="contactNumber" formControlName="contactNumber" type="text">
-    
-    <label for="isActive">Activo:</label>
-    <input id="isActive" formControlName="isActive" type="checkbox">
-    
-    <button type="submit" [disabled]="!warehouseForm.valid">Crear Almacén</button>
-  </form>
-</div>
+<div class="container mx-auto p-6">
+  <h1 class="text-center text-2xl font-bold mb-6">Gestión de Almacenes</h1>
 
-<button (click)="toggleForm()">Agregar Almacén</button>
+  <!-- Botón para desplegar el formulario -->
+  <div class="text-right mb-6">
+    <button
+      class="bg-indigo-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-indigo-700 focus:outline-none"
+      (click)="toggleForm()">
+      {{ showForm ? 'Ocultar Formulario' : 'Crear Almacén' }}
+    </button>
+  </div>
 
-<div *ngIf="warehouses.length > 0">
-  <h3>Seleccionar un Almacén</h3>
-  <select (change)="selectWarehouse($event)">
-    <option *ngFor="let warehouse of warehouses" [value]="warehouse.id">{{ warehouse.name }}</option>
-  </select>
-</div>
+  <!-- Formulario de Creación de Almacén -->
+  <div *ngIf="showForm" class="bg-white p-6 shadow-md rounded-lg mb-6">
+    <form [formGroup]="warehouseForm" (ngSubmit)="createWarehouse()" class="space-y-4">
+      <div>
+        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nombre del Almacén</label>
+        <input type="text" id="name" formControlName="name"
+          class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" required />
+      </div>
+      <div>
+        <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Dirección</label>
+        <input type="text" id="address" formControlName="address"
+          class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" required />
+      </div>
+      <div>
+        <label for="city" class="block text-sm font-medium text-gray-700 mb-1">Ciudad</label>
+        <input type="text" id="city" formControlName="city"
+          class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" required />
+      </div>
+      <div>
+        <label for="country" class="block text-sm font-medium text-gray-700 mb-1">País</label>
+        <input type="text" id="country" formControlName="country"
+          class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" required />
+      </div>
+      <div>
+        <label for="capacity" class="block text-sm font-medium text-gray-700 mb-1">Capacidad</label>
+        <input type="number" id="capacity" formControlName="capacity"
+          class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" required />
+      </div>
+      <div>
+        <label for="currentStock" class="block text-sm font-medium text-gray-700 mb-1">Stock Actual</label>
+        <input type="number" id="currentStock" formControlName="currentStock"
+          class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" required />
+      </div>
+      <div>
+        <label for="manager" class="block text-sm font-medium text-gray-700 mb-1">Encargado</label>
+        <input type="text" id="manager" formControlName="manager"
+          class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" required />
+      </div>
+      <div>
+        <label for="contactNumber" class="block text-sm font-medium text-gray-700 mb-1">Número de Contacto</label>
+        <input type="text" id="contactNumber" formControlName="contactNumber"
+          class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" required />
+      </div>
+      <div>
+        <label for="isActive" class="block text-sm font-medium text-gray-700 mb-1">Activo</label>
+        <input type="checkbox" id="isActive" formControlName="isActive"
+          class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" />
+      </div>
+      <button
+        type="submit"
+        class="w-full py-2 px-4 bg-indigo-600 text-white font-medium rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        [disabled]="!warehouseForm.valid">
+        Crear Almacén
+      </button>
+    </form>
+  </div>
 
-<div *ngIf="selectedWarehouse">
-  <h3>Detalles del Almacén Seleccionado</h3>
-  <p>Nombre: {{ selectedWarehouse.name }}</p>
-  <p>Dirección: {{ selectedWarehouse.location.address }}</p>
-  <p>Ciudad: {{ selectedWarehouse.location.city }}</p>
-  <p>País: {{ selectedWarehouse.location.country }}</p>
-  <p>Capacidad: {{ selectedWarehouse.capacity }}</p>
-  <p>Stock Actual: {{ selectedWarehouse.currentStock }}</p>
-  <p>Responsable: {{ selectedWarehouse.manager }}</p>
-  <p>Contacto: {{ selectedWarehouse.contactNumber }}</p>
-  <p>Activo: {{ selectedWarehouse.isActive ? 'Sí' : 'No' }}</p>
+  <!-- Desplegable para seleccionar almacén -->
+  <div class="mb-6">
+    <label for="warehouseSelect" class="block text-lg font-medium text-gray-700 mb-2">Seleccionar Almacén</label>
+    <select id="warehouseSelect" [(ngModel)]="selectedWarehouse" (change)="selectWarehouse()"
+      class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+      <option value="" disabled selected>Selecciona un almacén</option>
+      <option *ngFor="let warehouse of warehouses" [value]="warehouse.id">{{ warehouse.name }}</option>
+    </select>
+  </div>
+
+  <!-- Tabla de Almacenes -->
+  <div class="overflow-x-auto" *ngIf="warehouses.length > 0">
+    <table class="min-w-full border-collapse border border-gray-200">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="px-4 py-2 border border-gray-300 text-left font-semibold">ID</th>
+          <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Nombre</th>
+          <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Ubicación</th>
+          <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Stock Actual</th>
+          <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Encargado</th>
+          <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Número de Contacto</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let warehouse of warehouses">
+          <td class="px-4 py-2 border border-gray-300">{{ warehouse.id }}</td>
+          <td class="px-4 py-2 border border-gray-300">{{ warehouse.name }}</td>
+          <td class="px-4 py-2 border border-gray-300">{{ warehouse.location.city }}, {{ warehouse.location.country }}</td>
+          <td class="px-4 py-2 border border-gray-300">{{ warehouse.currentStock }}</td>
+          <td class="px-4 py-2 border border-gray-300">{{ warehouse.manager }}</td>
+          <td class="px-4 py-2 border border-gray-300">{{ warehouse.contactNumber }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p *ngIf="warehouses.length === 0" class="text-center text-gray-500 mt-4">No hay almacenes disponibles.</p>
 </div>
