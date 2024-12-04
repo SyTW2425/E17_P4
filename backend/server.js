@@ -13,6 +13,11 @@ const app = express();
 app.use(cors()); // Permitir solicitudes desde diferentes orígenes
 app.use(express.json()); // Para analizar JSON en las solicitudes
 
+//models
+const User = require('./models/User');
+const Product = require('./models/Product');
+const Warehouse = require('./models/Warehouse');
+
 // Middleware para verificar el token
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
@@ -39,6 +44,38 @@ function authorizeRole(role) {
     next();
   };
 }
+//middleware que verifica si el usuario tiene acceso y permisos.
+async function authorizeWarehouse(req, res, next) {
+  const { warehouseId } = req.body;
+  const userId = req.user.id;
+
+  try {
+    const warehouse = await Warehouse.findById(warehouseId);
+
+    if (!warehouse) {
+      return res.status(404).json({ message: 'Almacén no encontrado' });
+    }
+
+    // Verifica si el usuario es dueño del almacén
+    if (warehouse.userId.toString() === userId) {
+      req.isOwner = true;
+      return next();
+    }
+
+    // Verifica si el usuario es un empleado con permisos
+    const employee = warehouse.employees.find(e => e.employeeId.toString() === userId);
+    if (!employee) {
+      return res.status(403).json({ message: 'No tienes acceso a este almacén' });
+    }
+
+    req.permissions = employee.permissions;
+    return next();
+  } catch (error) {
+    console.error('Error en la autorización del almacén:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
+}
+
 // para el uso de las pruebas
 const mongoURI = process.env.NODE_ENV === 'test' ? process.env.MONGO_URI_TEST : process.env.MONGO_URI;
 
@@ -52,8 +89,6 @@ mongoose.connect(/*process.env.MONGO_URI*/mongoURI, {
   console.error('Error al conectar a MongoDB:', err);
 });
 
-//models
-const User = require('./models/User');
 //endpoints
 app.post('/api/register', async (req, res) => {
   const { firstName,lastName,username, email, password, role } = req.body;
@@ -150,9 +185,160 @@ app.post('/login', async (req, res) => {
   }
 });
 
-// Rutas de productos
-const productRoutes = require('./routes/product.routes');
-app.use('/api/products', productRoutes);
+
+//endpoints wearehouses//
+
+//crear almacen (solo dueños)
+app.post('/warehouses', authenticateToken, async (req, res) => {
+  try {
+    if (req.user.role !== 'Dueño') {
+      return res.status(403).json({ message: 'No tienes permiso para crear almacenes' });
+    }
+
+    const { name, location } = req.body;
+    const warehouse = new Warehouse({
+      name,
+      location,
+      userId: req.user.id,
+    });
+
+    await warehouse.save();
+    res.status(201).json({ message: 'Almacén creado exitosamente', warehouse });
+  } catch (error) {
+    console.error('Error al crear el almacén:', error);
+    res.status(500).json({ message: 'Error al crear el almacén', error });
+  }
+});
+
+
+//asignar empleados al almacen(solo dueños)
+app.post('/warehouses/:id/employees', authenticateToken, async (req, res) => {
+  try {
+    const { id: warehouseId } = req.params;
+    const { employeeId, permissions } = req.body;
+
+    const warehouse = await Warehouse.findOne({ _id: warehouseId, userId: req.user.id });
+    if (!warehouse) {
+      return res.status(404).json({ message: 'Almacén no encontrado o no tienes acceso' });
+    }
+
+    const employee = await User.findById(employeeId);
+    if (!employee || employee.role !== 'Empleado') {
+      return res.status(400).json({ message: 'El usuario no es un empleado válido' });
+    }
+
+    warehouse.employees.push({ employeeId, permissions });
+    await warehouse.save();
+
+    res.status(200).json({ message: 'Empleado asignado exitosamente', warehouse });
+  } catch (error) {
+    console.error('Error al asignar empleado:', error);
+    res.status(500).json({ message: 'Error al asignar empleado', error });
+  }
+});
+
+//editar almacen (solo dueños)
+app.put('/warehouses/:id', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, location } = req.body;
+
+    const warehouse = await Warehouse.findOneAndUpdate(
+      { _id: id, userId: req.user.id },
+      { name, location },
+      { new: true }
+    );
+
+    if (!warehouse) {
+      return res.status(404).json({ message: 'Almacén no encontrado o no tienes acceso' });
+    }
+
+    res.status(200).json({ message: 'Almacén actualizado exitosamente', warehouse });
+  } catch (error) {
+    console.error('Error al actualizar el almacén:', error);
+    res.status(500).json({ message: 'Error al actualizar el almacén', error });
+  }
+});
+
+//eliminar un almacen
+app.delete('/warehouses/:id', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const warehouse = await Warehouse.findOneAndDelete({ _id: id, userId: req.user.id });
+
+    if (!warehouse) {
+      return res.status(404).json({ message: 'Almacén no encontrado o no tienes acceso' });
+    }
+
+    res.status(200).json({ message: 'Almacén eliminado exitosamente', warehouse });
+  } catch (error) {
+    console.error('Error al eliminar el almacén:', error);
+    res.status(500).json({ message: 'Error al eliminar el almacén', error });
+  }
+});
+
+//quitar permisos de un empleado en un almacen
+app.delete('/warehouses/:id/employees/:employeeId', authenticateToken, async (req, res) => {
+  try {
+    const { id: warehouseId, employeeId } = req.params;
+
+    const warehouse = await Warehouse.findOne({ _id: warehouseId, userId: req.user.id });
+    if (!warehouse) {
+      return res.status(404).json({ message: 'Almacén no encontrado o no tienes acceso' });
+    }
+
+    warehouse.employees = warehouse.employees.filter(e => e.employeeId.toString() !== employeeId);
+    await warehouse.save();
+
+    res.status(200).json({ message: 'Empleado eliminado exitosamente del almacén', warehouse });
+  } catch (error) {
+    console.error('Error al eliminar empleado del almacén:', error);
+    res.status(500).json({ message: 'Error al eliminar empleado del almacén', error });
+  }
+});
+
+//ver empleados asignados a un almacen
+app.get('/warehouses/:id/employees', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const warehouse = await Warehouse.findOne({ _id: id, userId: req.user.id }).populate('employees.employeeId', 'firstName lastName email');
+    if (!warehouse) {
+      return res.status(404).json({ message: 'Almacén no encontrado o no tienes acceso' });
+    }
+
+    res.status(200).json(warehouse.employees);
+  } catch (error) {
+    console.error('Error al obtener empleados del almacén:', error);
+    res.status(500).json({ message: 'Error al obtener empleados del almacén', error });
+  }
+});
+
+//obtener almacenes de un usuario
+app.get('/warehouses', authenticateToken, async (req, res) => {
+  try {
+    let warehouses;
+
+    if (req.user.role === 'Dueño') {
+      // Dueño: obtiene todos sus almacenes
+      warehouses = await Warehouse.find({ userId: req.user.id }).populate('employees.employeeId', 'firstName lastName email');
+    } else if (req.user.role === 'Empleado') {
+      // Empleado: obtiene almacenes a los que tiene acceso
+      warehouses = await Warehouse.find({ 'employees.employeeId': req.user.id });
+    } else {
+      return res.status(403).json({ message: 'No tienes permisos para ver almacenes' });
+    }
+
+    res.status(200).json(warehouses);
+  } catch (error) {
+    console.error('Error al obtener los almacenes:', error);
+    res.status(500).json({ message: 'Error al obtener los almacenes', error });
+  }
+});
+
+
+
 
 // Exportar app para pruebas
 module.exports = app;
