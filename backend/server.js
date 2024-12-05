@@ -215,19 +215,21 @@ app.post('/warehouses', authenticateToken, async (req, res) => {
 app.post('/warehouses/:id/employees', authenticateToken, async (req, res) => {
   try {
     const { id: warehouseId } = req.params;
-    const { userName, permissions } = req.body;
+    const { username, permissions } = req.body;
 
     const warehouse = await Warehouse.findOne({ _id: warehouseId, userId: req.user.id });
     if (!warehouse) {
       return res.status(404).json({ message: 'Almacén no encontrado o no tienes acceso' });
     }
+    
+    const employee = await User.findOne({username});
 
-    const employee = await User.findOne(userName);
     if (!employee || employee.role !== 'Empleado') {
+      
       return res.status(400).json({ message: 'El usuario no es un empleado válido' });
     }
-
-    warehouse.employees.push({ userName, permissions });
+    //comprobar si el usuario ya existe, modificarlo
+    warehouse.employees.push({ employeeId: employee._id, permissions });
     await warehouse.save();
 
     res.status(200).json({ message: 'Empleado asignado exitosamente', warehouse });
@@ -278,7 +280,7 @@ app.delete('/warehouses/:id', authenticateToken, async (req, res) => {
   }
 });
 
-//quitar permisos de un empleado en un almacen
+//eliminar empleado
 app.delete('/warehouses/:id/employees/:employeeId', authenticateToken, async (req, res) => {
   try {
     const { id: warehouseId, employeeId } = req.params;

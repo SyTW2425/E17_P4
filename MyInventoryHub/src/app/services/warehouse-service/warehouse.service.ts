@@ -27,7 +27,7 @@ export class WarehouseService {
   assignEmployee(
     token: string,
     warehouseId: string,
-    data: { userName: string; permissions: string[] }
+    data: { username: string; permissions: string[] }
   ): Observable<any> {
     return this.http.post(`${this.baseUrl}/${warehouseId}/employees`, data, {
       headers: this.getHeaders(token),

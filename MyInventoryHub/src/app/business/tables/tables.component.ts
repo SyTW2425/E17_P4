@@ -2,12 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
 import { WarehouseService } from '../../services/warehouse-service/warehouse.service';
-import { AuthService } from '../../services/auth/auth.service'; // Importa el servicio AuthService
-
+import { AuthService } from '../../services/auth/auth.service';
+import { PermissionPipe } from '../../components/pipes/permissions.pipe'
+import { response } from 'express';
 @Component({
   selector: 'app-tables',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, CurrencyPipe, ReactiveFormsModule, FormsModule, PermissionPipe],
   templateUrl: './tables.component.html',
   styleUrls: ['./tables.component.css']
 })
@@ -18,7 +19,7 @@ export default class TablesComponent implements OnInit {
   warehouseForm: FormGroup;
   employeeForm: FormGroup;
   token: string | null = null; // Cambia el valor inicial a `null`
-
+  isFormOpen: boolean = false;
   constructor(
     private warehouseService: WarehouseService,
     private authService: AuthService, // Inyecta el AuthService
@@ -62,6 +63,21 @@ export default class TablesComponent implements OnInit {
       },
       (error) => {
         console.error('Error fetching warehouses:', error);
+      }
+    );
+  }
+  
+  loadEmployees(): void {
+    if (!this.token) {
+      console.error('No se puede cargar almacenes sin token.');
+      return;
+    }
+    this.warehouseService.getWarehouseEmployees(this.token, this.selectedWarehouseId!).subscribe(
+      (data) => {
+        this.employees = data;
+      },
+      (error) => {
+        console.error('Error cargando empleados.', error);
       }
     );
   }
@@ -114,10 +130,10 @@ export default class TablesComponent implements OnInit {
 
     if (this.employeeForm.valid) {
       const data = {
-        userName: this.employeeForm.value.userName,
+        username: this.employeeForm.value.userName,
         permissions: this.employeeForm.value.permissions.split(','),
       };
-
+      console.log('GEGE: ', this.selectedWarehouseId)
       this.warehouseService.assignEmployee(this.token, this.selectedWarehouseId, data).subscribe(
         (response) => {
           console.log('Employee assigned:', response);
@@ -129,25 +145,25 @@ export default class TablesComponent implements OnInit {
         }
       );
     }
-  } 
+  }
 
   assignEmployeeDirectly(warehouseId: string): void {
     if (!this.token) {
       console.error('No se puede asignar empleado sin token.');
       return;
     }
-  
+    console.log('WAREHOUSE', warehouseId)
     const userName = prompt('Introduce el username del empleado:');
     const permissions = prompt(
       'Introduce los permisos separados por comas (ADD, EDIT, DELETE):'
     );
-  
+
     if (userName && permissions) {
       const data = {
-        userName: userName,
+        username: userName,
         permissions: permissions.split(','),
       };
-  
+
       this.warehouseService.assignEmployee(this.token, warehouseId, data).subscribe(
         (response) => {
           console.log('Empleado asignado:', response);
@@ -159,7 +175,71 @@ export default class TablesComponent implements OnInit {
       );
     }
   }
-  
-  
+
+  // Eliminar almacén
+  deleteWarehouse(warehouseId: string): void {
+    if (!this.token) {
+      console.error('No se puede eliminar un almacén sin token.');
+      return;
+    }
+    if(confirm('¿Estás seguro de eliminar este almacén?')){
+      this.warehouseService.deleteWarehouse(this.token, warehouseId).subscribe(
+        (response) => {
+          console.log('Almacén elimnado: ', response);
+          this.loadWarehouses();
+        },
+        (error) => {
+          console.error('Error al eliminar el almacén', error)
+        }
+      );
+    }
+  }
+  //elimina empleado del almacen
+  deleteEmployeeFromWarehouse(warehouseId: any, employeeId: string): void {
+    if (!this.token) {
+      console.error('No se puede eliminar un almacén sin token.');
+      return;
+    }
+    console.log('GAGA: ', warehouseId)
+    if (confirm('¿Estás seguro de que deseas eliminar este empleado del almacén?')) {
+      this.warehouseService.removeEmployee(this.token, warehouseId, employeeId).subscribe(
+        (response) => {
+          console.log('Empleado eliminado.', response)
+          this.loadEmployees();
+        },
+        (error) => {
+          console.error('Error al eliminar al empleado', error)
+        }
+      );
+    }
+  }
+  //actualizar almacen
+  updateWarehouse(): void {
+    if (!this.token) {
+      console.error('No se puede eliminar un almacén sin token.');
+      return;
+    }
+    if(this.warehouseForm.valid) { //para obtener los valores del form
+      const data = {
+        name: this.warehouseForm.value.name,
+        location: this.warehouseForm.value.location,
+      };
+
+      this.warehouseService.updateWarehouse(this.token, this.selectedWarehouseId!, data).subscribe(
+        (response) => {
+          console.log('Almacen actualizado:', response);
+          this.loadWarehouses();
+        },
+        (error) => {
+          console.error('Error al actualizar almacén.', error);
+        }
+      );
+    } else {
+      console.log('Formulario no válido');
+    }
+  }
+  openForm(): void {
+    this.isFormOpen = true;
+  }
 }
 
