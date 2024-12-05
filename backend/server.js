@@ -215,19 +215,19 @@ app.post('/warehouses', authenticateToken, async (req, res) => {
 app.post('/warehouses/:id/employees', authenticateToken, async (req, res) => {
   try {
     const { id: warehouseId } = req.params;
-    const { employeeId, permissions } = req.body;
+    const { userName, permissions } = req.body;
 
     const warehouse = await Warehouse.findOne({ _id: warehouseId, userId: req.user.id });
     if (!warehouse) {
       return res.status(404).json({ message: 'Almacén no encontrado o no tienes acceso' });
     }
 
-    const employee = await User.findById(employeeId);
+    const employee = await User.findOne(userName);
     if (!employee || employee.role !== 'Empleado') {
       return res.status(400).json({ message: 'El usuario no es un empleado válido' });
     }
 
-    warehouse.employees.push({ employeeId, permissions });
+    warehouse.employees.push({ userName, permissions });
     await warehouse.save();
 
     res.status(200).json({ message: 'Empleado asignado exitosamente', warehouse });

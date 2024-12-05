@@ -1,25 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
-
-interface Product {
-    id: number;
-    name: string;
-    description: string;
-    stock: number;
-    category: string;
-    price: number;
-    supplier: string;
-    maxCapacity: number;
-    warehouseId: number;
-    imageUrl: string;
-    minPrice: number;
-}
-
-interface Warehouse {
-  id: number;
-  name: string;
-}
+import { WarehouseService } from '../../services/warehouse-service/warehouse.service';
+import { AuthService } from '../../services/auth/auth.service'; // Importa el servicio AuthService
 
 @Component({
   selector: 'app-tables',
@@ -28,100 +11,155 @@ interface Warehouse {
   templateUrl: './tables.component.html',
   styleUrls: ['./tables.component.css']
 })
-export default class TablesComponent {
-  productForm: FormGroup;
-  selectedFile: File | null = null;
-  showForm = false;
-  products: Product[] = [
-    {
-      id: 1,
-      name: 'Producto A',
-      description: 'Descripción del Producto A',
-      stock: 50,
-      category: 'Categoría 1',
-      price: 10.5,
-      supplier: 'Proveedor X',
-      maxCapacity: 100,
-      warehouseId: 1,
-      imageUrl: 'coca.png',
-      minPrice: 8.5,
-    },
-    {
-      id: 2,
-      name: 'Producto B',
-      description: 'Descripción del Producto B',
-      stock: 15,
-      category: 'Categoría 2',
-      price: 20.0,
-      supplier: 'Proveedor Y',
-      maxCapacity: 150,
-      warehouseId: 2,
-      imageUrl: 'aquarius.png',
-      minPrice: 16.0,
-    },
-    {
-      id: 3,
-      name: 'Producto C',
-      description: 'Descripción del Producto C',
-      stock: 40,
-      category: 'Categoría 1',
-      price: 15.0,
-      supplier: 'Proveedor Z',
-      maxCapacity: 50,
-      warehouseId: 1,
-      imageUrl: 'lays.png',
-      minPrice: 11.5,
-    }
-  ];
-  warehouses: Warehouse[] = [
-    { id: 1, name: 'Almacén 1' },
-    { id: 2, name: 'Almacén 2' },
-    { id: 3, name: 'Almacén 3' }
-  ];
-  selectedWarehouse: number | null = null;  
-  filteredProducts: Product[] = [...this.products];
+export default class TablesComponent implements OnInit {
+  warehouses: any[] = [];
+  employees: any[] = [];
+  selectedWarehouseId: string | null = null;
+  warehouseForm: FormGroup;
+  employeeForm: FormGroup;
+  token: string | null = null; // Cambia el valor inicial a `null`
 
-  constructor(private fb: FormBuilder) {
-    this.productForm = this.fb.group({
-      id: ['', Validators.required],
+  constructor(
+    private warehouseService: WarehouseService,
+    private authService: AuthService, // Inyecta el AuthService
+    private fb: FormBuilder
+  ) {
+    this.warehouseForm = this.fb.group({
       name: ['', Validators.required],
-      description: [''],
-      stock: ['', Validators.required],
-      category: [''],
-      price: ['', Validators.required],
-      supplier: [''],
-      maxCapacity: ['', Validators.required],
-      warehouseId: ['', Validators.required],
-      minPrice: ['', Validators.required]
+      location: ['', Validators.required],
+    });
+
+    this.employeeForm = this.fb.group({
+      employeeId: ['', Validators.required],
+      permissions: ['', Validators.required],
     });
   }
 
-  filterByWarehouse() {
-    if (this.selectedWarehouse !== null && this.selectedWarehouse !== undefined) {
-      this.filteredProducts = this.products.filter(
-        product => product.warehouseId === Number(this.selectedWarehouse)
+  ngOnInit(): void {
+    this.loadToken(); // Obtén el token al inicializar
+    this.loadWarehouses();
+  }
+
+  // Método para obtener el token
+  loadToken(): void {
+    this.token = this.authService.getToken(); // Usa el método del AuthService
+    if (!this.token) {
+      console.error('No se encontró el token. Por favor, inicia sesión.');
+      // Opcional: Redirige al login si el token no existe
+    }
+  }
+
+  // Cargar todos los almacenes del usuario
+  loadWarehouses(): void {
+    if (!this.token) {
+      console.error('No se puede cargar almacenes sin token.');
+      return;
+    }
+
+    this.warehouseService.getUserWarehouses(this.token).subscribe(
+      (data) => {
+        this.warehouses = data;
+      },
+      (error) => {
+        console.error('Error fetching warehouses:', error);
+      }
+    );
+  }
+
+  // Crear un nuevo almacén
+  createWarehouse(): void {
+    if (!this.token) {
+      console.error('No se puede crear un almacén sin token.');
+      return;
+    }
+
+    if (this.warehouseForm.valid) {
+      this.warehouseService.createWarehouse(this.token, this.warehouseForm.value).subscribe(
+        (response) => {
+          console.log('Warehouse created:', response);
+          this.loadWarehouses(); // Recargar la lista de almacenes
+          this.warehouseForm.reset();
+        },
+        (error) => {
+          console.error('Error creating warehouse:', error);
+        }
       );
-    } else {
-      this.filteredProducts = [...this.products];
     }
   }
 
-  onFileSelect(event: Event) {
-    const fileInput = event.target as HTMLInputElement;
-    if (fileInput.files && fileInput.files.length > 0) {
-      this.selectedFile = fileInput.files[0];
+  // Ver empleados de un almacén
+  viewEmployees(warehouseId: string): void {
+    if (!this.token) {
+      console.error('No se puede ver empleados sin token.');
+      return;
     }
-  }
-  toggleForm() {
-    this.showForm = !this.showForm;
+
+    this.selectedWarehouseId = warehouseId;
+    this.warehouseService.getWarehouseEmployees(this.token, warehouseId).subscribe(
+      (data) => {
+        this.employees = data;
+      },
+      (error) => {
+        console.error('Error fetching employees:', error);
+      }
+    );
   }
 
-  createProduct() {
-    if (this.productForm.valid) {
-      const product = { ...this.productForm.value };
-      this.products.push(product);
-      this.productForm.reset();
-      this.showForm = false;
+  // Asignar un empleado a un almacén
+  assignEmployee(): void {
+    if (!this.token || !this.selectedWarehouseId) {
+      console.error('No se puede asignar empleado sin token o almacén seleccionado.');
+      return;
+    }
+
+    if (this.employeeForm.valid) {
+      const data = {
+        userName: this.employeeForm.value.userName,
+        permissions: this.employeeForm.value.permissions.split(','),
+      };
+
+      this.warehouseService.assignEmployee(this.token, this.selectedWarehouseId, data).subscribe(
+        (response) => {
+          console.log('Employee assigned:', response);
+          this.viewEmployees(this.selectedWarehouseId!);
+          this.employeeForm.reset();
+        },
+        (error) => {
+          console.error('Error assigning employee:', error);
+        }
+      );
+    }
+  } 
+
+  assignEmployeeDirectly(warehouseId: string): void {
+    if (!this.token) {
+      console.error('No se puede asignar empleado sin token.');
+      return;
+    }
+  
+    const userName = prompt('Introduce el username del empleado:');
+    const permissions = prompt(
+      'Introduce los permisos separados por comas (ADD, EDIT, DELETE):'
+    );
+  
+    if (userName && permissions) {
+      const data = {
+        userName: userName,
+        permissions: permissions.split(','),
+      };
+  
+      this.warehouseService.assignEmployee(this.token, warehouseId, data).subscribe(
+        (response) => {
+          console.log('Empleado asignado:', response);
+          this.viewEmployees(warehouseId); // Actualiza la lista de empleados
+        },
+        (error) => {
+          console.error('Error al asignar empleado:', error);
+        }
+      );
     }
   }
+  
+  
 }
+

@@ -1,146 +1,137 @@
-<div class="container mx-auto p-6">
-    <h1 class="text-center text-2xl font-bold mb-6">Gestión de Productos</h1>
-  
-    <!-- Botón para desplegar el formulario -->
-    <div class="text-right mb-6">
-      <button
-        class="bg-indigo-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-indigo-700 focus:outline-none"
-        (click)="toggleForm()">
-        {{ showForm ? 'Ocultar Formulario' : 'Agregar Producto' }}
-      </button>
+<div class="container">
+  <h2>Gestión de Almacenes</h2>
+
+  <!-- Formulario para crear un almacén -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h4>Crear Nuevo Almacén</h4>
     </div>
-  
-    <!-- Formulario de Creación de Producto -->
-    <div *ngIf="showForm" class="bg-white p-6 shadow-md rounded-lg mb-6">
-      <form [formGroup]="productForm" (ngSubmit)="createProduct()" class="space-y-4">
-        <div>
-          <label for="id" class="block text-sm font-medium text-gray-700 mb-1">ID</label>
-          <input type="number" id="id" formControlName="id" class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-        </div>
-        <div>
-          <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
-          <input type="text" id="name" formControlName="name" class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-        </div>
-        <div>
-          <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
-          <textarea id="description" formControlName="description" class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"></textarea>
-        </div>
-        <div>
-          <label for="stock" class="block text-sm font-medium text-gray-700 mb-1">Stock</label>
-          <input type="number" id="stock" formControlName="stock" class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-        </div>
-        <div>
-          <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
-          <input type="text" id="category" formControlName="category" class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-        </div>
-        <div>
-          <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Precio</label>
-          <input type="number" id="price" formControlName="price" class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-        </div>
-        <div>
-          <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Precio Mínimo</label>
-          <input type="number" id="price" formControlName="price" class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-        </div>
-        <div>
-          <label for="supplier" class="block text-sm font-medium text-gray-700 mb-1">Proveedor</label>
-          <input type="text" id="supplier" formControlName="supplier" class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-        </div>
-        <div>
-          <label for="warehouse" class="block text-sm font-medium text-gray-700 mb-1">Almacén</label>
-          <select id="warehouse" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" formControlName="warehouseId">
-            <option value="" disabled selected>Selecciona un almacén</option>
-            <option *ngFor="let warehouse of warehouses" [value]="warehouse.id">{{ warehouse.name }}</option>
-          </select>
-        </div>
-        <div>
-            <label for="image" class="block text-sm font-medium text-gray-700 mb-1">Foto del Producto</label>
-            <input
-              type="file"
-              id="image"
-              (change)="onFileSelect($event)"
-              accept="image/*"
-              class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+    <div class="card-body">
+      <form [formGroup]="warehouseForm" (ngSubmit)="createWarehouse()">
+        <div class="form-group">
+          <label for="name">Nombre del Almacén:</label>
+          <input
+            id="name"
+            type="text"
+            class="form-control"
+            formControlName="name"
+            placeholder="Escribe el nombre del almacén"
+          />
+          <div
+            *ngIf="warehouseForm.get('name')?.invalid && warehouseForm.get('name')?.touched"
+            class="text-danger"
+          >
+            El nombre es obligatorio.
           </div>
+        </div>
+
+        <div class="form-group mt-3">
+          <label for="location">Ubicación:</label>
+          <input
+            id="location"
+            type="text"
+            class="form-control"
+            formControlName="location"
+            placeholder="Escribe la ubicación del almacén"
+          />
+          <div
+            *ngIf="warehouseForm.get('location')?.invalid && warehouseForm.get('location')?.touched"
+            class="text-danger"
+          >
+            La ubicación es obligatoria.
+          </div>
+        </div>
+
         <button
           type="submit"
-          class="w-full py-2 px-4 bg-indigo-600 text-white font-medium rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-          Crear Producto
+          class="btn btn-primary mt-3"
+          [disabled]="warehouseForm.invalid"
+        >
+          Crear Almacén
         </button>
       </form>
     </div>
-    <!-- Filtro por almacén -->
-    <div class="mb-6">
-      <label for="filterWarehouse" class="block text-lg font-medium text-gray-700 mb-2">
-        Filtrar por almacén
-      </label>
-      <select
-        id="filterWarehouse"
-        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-        [(ngModel)]="selectedWarehouse"
-        (change)="filterByWarehouse()"
-      >
-        <option [ngValue]="null" selected>Todos los almacenes</option>
-        <option *ngFor="let warehouse of warehouses" [value]="warehouse.id">
-          {{ warehouse.name }}
-        </option>
-      </select>
+  </div>
+
+  <!-- Tabla de almacenes -->
+  <div class="card">
+    <div class="card-header">
+      <h4>Lista de Almacenes</h4>
     </div>
-  
-    <!-- Tabla de Productos -->
-    <div class="overflow-x-auto" *ngIf="filteredProducts.length > 0">
-      <table class="min-w-full border-collapse border border-gray-200">
-        <thead class="bg-gray-100">
-            <tr>
-              <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Foto</th>  
-              <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Nombre</th>
-              <th class="px-4 py-2 border border-gray-300 text-left font-semibold">ID</th>
-              <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Nivel de Stock</th>
-              <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Descripción</th>
-              <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Disponibles</th>
-              <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Precio</th>
-              <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Categoría</th>
-              <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Proveedor</th>
-              <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Capacidad</th>
-              <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Almacén</th>
-              <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Precio Mínimo</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let product of filteredProducts" class="even:bg-gray-50">
-                <td class="px-4 py-2 border border-gray-300">
-                    <img
-                      [src]="product.imageUrl"
-                      alt="Foto del Producto"
-                      class="h-16 w-16 object-cover rounded-md">
-                  </td>
-              <td class="px-4 py-2 border border-gray-300">{{ product.name }}</td>
-              <td class="px-4 py-2 border border-gray-300">{{ product.id }}</td>
-              <td class="px-4 py-2 border border-gray-300">
-                <div class="w-full bg-gray-200 rounded-md">
-                  <div
-                    [style.width.%]="(product.stock / product.maxCapacity) * 100"
-                    [ngClass]="{
-                        'bg-green-500': (product.stock / product.maxCapacity) > 0.6,
-                        'bg-yellow-500': (product.stock / product.maxCapacity) > 0.3 && (product.stock / product.maxCapacity) <= 0.6,
-                        'bg-red-500': (product.stock / product.maxCapacity) <= 0.3
-                      }"
-                    class="h-2 rounded-md">
-                  </div>
-                </div>
-                <span>{{ ((product.stock / product.maxCapacity) * 100).toFixed(0) }}%</span>
-              </td>
-              <td class="px-4 py-2 border border-gray-300">{{ product.description }}</td>
-              <td class="px-4 py-2 border border-gray-300">{{ product.stock }}</td>
-              <td class="px-4 py-2 border border-gray-300">{{ product.price | currency }}</td>
-              <td class="px-4 py-2 border border-gray-300">{{ product.category }}</td>
-              <td class="px-4 py-2 border border-gray-300">{{ product.supplier }}</td>
-              <td class="px-4 py-2 border border-gray-300">{{ product.maxCapacity }}</td>
-              <td class="px-4 py-2 border border-gray-300">{{ product.warehouseId }}</td>
-              <td class="px-4 py-2 border border-gray-300">{{ product.minPrice | currency  }}</td>
-            </tr>
-          </tbody>          
+    <div class="card-body">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Ubicación</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let warehouse of warehouses">
+            <td>{{ warehouse.name }}</td>
+            <td>{{ warehouse.location }}</td>
+            <td>
+              <!-- Menú desplegable con acciones -->
+              <div class="dropdown">
+                <button
+                  class="btn btn-secondary dropdown-toggle"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Acciones
+                </button>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      href="#"
+                      (click)="viewEmployees(warehouse.id)"
+                    >
+                      Ver empleados
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      href="#"
+                      (click)="assignEmployeeDirectly(warehouse.id)"
+                    >
+                      Asignar empleado
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+        </tbody>
       </table>
     </div>
-    <p *ngIf="filteredProducts.length === 0" class="text-center text-gray-500 mt-4">No hay productos disponibles.</p>
   </div>
-  
+
+  <!-- Detalle de empleados del almacén seleccionado -->
+  <div class="card mt-4" *ngIf="selectedWarehouseId">
+    <div class="card-header">
+      <h4>Empleados en Almacén</h4>
+    </div>
+    <div class="card-body">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Permisos</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let employee of employees">
+            <td>{{ employee.id }}</td>
+            <td>{{ employee.name }}</td>
+            <td>{{ employee.permissions.join(', ') }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
