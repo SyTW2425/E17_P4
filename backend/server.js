@@ -339,7 +339,7 @@ app.get('/warehouses', authenticateToken, async (req, res) => {
   }
 });
 
-
+// AÑADIR UN METODO PARA CAMBIAR PERMISOS DE LOS EMPLEADOS DE UN ALMACEN (PARECIDO A UPDATEWAREHOUSE)
 
 
 // Exportar app para pruebas

@@ -4,11 +4,12 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } 
 import { WarehouseService } from '../../services/warehouse-service/warehouse.service';
 import { AuthService } from '../../services/auth/auth.service';
 import { PermissionPipe } from '../../components/pipes/permissions.pipe'
-import { response } from 'express';
+import {DialogModule} from 'primeng/dialog'
+import {ButtonModule} from 'primeng/button'
 @Component({
   selector: 'app-tables',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, ReactiveFormsModule, FormsModule, PermissionPipe],
+  imports: [CommonModule, CurrencyPipe, ReactiveFormsModule, FormsModule, PermissionPipe, DialogModule, ButtonModule],
   templateUrl: './tables.component.html',
   styleUrls: ['./tables.component.css']
 })
@@ -17,6 +18,7 @@ export default class TablesComponent implements OnInit {
   employees: any[] = [];
   selectedWarehouseId: string | null = null;
   warehouseForm: FormGroup;
+  warehouseUpdateForm: FormGroup;
   employeeForm: FormGroup;
   token: string | null = null; // Cambia el valor inicial a `null`
   isFormOpen: boolean = false;
@@ -29,6 +31,12 @@ export default class TablesComponent implements OnInit {
       name: ['', Validators.required],
       location: ['', Validators.required],
     });
+
+    this.warehouseUpdateForm = this.fb.group({
+      name: ['', Validators.required],
+      location: ['', Validators.required],
+    });
+
 
     this.employeeForm = this.fb.group({
       employeeId: ['', Validators.required],
@@ -200,7 +208,7 @@ export default class TablesComponent implements OnInit {
       console.error('No se puede eliminar un almacén sin token.');
       return;
     }
-    console.log('GAGA: ', warehouseId)
+
     if (confirm('¿Estás seguro de que deseas eliminar este empleado del almacén?')) {
       this.warehouseService.removeEmployee(this.token, warehouseId, employeeId).subscribe(
         (response) => {
@@ -219,10 +227,10 @@ export default class TablesComponent implements OnInit {
       console.error('No se puede eliminar un almacén sin token.');
       return;
     }
-    if(this.warehouseForm.valid) { //para obtener los valores del form
+    if(this.warehouseUpdateForm.valid) { //para obtener los valores del form
       const data = {
-        name: this.warehouseForm.value.name,
-        location: this.warehouseForm.value.location,
+        name: this.warehouseUpdateForm.value.name,
+        location: this.warehouseUpdateForm.value.location,
       };
 
       this.warehouseService.updateWarehouse(this.token, this.selectedWarehouseId!, data).subscribe(
@@ -232,13 +240,21 @@ export default class TablesComponent implements OnInit {
         },
         (error) => {
           console.error('Error al actualizar almacén.', error);
+        },
+        ()=>{this.isFormOpen = false
+          this.warehouseUpdateForm.reset()
         }
+        
       );
     } else {
       console.log('Formulario no válido');
+      this.isFormOpen = false
     }
+    
   }
-  openForm(): void {
+  //abrir formulario
+  openForm(warehouseId: any): void {
+    this.selectedWarehouseId = warehouseId;
     this.isFormOpen = true;
   }
 }

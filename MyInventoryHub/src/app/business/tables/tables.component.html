@@ -1,9 +1,5 @@
 <div class="container">
   <h2>Gestión de Almacenes</h2>
-  <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-  Launch demo modal
-</button>
   <!-- Formulario para crear un almacén -->
   <div class="card mb-4">
     <div class="card-header">
@@ -13,43 +9,24 @@
       <form [formGroup]="warehouseForm" (ngSubmit)="createWarehouse()">
         <div class="form-group">
           <label for="name">Nombre del Almacén:</label>
-          <input
-            id="name"
-            type="text"
-            class="form-control"
-            formControlName="name"
-            placeholder="Escribe el nombre del almacén"
-          />
-          <div
-            *ngIf="warehouseForm.get('name')?.invalid && warehouseForm.get('name')?.touched"
-            class="text-danger"
-          >
+          <input id="name" type="text" class="form-control" formControlName="name"
+            placeholder="Escribe el nombre del almacén" />
+          <div *ngIf="warehouseForm.get('name')?.invalid && warehouseForm.get('name')?.touched" class="text-danger">
             El nombre es obligatorio.
           </div>
         </div>
 
         <div class="form-group mt-3">
           <label for="location">Ubicación:</label>
-          <input
-            id="location"
-            type="text"
-            class="form-control"
-            formControlName="location"
-            placeholder="Escribe la ubicación del almacén"
-          />
-          <div
-            *ngIf="warehouseForm.get('location')?.invalid && warehouseForm.get('location')?.touched"
-            class="text-danger"
-          >
+          <input id="location" type="text" class="form-control" formControlName="location"
+            placeholder="Escribe la ubicación del almacén" />
+          <div *ngIf="warehouseForm.get('location')?.invalid && warehouseForm.get('location')?.touched"
+            class="text-danger">
             La ubicación es obligatoria.
           </div>
         </div>
 
-        <button
-          type="submit"
-          class="btn btn-primary mt-3"
-          [disabled]="warehouseForm.invalid"
-        >
+        <button type="submit" class="btn btn-primary mt-3" [disabled]="warehouseForm.invalid">
           Crear Almacén
         </button>
       </form>
@@ -77,48 +54,28 @@
             <td>
               <!-- Menú desplegable con acciones -->
               <div class="dropdown">
-                <button
-                  class="btn btn-secondary dropdown-toggle"
-                  type="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
+                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                  aria-expanded="false">
                   Acciones
                 </button>
                 <ul class="dropdown-menu">
                   <li>
-                    <a
-                      class="dropdown-item"
-                      href="#"
-                      (click)="viewEmployees(warehouse._id)"
-                    >
+                    <a class="dropdown-item" href="#" (click)="viewEmployees(warehouse._id)">
                       Ver empleados
                     </a>
                   </li>
                   <li>
-                    <a
-                      class="dropdown-item"
-                      href="#"
-                      (click)="assignEmployeeDirectly(warehouse._id)"
-                    >
+                    <a class="dropdown-item" href="#" (click)="assignEmployeeDirectly(warehouse._id)">
                       Asignar empleado
                     </a>
                   </li>
                   <li>
-                    <a
-                      class="dropdown-item"
-                      href="#"
-                      (click)="deleteWarehouse(warehouse._id)"
-                    >
+                    <a class="dropdown-item" href="#" (click)="deleteWarehouse(warehouse._id)">
                       Eliminar almacen
                     </a>
                   </li>
                   <li>
-                    <a
-                      class="dropdown-item"
-                      href="#"
-                      (click)="openForm()"
-                    >
+                    <a class="dropdown-item" href="#" (click)="openForm(warehouse._id)">
                       actualizar almacén
                     </a>
                   </li>
@@ -148,25 +105,18 @@
           <tr *ngFor="let employee of employees">
             <td>{{ employee.employeeId.firstName + ' ' + employee.employeeId.lastName}}</td>
             <!-- <td>{{ employee.permissions.join(', ') }}</td> -->
-             <td>{{employee.permissions | Permission}}</td>
-             <td>
+            <td>{{employee.permissions | Permission}}</td>
+            <td>
               <!-- Menú desplegable con acciones -->
               <div class="dropdown">
-                <button
-                  class="btn btn-secondary dropdown-toggle"
-                  type="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
+                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                  aria-expanded="false">
                   Acciones
                 </button>
                 <ul class="dropdown-menu">
                   <li>
-                    <a
-                      class="dropdown-item"
-                      href="#"
-                      (click)="deleteEmployeeFromWarehouse(selectedWarehouseId, employee.employeeId._id)"
-                    >
+                    <a class="dropdown-item" href="#"
+                      (click)="deleteEmployeeFromWarehouse(selectedWarehouseId, employee.employeeId._id)">
                       Eliminar empleado
                     </a>
                   </li>
@@ -180,36 +130,27 @@
   </div>
 </div>
 
-<!-- Modal -->
-<div id="myModal" class="modal" [ngStyle]="{'display': isFormOpen ? 'block' : 'none'}">
-
-  <!-- Modal content -->
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <p>Some text in the Modal..</p>
-  </div>
-
-</div>
-
-
-
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        ...
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+<!-- MODAL -->
+<p-dialog header="Edita el almacén" [modal]="true" [(visible)]="isFormOpen" [style]="{ width: '30rem' }">
+  <span class="p-text-secondary block mb-5">Actualiza tu información.</span>
+  <form [formGroup]="warehouseUpdateForm" (ngSubmit)="updateWarehouse()">
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="warehousename" class="font-semibold w-6rem">Nombre del almacén</label>
+      <input  id="name" class="flex-auto" autocomplete="off" formControlName="name" />
+      <div *ngIf="warehouseUpdateForm.get('name')?.invalid && warehouseUpdateForm.get('name')?.touched" class="text-danger">
+        El nombre es obligatorio.
       </div>
     </div>
-  </div>
-</div>
+    <div class="flex align-items-center gap-3 mb-5">
+      <label for="warehouselocation" class="font-semibold w-6rem">Ubicación del almacén</label>
+      <input  id="location" class="flex-auto" autocomplete="off" formControlName="location"  />
+      <div *ngIf="warehouseUpdateForm.get('location')?.invalid && warehouseUpdateForm.get('location')?.touched" class="text-danger">
+        La ubicación es obligatoria.
+      </div>
+    </div>
+    <div class="flex justify-content-end gap-2">
+      <p-button label="Cancelar" severity="secondary" (onClick)="isFormOpen = false" />
+      <p-button label="Guardar" type="submit" [disabled]="warehouseUpdateForm.invalid"/>
+    </div>
+  </form>
+</p-dialog>
