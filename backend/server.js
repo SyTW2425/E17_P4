@@ -339,8 +339,42 @@ app.get('/warehouses', authenticateToken, async (req, res) => {
   }
 });
 
-// AÑADIR UN METODO PARA CAMBIAR PERMISOS DE LOS EMPLEADOS DE UN ALMACEN (PARECIDO A UPDATEWAREHOUSE)
 
+//editar permisos de los empleados (solo dueños)
+app.put('/warehouses/:id/employees/:employeeId', authenticateToken, async (req, res) => {
+  try {
+    const { id: warehouseId, employeeId } = req.params;
+    const { permissions } = req.body;
+
+    // Validar entrada
+    if (!permissions || !Array.isArray(permissions)) {
+      return res.status(400).json({ message: 'Los permisos deben ser un array válido.' });
+    }
+
+    // Buscar el almacén y verificar que pertenece al usuario autenticado
+    const warehouse = await Warehouse.findOne({ _id: warehouseId, userId: req.user.id });
+    if (!warehouse) {
+      return res.status(404).json({ message: 'Almacén no encontrado o no tienes acceso.' });
+    }
+
+    // Buscar el empleado dentro del almacén
+    const employee = warehouse.employees.find(emp => emp.userName === employeeId);
+    if (!employee) {
+      return res.status(404).json({ message: 'Empleado no encontrado en este almacén.' });
+    }
+
+    // Actualizar permisos
+    employee.permissions = permissions;
+
+    // Guardar los cambios en el almacén
+    await warehouse.save();
+
+    res.status(200).json({ message: 'Permisos actualizados exitosamente.', employee });
+  } catch (error) {
+    console.error('Error al actualizar permisos:', error);
+    res.status(500).json({ message: 'Error al actualizar permisos.', error });
+  }
+});
 
 // Exportar app para pruebas
 module.exports = app;
