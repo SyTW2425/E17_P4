@@ -17,11 +17,14 @@ export default class TablesComponent implements OnInit {
   warehouses: any[] = [];
   employees: any[] = [];
   selectedWarehouseId: string | null = null;
+  selectedEmployeeId: string | null = null;
   warehouseForm: FormGroup;
   warehouseUpdateForm: FormGroup;
+  employeeUpdateForm: FormGroup;
   employeeForm: FormGroup;
   token: string | null = null; // Cambia el valor inicial a `null`
   isFormOpen: boolean = false;
+  isUpdateEmployeeFormOpen: boolean = false;
   constructor(
     private warehouseService: WarehouseService,
     private authService: AuthService, // Inyecta el AuthService
@@ -41,6 +44,10 @@ export default class TablesComponent implements OnInit {
     this.employeeForm = this.fb.group({
       employeeId: ['', Validators.required],
       permissions: ['', Validators.required],
+    });
+
+    this.employeeUpdateForm = this.fb.group({
+      permissions: ['', [Validators.required]],
     });
   }
 
@@ -252,10 +259,41 @@ export default class TablesComponent implements OnInit {
     }
     
   }
+  updateEmployeePermissions(): void {
+    if (!this.token || !this.selectedWarehouseId) {
+      console.error('No se puede actualizar permisos sin token o almacén seleccionado.');
+      return;
+    }
+    if (this.employeeUpdateForm.valid && this.selectedWarehouseId && this.token) {
+      const permissions = this.employeeUpdateForm.value.permissions.split(',');
+      this.warehouseService
+        .updateEmployeePermissions(this.token, this.selectedWarehouseId, this.selectedEmployeeId!, permissions)
+        .subscribe(
+          (response) => {
+            console.log('Permisos actualizados:', response);
+            this.viewEmployees(this.selectedWarehouseId!); 
+          },
+          (error) => {
+            console.error('Error al actualizar permisos:', error);
+            this.isUpdateEmployeeFormOpen = false;
+          },
+          ()=>{this.isUpdateEmployeeFormOpen = false
+            this.employeeUpdateForm.reset()
+          }
+        );
+    }
+
+  }
+
   //abrir formulario
   openForm(warehouseId: any): void {
     this.selectedWarehouseId = warehouseId;
     this.isFormOpen = true;
+  }
+
+  openUpdateEmployeeForm(employeeId: any):void {
+    this.selectedEmployeeId = employeeId;
+    this.isUpdateEmployeeFormOpen = true;
   }
 }
 

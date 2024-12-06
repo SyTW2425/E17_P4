@@ -52,7 +52,7 @@ export class WarehouseService {
     });
   }
 
-  // Eliminar un empleado de un almacén
+  // Eliminar un empleado de un almacén(solo dueños)
   removeEmployee(
     token: string,
     warehouseId: string,
@@ -63,15 +63,31 @@ export class WarehouseService {
     });
   }
 
-  // Listar empleados asignados a un almacén
+  // Listar empleados asignados a un almacén(solo dueños)
   getWarehouseEmployees(token: string, warehouseId: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/${warehouseId}/employees`, {
       headers: this.getHeaders(token),
     });
   }
 
-  // Obtener almacenes del usuario (dueño o empleado)
+  // Obtener almacenes del usuario (dueños o empleados)
   getUserWarehouses(token: string): Observable<any> {
     return this.http.get(this.baseUrl, { headers: this.getHeaders(token) });
   }
+  
+  // actualizar permisos de los usuarios (solo dueño)
+  updateEmployeePermissions(
+    token: string,
+    warehouseId: string,
+    employeeId: string,
+    permissions: string[]
+  ): Observable<any> {
+    const url = `${this.baseUrl}/${warehouseId}/employees/${employeeId}`;
+    const data = { permissions };
+  
+    return this.http.put(url, data, {
+      headers: this.getHeaders(token),
+    });
+  }
+  
 }

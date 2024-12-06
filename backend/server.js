@@ -352,13 +352,13 @@ app.put('/warehouses/:id/employees/:employeeId', authenticateToken, async (req, 
     }
 
     
-    const warehouse = await Warehouse.findOne({ _id: warehouseId, userId: req.user.id });
+    const warehouse = await Warehouse.findOne({ _id: warehouseId, userId: req.user.id }); 
     if (!warehouse) {
       return res.status(404).json({ message: 'Almacén no encontrado o no tienes acceso.' });
     }
 
     
-    const employee = warehouse.employees.find(emp => emp.userName === employeeId);
+    const employee = warehouse.employees.find(emp => emp.id === employeeId); //esto tiene algo raro
     if (!employee) {
       return res.status(404).json({ message: 'Empleado no encontrado en este almacén.' });
     }
