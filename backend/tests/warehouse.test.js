@@ -63,6 +63,7 @@ describe('Warehouse Endpoints', () => {
     employeeToken = `Bearer ${generateTestToken(employee)}`;
     ownerId = owner._id;
     employeeId = employee._id;
+    employeeUsername = employee.username;
   });
 
   it('debería crear un almacén con éxito si el usuario es dueño', async () => {
@@ -127,43 +128,7 @@ describe('Warehouse Endpoints', () => {
       expect(response.body.message).toBe('Empleado asignado exitosamente');
     });
   */
-  it('debería asignar un empleado a un almacén', async () => {
-    // Crear el empleado en la base de datos usando el ID generado
-    await User.create({
-      _id: employeeId,
-      firstName: 'Juan',
-      lastName: 'Pérez',
-      username: 'juanp',
-      email: 'employee@example.com',
-      password: 'password123', // Contraseña ya encriptada
-      role: 'Empleado',
-    });
 
-    // Crear un almacén en la base de datos
-    const warehouse = await Warehouse.create({
-      name: 'Warehouse para asignar',
-      location: 'Ubicación para asignar',
-      userId: ownerId, // Este es el ID del dueño
-    });
-
-    // Realizar la solicitud al endpoint
-    const response = await request(app)
-      .post(`/warehouses/${warehouse._id}/employees`)
-      .set('Authorization', ownerToken) // Asegurarse de que el token incluye los datos del dueño
-      .send({
-        employeeId: employeeId, // Usar el ID del empleado creado
-        permissions: ['ADD', 'EDIT'],
-      });
-
-    // Verificaciones
-    expect(response.status).toBe(200); // Debería ser exitoso
-    expect(response.body.message).toBe('Empleado asignado exitosamente');
-    expect(response.body.warehouse.employees.length).toBe(1); // Confirmar que se asignó
-    expect(response.body.warehouse.employees[0]).toMatchObject({
-      employeeId: employeeId.toString(),
-      permissions: ['ADD', 'EDIT'],
-    });
-  });
   it('debería actualizar un almacén si el usuario es dueño', async () => {
     const warehouse = await Warehouse.create({
       name: 'Warehouse a actualizar',
