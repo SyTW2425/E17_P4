@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
 import { WarehouseService } from '../../services/warehouse-service/warehouse.service';
+import { ProductService } from '../../services/product-service/product.service';
 import { AuthService } from '../../services/auth/auth.service';
 import { PermissionPipe } from '../../components/pipes/permissions.pipe'
-import {DialogModule} from 'primeng/dialog'
-import {ButtonModule} from 'primeng/button'
+import { DialogModule } from 'primeng/dialog'
+import { ButtonModule } from 'primeng/button'
 @Component({
   selector: 'app-tables',
   standalone: true,
@@ -16,18 +17,30 @@ import {ButtonModule} from 'primeng/button'
 export default class TablesComponent implements OnInit {
   warehouses: any[] = [];
   employees: any[] = [];
+  products: any[] = [];
   selectedWarehouseId: string | null = null;
   selectedEmployeeId: string | null = null;
+  selectedProductId: string | null = null;
   warehouseForm: FormGroup;
   warehouseUpdateForm: FormGroup;
   employeeUpdateForm: FormGroup;
+  productForm: FormGroup;
+  productUpdateForm: FormGroup;
   employeeForm: FormGroup;
   token: string | null = null; // Cambia el valor inicial a `null`
   isFormOpen: boolean = false;
   isUpdateEmployeeFormOpen: boolean = false;
+  isProductFormOpen: boolean = false;
+  isEmployeesViewOpen: boolean = false;
+  isProductsViewOpen: boolean = false;
+  selectedWarehouseName: string | null = null;
+  isProductModalVisible: boolean = false;
+
+
   constructor(
     private warehouseService: WarehouseService,
-    private authService: AuthService, // Inyecta el AuthService
+    private authService: AuthService,
+    private productService: ProductService,
     private fb: FormBuilder
   ) {
     this.warehouseForm = this.fb.group({
@@ -49,10 +62,33 @@ export default class TablesComponent implements OnInit {
     this.employeeUpdateForm = this.fb.group({
       permissions: ['', [Validators.required]],
     });
+
+    this.productForm = this.fb.group({
+      name: ['', Validators.required],
+      description: ['', Validators.required],
+      stock: [0, [Validators.required, Validators.min(0)]],
+      minimunStock: [null],
+      category: ['', Validators.required],
+      price: [0, [Validators.required, Validators.min(0)]],
+      unit: [null],
+      spoil: [null],
+      supplier: ['', Validators.required],
+    });
+    this.productUpdateForm = this.fb.group({
+      name: ['', Validators.required],
+      description: ['', Validators.required],
+      stock: [0, [Validators.required, Validators.min(0)]],
+      minimunStock: [null],
+      category: ['', Validators.required],
+      price: [0, [Validators.required, Validators.min(0)]],
+      unit: [null],
+      spoil: [null],
+      supplier: ['', Validators.required],
+    });
   }
 
   ngOnInit(): void {
-    this.loadToken(); // Obtén el token al inicializar
+    this.loadToken(); // Obtiene el token al inicializar
     this.loadWarehouses();
   }
 
@@ -61,7 +97,6 @@ export default class TablesComponent implements OnInit {
     this.token = this.authService.getToken(); // Usa el método del AuthService
     if (!this.token) {
       console.error('No se encontró el token. Por favor, inicia sesión.');
-      // Opcional: Redirige al login si el token no existe
     }
   }
 
@@ -81,7 +116,7 @@ export default class TablesComponent implements OnInit {
       }
     );
   }
-  
+
   loadEmployees(): void {
     if (!this.token) {
       console.error('No se puede cargar almacenes sin token.');
@@ -95,6 +130,24 @@ export default class TablesComponent implements OnInit {
         console.error('Error cargando empleados.', error);
       }
     );
+  }
+
+  // Cargar productos del almacén seleccionado
+  loadProducts(): void {
+    if (!this.token) {
+      console.error('No se puede cargar productos sin token.');
+      return;
+    }
+    if (this.selectedWarehouseId) {
+      this.productService.getProducts(this.token, this.selectedWarehouseId).subscribe(
+        (response) => {
+          this.products = response;
+        },
+        (error) => {
+          console.error('Error carga de productos:', error);
+        }
+      );
+    }
   }
 
   // Crear un nuevo almacén
@@ -117,6 +170,28 @@ export default class TablesComponent implements OnInit {
       );
     }
   }
+  // Método para cargar productos de un almacén
+  viewProducts(warehouseId: string): void {
+    if (!this.token) {
+      console.error('No se puede mostrar los productos sin un token.');
+      return;
+    }
+    this.isProductsViewOpen = true;
+    this.isEmployeesViewOpen = false;
+    this.selectedWarehouseId = warehouseId;
+
+    const warehouse = this.warehouses.find(wh => wh._id === warehouseId);
+    this.selectedWarehouseName = warehouse ? warehouse.name : 'Almacén no encontrado';
+    this.productService.getProducts(this.token, warehouseId).subscribe(
+      (data) => {
+        console.log('Productos cargados:', data);
+        this.products = data;
+      },
+      (error) => {
+        console.error('Error al cargar productos:', error);
+      }
+    );
+  }
 
   // Ver empleados de un almacén
   viewEmployees(warehouseId: string): void {
@@ -124,6 +199,9 @@ export default class TablesComponent implements OnInit {
       console.error('No se puede ver empleados sin token.');
       return;
     }
+
+    this.isEmployeesViewOpen = true;
+    this.isProductsViewOpen = false;
 
     this.selectedWarehouseId = warehouseId;
     this.warehouseService.getWarehouseEmployees(this.token, warehouseId).subscribe(
@@ -197,7 +275,7 @@ export default class TablesComponent implements OnInit {
       console.error('No se puede eliminar un almacén sin token.');
       return;
     }
-    if(confirm('¿Estás seguro de eliminar este almacén?')){
+    if (confirm('¿Estás seguro de eliminar este almacén?')) {
       this.warehouseService.deleteWarehouse(this.token, warehouseId).subscribe(
         (response) => {
           console.log('Almacén elimnado: ', response);
@@ -234,7 +312,7 @@ export default class TablesComponent implements OnInit {
       console.error('No se puede eliminar un almacén sin token.');
       return;
     }
-    if(this.warehouseUpdateForm.valid) { //para obtener los valores del form
+    if (this.warehouseUpdateForm.valid) { //para obtener los valores del form
       const data = {
         name: this.warehouseUpdateForm.value.name,
         location: this.warehouseUpdateForm.value.location,
@@ -248,16 +326,17 @@ export default class TablesComponent implements OnInit {
         (error) => {
           console.error('Error al actualizar almacén.', error);
         },
-        ()=>{this.isFormOpen = false
+        () => {
+          this.isFormOpen = false
           this.warehouseUpdateForm.reset()
         }
-        
+
       );
     } else {
       console.log('Formulario no válido');
       this.isFormOpen = false
     }
-    
+
   }
   updateEmployeePermissions(): void {
     if (!this.token || !this.selectedWarehouseId) {
@@ -271,18 +350,121 @@ export default class TablesComponent implements OnInit {
         .subscribe(
           (response) => {
             console.log('Permisos actualizados:', response);
-            this.viewEmployees(this.selectedWarehouseId!); 
+            this.viewEmployees(this.selectedWarehouseId!);
           },
           (error) => {
             console.error('Error al actualizar permisos:', error);
             this.isUpdateEmployeeFormOpen = false;
           },
-          ()=>{this.isUpdateEmployeeFormOpen = false
+          () => {
+            this.isUpdateEmployeeFormOpen = false
             this.employeeUpdateForm.reset()
           }
         );
     }
+  }
+  /// productos
 
+  //crea un producto
+  createProduct(): void {
+    if (!this.token) {
+      console.error('No se puede crear un producto sin token.');
+      return;
+    }
+
+    if (!this.selectedWarehouseId) {
+      console.error('No se puede crear un producto sin seleccionar un almacén.');
+      return;
+    }
+
+    if (this.productForm.valid) {
+      const productData = {
+        ...this.productForm.value,
+        minimunStock: this.productForm.value.minimunStock || 0, // Valor predeterminado
+        unit: this.productForm.value.unit || 'N/A', // Valor predeterminado
+        spoil: this.productForm.value.spoil || null, // Mantener null si no se define
+      };
+
+      this.productService.createProduct(this.token, this.selectedWarehouseId, productData).subscribe(
+        (response) => {
+          console.log('Producto creado exitosamente:', response);
+          this.loadProducts(); // Recargar la lista de productos
+          this.productForm.reset(); // Reiniciar formulario
+        },
+        (error) => {
+          console.error('Error al crear el producto:', error);
+        }
+      );
+    }
+  }
+
+  //actualizar producto
+  updateProduct(): void {
+    if (!this.token) {
+      console.error('No se puede actualizar un producto sin token.');
+      return;
+    }
+
+    if (!this.selectedWarehouseId || !this.selectedProductId) {
+      console.error('No se puede actualizar un producto sin seleccionar un almacén y un producto.');
+      return;
+    }
+
+    if (this.productUpdateForm.valid) {
+      const data = {
+        name: this.productUpdateForm.value.name,
+        description: this.productUpdateForm.value.description,
+        stock: this.productUpdateForm.value.stock,
+        minimunStock: this.productUpdateForm.value.minimunStock || 0, // Valor predeterminado
+        category: this.productUpdateForm.value.category,
+        price: this.productUpdateForm.value.price,
+        unit: this.productUpdateForm.value.unit || 'N/A', // Valor predeterminado
+        spoil: this.productUpdateForm.value.spoil || null, // Mantener null si no se define
+        supplier: this.productUpdateForm.value.supplier,
+      };
+
+      this.productService.updateProduct(this.token, this.selectedWarehouseId, this.selectedProductId, data).subscribe(
+        (response) => {
+          console.log('Producto actualizado:', response);
+          this.loadProducts(); // Recargar la lista de productos
+        },
+        (error) => {
+          console.error('Error al actualizar el producto:', error);
+        },
+        () => {
+          this.isProductFormOpen = false;
+          this.productUpdateForm.reset();
+        }
+      );
+    } else {
+      console.log('Formulario de actualización de producto no válido');
+      this.isProductFormOpen = false;
+    }
+  }
+
+  // Eliminar producto
+  deleteProduct(productId: string): void {
+    if (!this.token) {
+      console.error('No se puede eliminar un producto sin token.');
+      return;
+    }
+
+    if (!this.selectedWarehouseId) {
+      console.error('No se puede eliminar un producto sin seleccionar un almacén.');
+      return;
+    }
+
+    if (confirm('¿Estás seguro de eliminar este producto?')) {
+      this.productService.deleteProduct(this.token, this.selectedWarehouseId, productId).subscribe(
+        (response) => {
+          console.log('Producto eliminado:', response);
+          this.loadProducts(); // Recargar la lista de productos
+        },
+        (error) => {
+          console.error('Error al eliminar el producto:', error);
+        }
+      );
+    }
   }
 
   //abrir formulario
@@ -291,9 +473,19 @@ export default class TablesComponent implements OnInit {
     this.isFormOpen = true;
   }
 
-  openUpdateEmployeeForm(employeeId: any):void {
+  openUpdateEmployeeForm(employeeId: any): void {
     this.selectedEmployeeId = employeeId;
     this.isUpdateEmployeeFormOpen = true;
+  }
+  clearProductsView(): void {
+    this.products = [];
+    this.selectedWarehouseId = null;
+  }
+
+  // Método para abrir el modal
+  openAddProductModal(warehouseId: string): void {
+    this.selectedWarehouseId = warehouseId; // Guardamos el id del almacén
+    this.isProductModalVisible = true; // Abrir el modal
   }
 }
 

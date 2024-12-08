@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class WarehouseService {
-  private baseUrl = 'http://localhost:3000/warehouses'; // Cambia al URL de tu backend
+  private baseUrl = 'http://localhost:3000/warehouses'; 
 
   constructor(private http: HttpClient) {}
 

@@ -79,6 +79,17 @@
                       actualizar almacén
                     </a>
                   </li>
+                  <li>
+                    <a class="dropdown-item" href="#" (click)="viewProducts(warehouse._id)">
+                      Ver productos
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="#" (click)="openAddProductModal(warehouse._id)">
+                      Añadir producto
+                    </a>
+                  </li>
+                  
                 </ul>
               </div>
             </td>
@@ -89,7 +100,7 @@
   </div>
 
   <!-- Detalle de empleados del almacén seleccionado -->
-  <div class="card mt-4" *ngIf="selectedWarehouseId">
+  <div class="card mt-4" *ngIf="selectedWarehouseId && isEmployeesViewOpen">
     <div class="card-header">
       <h4>Empleados en Almacén</h4>
     </div>
@@ -133,7 +144,69 @@
       </table>
     </div>
   </div>
+  
 </div>
+
+
+<!-- Detalle de productos del almacén seleccionado -->
+<div class="card mt-4" *ngIf="selectedWarehouseId && isProductsViewOpen">
+  <div class="card-header">
+    <h4>Productos del almacén: {{ selectedWarehouseName }}</h4>
+  </div>
+  <div class="card-body">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Stock</th>
+          <th>Stock Mínimo</th>
+          <th>Precio</th>
+          <th>Unidad</th>
+          <th>Fecha de Caducidad</th>
+          <th>Proveedor</th>
+          <th>Categoría</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of products">
+          <td>{{ product.name }}</td>
+          <td>{{ product.description }}</td>
+          <td>{{ product.stock }}</td>
+          <td>{{ product.minimunStock }}</td>
+          <td>{{ product.price | currency }}</td>
+          <td>{{ product.unit }}</td>
+          <td>{{ product.spoil | date: 'shortDate' }}</td>
+          <td>{{ product.supplier }}</td>
+          <td>{{ product.category }}</td>
+          <td>
+            <!-- Menú desplegable con acciones -->
+            <div class="dropdown">
+              <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                Acciones
+              </button>
+              <ul class="dropdown-menu">
+                <li>
+                  <a class="dropdown-item" href="#" >
+                    Eliminar producto
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="#" >
+                    Actualizar producto
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
 
 <!-- MODAL ACTUALIZAR WAREHOUSE -->
 <p-dialog header="Edita el almacén" [modal]="true" [(visible)]="isFormOpen" [style]="{ width: '30rem' }">
@@ -174,6 +247,81 @@
     <div class="flex justify-content-end gap-2">
       <p-button label="Cancelar" severity="secondary" (onClick)="isUpdateEmployeeFormOpen = false" />
       <p-button label="Guardar" type="submit" [disabled]="employeeUpdateForm.invalid" />
+    </div>
+  </form>
+</p-dialog>
+
+
+<!-- MODAL AÑADIR PRODUCTO -->
+<p-dialog header="Añadir Producto" [modal]="true" [(visible)]="isProductModalVisible" [style]="{ width: '30rem' }">
+  <span class="p-text-secondary block mb-5">Rellena la información del producto.</span>
+  <form [formGroup]="productForm" (ngSubmit)="createProduct()">
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="name" class="font-semibold w-6rem">Nombre del producto</label>
+      <input id="name" class="flex-auto" autocomplete="off" formControlName="name" />
+      <div *ngIf="productForm.get('name')?.invalid && productForm.get('name')?.touched" class="text-danger">
+        El nombre es obligatorio.
+      </div>
+    </div>
+
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="description" class="font-semibold w-6rem">Descripción</label>
+      <input id="description" class="flex-auto" autocomplete="off" formControlName="description" />
+      <div *ngIf="productForm.get('description')?.invalid && productForm.get('description')?.touched" class="text-danger">
+        La descripción es obligatoria.
+      </div>
+    </div>
+
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="stock" class="font-semibold w-6rem">Stock</label>
+      <input id="stock" class="flex-auto" type="number" autocomplete="off" formControlName="stock" />
+      <div *ngIf="productForm.get('stock')?.invalid && productForm.get('stock')?.touched" class="text-danger">
+        El stock debe ser un número válido.
+      </div>
+    </div>
+
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="minimunStock" class="font-semibold w-6rem">Stock Mínimo</label>
+      <input id="minimunStock" class="flex-auto" type="number" autocomplete="off" formControlName="minimunStock" />
+    </div>
+
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="category" class="font-semibold w-6rem">Categoría</label>
+      <input id="category" class="flex-auto" autocomplete="off" formControlName="category" />
+      <div *ngIf="productForm.get('category')?.invalid && productForm.get('category')?.touched" class="text-danger">
+        La categoría es obligatoria.
+      </div>
+    </div>
+
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="price" class="font-semibold w-6rem">Precio</label>
+      <input id="price" class="flex-auto" type="number" autocomplete="off" formControlName="price" />
+      <div *ngIf="productForm.get('price')?.invalid && productForm.get('price')?.touched" class="text-danger">
+        El precio es obligatorio.
+      </div>
+    </div>
+
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="unit" class="font-semibold w-6rem">Unidad</label>
+      <input id="unit" class="flex-auto" autocomplete="off" formControlName="unit" />
+    </div>
+
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="spoil" class="font-semibold w-6rem">Fecha de Vencimiento</label>
+      <input id="spoil" class="flex-auto" type="date" formControlName="spoil" />
+    </div>
+
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="supplier" class="font-semibold w-6rem">Proveedor</label>
+      <input id="supplier" class="flex-auto" autocomplete="off" formControlName="supplier" />
+      <div *ngIf="productForm.get('supplier')?.invalid && productForm.get('supplier')?.touched" class="text-danger">
+        El proveedor es obligatorio.
+      </div>
+    </div>
+
+    <div class="flex justify-content-end gap-2">
+      <p-button label="Cancelar" severity="secondary" (onClick)="isProductModalVisible = false" />
+      <p-button label="Añadir Producto" type="submit" [disabled]="productForm.invalid" />
     </div>
   </form>
 </p-dialog>
