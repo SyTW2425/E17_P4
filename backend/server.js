@@ -463,7 +463,7 @@ app.put('/warehouses/:warehouseId/products/:productId', authenticateToken, async
     // Verificar permisos
     if (req.user.role === 'Empleado') {
       const employee = warehouse.employees.find(e => e.employeeId.toString() === req.user.id);
-      if (!employee || !employee.permissions.includes('UPDATE')) {
+      if (!employee || !employee.permissions.includes('EDIT')) {
         return res.status(403).json({ message: 'No tienes permiso para editar productos en este almacén.' });
       }
     } else if (req.user.role !== 'Dueño' || warehouse.userId.toString() !== req.user.id) {

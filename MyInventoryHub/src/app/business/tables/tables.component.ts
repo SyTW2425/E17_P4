@@ -7,6 +7,7 @@ import { AuthService } from '../../services/auth/auth.service';
 import { PermissionPipe } from '../../components/pipes/permissions.pipe'
 import { DialogModule } from 'primeng/dialog'
 import { ButtonModule } from 'primeng/button'
+
 @Component({
   selector: 'app-tables',
   standalone: true,
@@ -27,7 +28,7 @@ export default class TablesComponent implements OnInit {
   productForm: FormGroup;
   productUpdateForm: FormGroup;
   employeeForm: FormGroup;
-  token: string | null = null; // Cambia el valor inicial a `null`
+  token: string | null = null; 
   isFormOpen: boolean = false;
   isUpdateEmployeeFormOpen: boolean = false;
   isProductFormOpen: boolean = false;
@@ -35,6 +36,7 @@ export default class TablesComponent implements OnInit {
   isProductsViewOpen: boolean = false;
   selectedWarehouseName: string | null = null;
   isProductModalVisible: boolean = false;
+  isUpdateProductFormOpen: boolean = false;
 
 
   constructor(
@@ -432,13 +434,13 @@ export default class TablesComponent implements OnInit {
           console.error('Error al actualizar el producto:', error);
         },
         () => {
-          this.isProductFormOpen = false;
+          this.isUpdateProductFormOpen = false;
           this.productUpdateForm.reset();
         }
       );
     } else {
       console.log('Formulario de actualización de producto no válido');
-      this.isProductFormOpen = false;
+      this.isUpdateProductFormOpen = false;
     }
   }
 
@@ -482,10 +484,16 @@ export default class TablesComponent implements OnInit {
     this.selectedWarehouseId = null;
   }
 
-  // Método para abrir el modal
+
   openAddProductModal(warehouseId: string): void {
     this.selectedWarehouseId = warehouseId; // Guardamos el id del almacén
     this.isProductModalVisible = true; // Abrir el modal
   }
+  // Método para abrir el formulario de actualización de producto
+  openUpdateProductForm(productId: any): void {
+    this.selectedProductId = productId;
+    this.isUpdateProductFormOpen = true;
+  }
+
 }
 
