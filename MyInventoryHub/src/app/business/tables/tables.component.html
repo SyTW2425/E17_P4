@@ -166,7 +166,7 @@
   <form [formGroup]="employeeUpdateForm" (ngSubmit)="updateEmployeePermissions()">
     <div class="flex align-items-center gap-3 mb-5">
       <label for="permissions" class="font-semibold w-6rem">Permisos</label>
-      <input id="permissions" class="flex-auto" formControlName="permissions" autocomplete="off" placeholder="Ej: ADD,UPDATE"/>
+      <input id="permissions" class="flex-auto" formControlName="permissions" autocomplete="off" placeholder="Ej: ADD,EDIT,DELETE"/>
       <div *ngIf="employeeUpdateForm.get('permissions')?.invalid && employeeUpdateForm.get('permissions')?.touched" class="text-danger">
         Los permisos son obligatorios.
       </div>

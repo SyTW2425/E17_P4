@@ -91,12 +91,12 @@ mongoose.connect(/*process.env.MONGO_URI*/mongoURI, {
 
 //endpoints
 app.post('/api/register', async (req, res) => {
-  const { firstName,lastName,username, email, password, role } = req.body;
+  const { firstName, lastName, username, email, password, role } = req.body;
 
   // Verificar que estamos recibiendo los datos correctamente
   console.log('Datos recibidos:', req.body);
 
-  if (!firstName || !lastName|| !username || !email || !password || !role) {
+  if (!firstName || !lastName || !username || !email || !password || !role) {
     return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
   }
 
@@ -126,11 +126,11 @@ app.post('/api/register', async (req, res) => {
     // Generar un token JWT
     const token = jwt.sign(
       {
-        id: newUser._id, 
-        email: newUser.email, 
+        id: newUser._id,
+        email: newUser.email,
         role: newUser.role,
-        firstName: newUser.firstName,  
-        lastName: newUser.lastName     
+        firstName: newUser.firstName,
+        lastName: newUser.lastName
       },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
@@ -169,16 +169,16 @@ app.post('/login', async (req, res) => {
 
     const token = jwt.sign(
       {
-        id: user._id, 
+        id: user._id,
         email: user.email,
         role: user.role,
-        firstName: user.firstName,  
-        lastName: user.lastName     
+        firstName: user.firstName,
+        lastName: user.lastName
       },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
-    
+
     res.json({ token });
   } catch (error) {
     res.status(500).json({ message: 'Error al iniciar sesión', error });
@@ -221,11 +221,11 @@ app.post('/warehouses/:id/employees', authenticateToken, async (req, res) => {
     if (!warehouse) {
       return res.status(404).json({ message: 'Almacén no encontrado o no tienes acceso' });
     }
-    
-    const employee = await User.findOne({username});
+
+    const employee = await User.findOne({ username });
 
     if (!employee || employee.role !== 'Empleado') {
-      
+
       return res.status(400).json({ message: 'El usuario no es un empleado válido' });
     }
     //comprobar si el usuario ya existe, modificarlo
@@ -346,33 +346,29 @@ app.put('/warehouses/:id/employees/:employeeId', authenticateToken, async (req, 
     const { id: warehouseId, employeeId } = req.params;
     const { permissions } = req.body;
 
-    
     if (!permissions || !Array.isArray(permissions)) {
-      return res.status(400).json({ message: 'Los permisos deben ser un array válido.' });
+      return res.status(400).json({ message: 'Los permisos deben ser un array.' });
     }
 
-    
-    const warehouse = await Warehouse.findOne({ _id: warehouseId, userId: req.user.id }); 
+    const warehouse = await Warehouse.findOne({ _id: warehouseId, userId: req.user.id });
     if (!warehouse) {
       return res.status(404).json({ message: 'Almacén no encontrado o no tienes acceso.' });
     }
 
-    
-    const employee = warehouse.employees.find(emp => emp.id === employeeId); //esto tiene algo raro
+    // Encuentra al empleado dentro del array de empleados del almacén
+    const employee = warehouse.employees.find(e => e.employeeId.toString() === employeeId);
     if (!employee) {
       return res.status(404).json({ message: 'Empleado no encontrado en este almacén.' });
     }
 
-    
+    // Actualiza los permisos del empleado
     employee.permissions = permissions;
-
-   
     await warehouse.save();
 
-    res.status(200).json({ message: 'Permisos actualizados exitosamente.', employee });
+    res.status(200).json({ message: 'Permisos actualizados exitosamente', warehouse });
   } catch (error) {
-    console.error('Error al actualizar permisos:', error);
-    res.status(500).json({ message: 'Error al actualizar permisos.', error });
+    console.error('Error al actualizar permisos del empleado:', error);
+    res.status(500).json({ message: 'Error al actualizar permisos del empleado', error });
   }
 });
 
