@@ -13,7 +13,7 @@ import { FaqComponent } from './components/pages/landing-page/faq/faq.component'
 import { IndexComponent } from './components/pages/landing-page/index/index.component';
 import LayoutComponent from './shared/components/layout/layout.component';
 import DashboardComponent from './business/dashboard/dashboard.component';
-import ProfileComponent from './business/profile/profile.component';
+import { ProfileComponent } from './business/profile/profile.component';
 import TablesComponent from './business/tables/tables.component';
 import { SignInComponent } from './components/sign-in/sign-in.component';
 import { RegisterComponent } from './components/register/register.component';
