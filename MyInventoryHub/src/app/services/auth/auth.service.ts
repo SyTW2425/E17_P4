@@ -86,5 +86,11 @@ export class AuthService {
       return null;
     }
   }
+  
+  isOwner(): boolean {
+    const decodedToken = this.decodeToken();
+    return decodedToken?.role === 'Dueño';
+  }
+  
 
 }

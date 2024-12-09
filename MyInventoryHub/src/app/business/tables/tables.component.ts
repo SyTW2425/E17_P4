@@ -37,6 +37,7 @@ export default class TablesComponent implements OnInit {
   selectedWarehouseName: string | null = null;
   isProductModalVisible: boolean = false;
   isUpdateProductFormOpen: boolean = false;
+  isOwner: boolean = false;
 
 
   constructor(
@@ -92,6 +93,7 @@ export default class TablesComponent implements OnInit {
   ngOnInit(): void {
     this.loadToken(); // Obtiene el token al inicializar
     this.loadWarehouses();
+    this.isOwner = this.authService.isOwner();
   }
 
   // Método para obtener el token
