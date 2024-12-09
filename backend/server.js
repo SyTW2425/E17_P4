@@ -521,6 +521,26 @@ app.delete('/warehouses/:warehouseId/products/:productId', authenticateToken, as
   }
 });
 
+app.put('/api/update-profile', authenticateToken, async (req, res) => {
+  const { firstName, lastName } = req.body;
+
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    user.firstName = firstName;
+    user.lastName = lastName;
+
+    await user.save();
+
+    res.status(200).json({ message: 'Perfil actualizado correctamente', user });
+  } catch (error) {
+    console.error('Error al actualizar el perfil:', error);
+    res.status(500).json({ message: 'Error interno del servidor', error });
+  }
+});
 
 
 // Exportar app para pruebas
