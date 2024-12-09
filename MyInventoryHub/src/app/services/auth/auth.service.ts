@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, throwError, tap } from 'rxjs';  // Usamos throwError desde 'rxjs'
+import { Observable, throwError, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { catchError } from 'rxjs/operators';
 import { jwtDecode } from 'jwt-decode';
