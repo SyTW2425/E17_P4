@@ -23,8 +23,8 @@ jobs:
         with:
           node-version: '18'
 
-      # Paso 3: Instalar dependencias de Chrome
-      - name: Install Chrome dependencies
+      # Paso 3: Instalar dependencias del sistema
+      - name: Install system dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -40,7 +40,9 @@ jobs:
             libxtst6 \
             libatk1.0-0 \
             libatk-bridge2.0-0 \
-            libcups2
+            libcups2 \
+            libgbm1 \
+            libasound2
 
       # Paso 4: Instalar Google Chrome
       - name: Install Google Chrome
@@ -53,9 +55,20 @@ jobs:
         run: |
           cd MyInventoryHub
           npm install
-          
+
       # Paso 6: Ejecutar los tests en modo headless
       - name: Run tests
         run: |
           cd MyInventoryHub
           npm test
+
+      - name: Install xvfb
+        run: | 
+          sudo apt-get install -y xvfb
+
+      - name: Run tests with xvfb
+        run: |
+          cd MyInventoryHub
+          xvfb-run npm test
+        
+    
