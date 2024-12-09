@@ -23,19 +23,38 @@ jobs:
         with:
           node-version: '18'
 
-      # Paso 3: Instalar dependencias de Chrome para CI
+      # Paso 3: Instalar dependencias de Chrome
       - name: Install Chrome dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libnss3 libgconf-2-4 libxi6 libxkbcommon-x11-0
+          sudo apt-get install -y \
+            libnss3 \
+            libgconf-2-4 \
+            libxi6 \
+            libxkbcommon-x11-0 \
+            libxcomposite1 \
+            libxcursor1 \
+            libxdamage1 \
+            libxrandr2 \
+            libxss1 \
+            libxtst6 \
+            libatk1.0-0 \
+            libatk-bridge2.0-0 \
+            libcups2
 
-      # Paso 4: Instalar dependencias del proyecto
+      # Paso 4: Instalar Google Chrome
+      - name: Install Google Chrome
+        run: |
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
+
+      # Paso 5: Instalar dependencias del proyecto
       - name: Install dependencies
         run: |
           cd MyInventoryHub
           npm install
           
-      # Paso 5: Ejecutar los tests en modo headless
+      # Paso 6: Ejecutar los tests en modo headless
       - name: Run tests
         run: |
           cd MyInventoryHub
