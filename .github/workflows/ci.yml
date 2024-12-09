@@ -23,11 +23,13 @@ jobs:
         with:
           node-version: '18'
 
-      # Paso 3: Instalar dependencias del sistema
-      - name: Install system dependencies
+      # Paso 3: Instalar dependencias del sistema y xvfb
+      - name: Install system dependencies and xvfb
         run: |
           sudo apt-get update
           sudo apt-get install -y \
+            google-chrome-stable \
+            xvfb \
             libnss3 \
             libgconf-2-4 \
             libxi6 \
@@ -44,31 +46,14 @@ jobs:
             libgbm1 \
             libasound2
 
-      # Paso 4: Instalar Google Chrome
-      - name: Install Google Chrome
-        run: |
-          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-          sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
-
-      # Paso 5: Instalar dependencias del proyecto
+      # Paso 4: Instalar dependencias del proyecto
       - name: Install dependencies
         run: |
           cd MyInventoryHub
           npm install
 
-      # Paso 6: Ejecutar los tests en modo headless
-      - name: Run tests
-        run: |
-          cd MyInventoryHub
-          npm test
-
-      - name: Install xvfb
-        run: | 
-          sudo apt-get install -y xvfb
-
+      # Paso 5: Ejecutar los tests con xvfb-run
       - name: Run tests with xvfb
         run: |
           cd MyInventoryHub
-          xvfb-run npm test
-        
-    
+          xvfb-run --auto-servernum npm test
