@@ -87,18 +87,22 @@ export class AuthService {
     }
   }
 
-    // Obtener detalles del usuario desde el token almacenado
-    getUserDetails() {
-      const token = localStorage.getItem('token');
-      if (!token) return null;
-  
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload;
-    }
-  
-    // Actualizar perfil del usuario
-    updateUserProfile(profileData: any): Observable<any> {
-      return this.http.put(`${this.apiUrl}/update-profile`, profileData);
-    }
+  // Obtener detalles del usuario desde el token almacenado
+  getUserDetails() {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
 
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload;
+  }
+
+  // Actualizar perfil del usuario
+  updateUserProfile(profileData: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/update-profile`, profileData);
+  }
+
+  // Método para cambiar la contraseña
+  changePassword(currentPassword: string, newPassword: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/change-password`, { currentPassword, newPassword });
+  }
 }

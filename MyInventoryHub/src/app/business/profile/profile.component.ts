@@ -51,6 +51,6 @@ export class ProfileComponent implements OnInit {
   }
 
   onChangePassword(): void {
-    this.router.navigate(['/change-password']); // Redirecciona a una futura página de cambio de contraseña
+    this.router.navigate(['/password']); // Redirecciona a una futura página de cambio de contraseña
   }
 }
