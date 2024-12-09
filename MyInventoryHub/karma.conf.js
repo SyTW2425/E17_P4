@@ -13,6 +13,7 @@ module.exports = function(config) {
         ]
       }
     },
-    singleRun: true
+    singleRun: true,
+    reporters: ['progress']
   });
 };
