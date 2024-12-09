@@ -60,22 +60,22 @@
                 </button>
                 <ul class="dropdown-menu">
                   <li>
-                    <a class="dropdown-item" href="#" (click)="viewEmployees(warehouse._id)">
+                    <a class="dropdown-item" href="#" (click)="viewEmployees(warehouse._id)" *ngIf="isOwner">
                       Ver empleados
                     </a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#" (click)="assignEmployeeDirectly(warehouse._id)">
+                    <a class="dropdown-item" href="#" (click)="assignEmployeeDirectly(warehouse._id)" *ngIf="isOwner">
                       Asignar empleado
                     </a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#" (click)="deleteWarehouse(warehouse._id)">
+                    <a class="dropdown-item" href="#" (click)="deleteWarehouse(warehouse._id)" *ngIf="isOwner">
                       Eliminar almacen
                     </a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#" (click)="openForm(warehouse._id)">
+                    <a class="dropdown-item" href="#" (click)="openForm(warehouse._id)" *ngIf="isOwner">
                       actualizar almacén
                     </a>
                   </li>
@@ -85,11 +85,12 @@
                     </a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#" (click)="openAddProductModal(warehouse._id)">
+                    <a class="dropdown-item" href="#" (click)="openAddProductModal(warehouse._id)"
+                      *ngIf=" isOwner || hasAddPermissions(warehouse)">
                       Añadir producto
                     </a>
                   </li>
-                  
+
                 </ul>
               </div>
             </td>
@@ -132,7 +133,7 @@
                     </a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#" (click)="openUpdateEmployeeForm(employee.employeeId._id)">
+                    <a class="dropdown-item" href="#" (click)="openUpdateEmployeeForm(employee.employeeId._id, employee.permissions)">
                       actualizar permisos
                     </a>
                   </li>
@@ -144,7 +145,7 @@
       </table>
     </div>
   </div>
-  
+
 </div>
 
 
@@ -175,9 +176,9 @@
           <td>{{ product.description }}</td>
           <td>{{ product.stock }}</td>
           <td>{{ product.minimunStock }}</td>
-          <td>{{ product.price | currency }}</td>
+          <td>{{ product.price | currency:'EUR' }}</td>
           <td>{{ product.unit }}</td>
-          <td>{{ product.spoil | date: 'shortDate' }}</td>
+          <td>{{ product.spoil | date: 'dd/MM/yyyy' }}</td>
           <td>{{ product.supplier }}</td>
           <td>{{ product.category }}</td>
           <td>
@@ -189,7 +190,7 @@
               </button>
               <ul class="dropdown-menu">
                 <li>
-                  <a class="dropdown-item" href="#" (click)="deleteProduct(product._id)" >
+                  <a class="dropdown-item" href="#" (click)="deleteProduct(product._id)">
                     Eliminar producto
                   </a>
                 </li>
@@ -214,41 +215,60 @@
   <form [formGroup]="warehouseUpdateForm" (ngSubmit)="updateWarehouse()">
     <div class="flex align-items-center gap-3 mb-3">
       <label for="warehousename" class="font-semibold w-6rem">Nombre del almacén</label>
-      <input  id="name" class="flex-auto" autocomplete="off" formControlName="name" />
-      <div *ngIf="warehouseUpdateForm.get('name')?.invalid && warehouseUpdateForm.get('name')?.touched" class="text-danger">
+      <input id="name" class="flex-auto" autocomplete="off" formControlName="name" />
+      <div *ngIf="warehouseUpdateForm.get('name')?.invalid && warehouseUpdateForm.get('name')?.touched"
+        class="text-danger">
         El nombre es obligatorio.
       </div>
     </div>
     <div class="flex align-items-center gap-3 mb-5">
       <label for="warehouselocation" class="font-semibold w-6rem">Ubicación del almacén</label>
-      <input  id="location" class="flex-auto" autocomplete="off" formControlName="location"  />
-      <div *ngIf="warehouseUpdateForm.get('location')?.invalid && warehouseUpdateForm.get('location')?.touched" class="text-danger">
+      <input id="location" class="flex-auto" autocomplete="off" formControlName="location" />
+      <div *ngIf="warehouseUpdateForm.get('location')?.invalid && warehouseUpdateForm.get('location')?.touched"
+        class="text-danger">
         La ubicación es obligatoria.
       </div>
     </div>
     <div class="flex justify-content-end gap-2">
       <p-button label="Cancelar" severity="secondary" (onClick)="isFormOpen = false" />
-      <p-button label="Guardar" type="submit" [disabled]="warehouseUpdateForm.invalid"/>
+      <p-button label="Guardar" type="submit" [disabled]="warehouseUpdateForm.invalid" />
     </div>
   </form>
 </p-dialog>
 
-<!-- MODAL -->
-<p-dialog header="Editar permisos de empleado" [modal]="true" [(visible)]="isUpdateEmployeeFormOpen" [style]="{ width: '30rem' }">
+<!-- MODAL EDICION DE PERMISOS -->
+<p-dialog header="Editar permisos de empleado" [modal]="true" [(visible)]="isUpdateEmployeeFormOpen"
+  [style]="{ width: '30rem' }">
   <span class="p-text-secondary block mb-5">Actualiza los permisos del empleado.</span>
-  <form [formGroup]="employeeUpdateForm" (ngSubmit)="updateEmployeePermissions()">
-    <div class="flex align-items-center gap-3 mb-5">
+  <!-- <form [formGroup]="employeeUpdateForm" (ngSubmit)="updateEmployeePermissions()"> -->
+    <!-- <div class="flex align-items-center gap-3 mb-5">
       <label for="permissions" class="font-semibold w-6rem">Permisos</label>
-      <input id="permissions" class="flex-auto" formControlName="permissions" autocomplete="off" placeholder="Ej: ADD,EDIT,DELETE"/>
-      <div *ngIf="employeeUpdateForm.get('permissions')?.invalid && employeeUpdateForm.get('permissions')?.touched" class="text-danger">
+      <input id="permissions" class="flex-auto" formControlName="permissions" autocomplete="off"
+        placeholder="Ej: ADD,EDIT,DELETE" />
+      <div *ngIf="employeeUpdateForm.get('permissions')?.invalid && employeeUpdateForm.get('permissions')?.touched"
+        class="text-danger">
         Los permisos son obligatorios.
       </div>
+    </div> -->
+    <!-- CHECKBOX -->
+    <div class="flex items-center">
+      <p-checkbox inputId="addPermission" name="permissions" value="ADD" [(ngModel)]="permissionsEmployee" />
+      <label for="addPermission" class="ml-2"> Añadir </label>
     </div>
+    <div class="flex items-center">
+      <p-checkbox inputId="editPermission" name="permissions" value="EDIT" [(ngModel)]="permissionsEmployee" />
+      <label for="editPermission" class="ml-2"> Editar </label>
+    </div>
+    <div class="flex items-center">
+      <p-checkbox inputId="deletePermission" name="permissions" value="DELETE" [(ngModel)]="permissionsEmployee" />
+      <label for="deletePermission" class="ml-2"> Borrar </label>
+    </div>
+  <!-- GUARDAR PERMISOS -->
     <div class="flex justify-content-end gap-2">
       <p-button label="Cancelar" severity="secondary" (onClick)="isUpdateEmployeeFormOpen = false" />
-      <p-button label="Guardar" type="submit" [disabled]="employeeUpdateForm.invalid" />
+      <p-button label="Guardar" (onClick)="updateEmployeePermissions()" [disabled]="permissionsEmployee.length == 0" />
     </div>
-  </form>
+  <!-- </form> -->
 </p-dialog>
 
 
@@ -267,7 +287,8 @@
     <div class="flex align-items-center gap-3 mb-3">
       <label for="description" class="font-semibold w-6rem">Descripción</label>
       <input id="description" class="flex-auto" autocomplete="off" formControlName="description" />
-      <div *ngIf="productForm.get('description')?.invalid && productForm.get('description')?.touched" class="text-danger">
+      <div *ngIf="productForm.get('description')?.invalid && productForm.get('description')?.touched"
+        class="text-danger">
         La descripción es obligatoria.
       </div>
     </div>
@@ -327,7 +348,8 @@
 </p-dialog>
 
 <!-- MODAL ACTUALIZAR PRODUCTO -->
-<p-dialog header="Actualizar Producto" [modal]="true" [(visible)]="isUpdateProductFormOpen" [style]="{ width: '30rem' }">
+<p-dialog header="Actualizar Producto" [modal]="true" [(visible)]="isUpdateProductFormOpen"
+  [style]="{ width: '30rem' }">
   <span class="p-text-secondary block mb-5">Actualiza la información del producto.</span>
   <form [formGroup]="productUpdateForm" (ngSubmit)="updateProduct()">
     <!-- Nombre del producto -->
@@ -343,7 +365,8 @@
     <div class="flex align-items-center gap-3 mb-3">
       <label for="description" class="font-semibold w-6rem">Descripción</label>
       <input id="description" class="flex-auto" autocomplete="off" formControlName="description" />
-      <div *ngIf="productUpdateForm.get('description')?.invalid && productUpdateForm.get('description')?.touched" class="text-danger">
+      <div *ngIf="productUpdateForm.get('description')?.invalid && productUpdateForm.get('description')?.touched"
+        class="text-danger">
         La descripción es obligatoria.
       </div>
     </div>
@@ -352,7 +375,8 @@
     <div class="flex align-items-center gap-3 mb-3">
       <label for="stock" class="font-semibold w-6rem">Stock</label>
       <input id="stock" class="flex-auto" type="number" autocomplete="off" formControlName="stock" />
-      <div *ngIf="productUpdateForm.get('stock')?.invalid && productUpdateForm.get('stock')?.touched" class="text-danger">
+      <div *ngIf="productUpdateForm.get('stock')?.invalid && productUpdateForm.get('stock')?.touched"
+        class="text-danger">
         El stock debe ser un número válido.
       </div>
     </div>
@@ -367,7 +391,8 @@
     <div class="flex align-items-center gap-3 mb-3">
       <label for="category" class="font-semibold w-6rem">Categoría</label>
       <input id="category" class="flex-auto" autocomplete="off" formControlName="category" />
-      <div *ngIf="productUpdateForm.get('category')?.invalid && productUpdateForm.get('category')?.touched" class="text-danger">
+      <div *ngIf="productUpdateForm.get('category')?.invalid && productUpdateForm.get('category')?.touched"
+        class="text-danger">
         La categoría es obligatoria.
       </div>
     </div>
@@ -376,7 +401,8 @@
     <div class="flex align-items-center gap-3 mb-3">
       <label for="price" class="font-semibold w-6rem">Precio</label>
       <input id="price" class="flex-auto" type="number" autocomplete="off" formControlName="price" />
-      <div *ngIf="productUpdateForm.get('price')?.invalid && productUpdateForm.get('price')?.touched" class="text-danger">
+      <div *ngIf="productUpdateForm.get('price')?.invalid && productUpdateForm.get('price')?.touched"
+        class="text-danger">
         El precio es obligatorio.
       </div>
     </div>
@@ -397,7 +423,8 @@
     <div class="flex align-items-center gap-3 mb-3">
       <label for="supplier" class="font-semibold w-6rem">Proveedor</label>
       <input id="supplier" class="flex-auto" autocomplete="off" formControlName="supplier" />
-      <div *ngIf="productUpdateForm.get('supplier')?.invalid && productUpdateForm.get('supplier')?.touched" class="text-danger">
+      <div *ngIf="productUpdateForm.get('supplier')?.invalid && productUpdateForm.get('supplier')?.touched"
+        class="text-danger">
         El proveedor es obligatorio.
       </div>
     </div>
@@ -408,4 +435,10 @@
       <p-button label="Actualizar Producto" type="submit" [disabled]="productUpdateForm.invalid" />
     </div>
   </form>
+</p-dialog>
+
+
+<p-dialog header="Error" [(visible)]="showErrorModal" [modal]="true" [closable]="false">
+  <p>{{ errorMessage }}</p>
+  <button type="button" pButton label="Cerrar" (click)="closeErrorModal()"></button>
 </p-dialog>

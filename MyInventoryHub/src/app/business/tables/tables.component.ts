@@ -7,11 +7,14 @@ import { AuthService } from '../../services/auth/auth.service';
 import { PermissionPipe } from '../../components/pipes/permissions.pipe'
 import { DialogModule } from 'primeng/dialog'
 import { ButtonModule } from 'primeng/button'
+import { CheckboxModule } from 'primeng/checkbox';
+import { TableModule } from 'primeng/table';
+
 
 @Component({
   selector: 'app-tables',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, ReactiveFormsModule, FormsModule, PermissionPipe, DialogModule, ButtonModule],
+  imports: [CommonModule, CurrencyPipe, ReactiveFormsModule, FormsModule, PermissionPipe, DialogModule, ButtonModule, CheckboxModule,TableModule],
   templateUrl: './tables.component.html',
   styleUrls: ['./tables.component.css']
 })
@@ -38,8 +41,10 @@ export default class TablesComponent implements OnInit {
   isProductModalVisible: boolean = false;
   isUpdateProductFormOpen: boolean = false;
   isOwner: boolean = false;
-
-
+  public permissionsEmployee: string[] = [];
+  showErrorModal: boolean = false; 
+  errorMessage: string = '';
+  
   constructor(
     private warehouseService: WarehouseService,
     private authService: AuthService,
@@ -343,12 +348,13 @@ export default class TablesComponent implements OnInit {
 
   }
   updateEmployeePermissions(): void {
+    console.log('GAGA');
     if (!this.token || !this.selectedWarehouseId) {
       console.error('No se puede actualizar permisos sin token o almacén seleccionado.');
       return;
     }
-    if (this.employeeUpdateForm.valid && this.selectedWarehouseId && this.token) {
-      const permissions = this.employeeUpdateForm.value.permissions.split(',');
+    if (this.permissionsEmployee.length != 0 && this.selectedWarehouseId && this.token) {
+      const permissions = this.permissionsEmployee;
       this.warehouseService
         .updateEmployeePermissions(this.token, this.selectedWarehouseId, this.selectedEmployeeId!, permissions)
         .subscribe(
@@ -363,6 +369,7 @@ export default class TablesComponent implements OnInit {
           () => {
             this.isUpdateEmployeeFormOpen = false
             this.employeeUpdateForm.reset()
+            this.permissionsEmployee = [] 
           }
         );
     }
@@ -396,7 +403,12 @@ export default class TablesComponent implements OnInit {
           this.productForm.reset(); // Reiniciar formulario
         },
         (error) => {
-          console.error('Error al crear el producto:', error);
+          if (error.status === 403) {
+            this.errorMessage = 'No tienes permisos para crear un producto en este almacén.';
+            this.showErrorModal = true; 
+          } else {
+            console.error('Error al crear el producto:', error);
+          }
         }
       );
     }
@@ -477,9 +489,10 @@ export default class TablesComponent implements OnInit {
     this.isFormOpen = true;
   }
 
-  openUpdateEmployeeForm(employeeId: any): void {
+  openUpdateEmployeeForm(employeeId: any, permissions: string[]): void {
     this.selectedEmployeeId = employeeId;
     this.isUpdateEmployeeFormOpen = true;
+    this.permissionsEmployee = permissions;
   }
   clearProductsView(): void {
     this.products = [];
@@ -495,6 +508,17 @@ export default class TablesComponent implements OnInit {
   openUpdateProductForm(productId: any): void {
     this.selectedProductId = productId;
     this.isUpdateProductFormOpen = true;
+  }
+
+  closeErrorModal(): void {
+    this.showErrorModal = false;
+  }
+
+  hasAddPermissions(warehouse: any): boolean {
+    const id = this.authService.getUserInfo().id;
+    const employee = warehouse.employees.find((obj: any) => obj.id === id);
+    console.log(warehouse, this.authService.getUserInfo());
+    return employee && employee.permissions.find((obj: any) => obj === 'ADD');
   }
 
 }

@@ -80,7 +80,7 @@ export class WarehouseService {
     token: string,
     warehouseId: string,
     employeeId: string,
-    permissions: string[]
+    permissions: string[] 
   ): Observable<any> {
     const url = `${this.baseUrl}/${warehouseId}/employees/${employeeId}`;
     const data = { permissions };

@@ -18,7 +18,7 @@ export interface DecodedToken {
 })
 export class AuthService {
 
-  private apiUrl = 'http://localhost:3000/api'; // URL de tu backend
+  private apiUrl = 'http://localhost:3000/api'; 
   private currentUserToken: string | null = null;
 
   constructor(private http: HttpClient, private router: Router) { }
@@ -92,5 +92,9 @@ export class AuthService {
     return decodedToken?.role === 'Dueño';
   }
   
+  getUserInfo(): any {
+    const decodedToken = this.decodeToken();
+    return decodedToken;
+  }
 
 }
