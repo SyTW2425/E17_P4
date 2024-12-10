@@ -99,7 +99,7 @@
       </table>
     </div>
   </div>
-
+<!-- 675185617d067e58135d4755 -->
   <!-- Detalle de empleados del almacén seleccionado -->
   <div class="card mt-4" *ngIf="selectedWarehouseId && isEmployeesViewOpen">
     <div class="card-header">
@@ -190,12 +190,12 @@
               </button>
               <ul class="dropdown-menu">
                 <li>
-                  <a class="dropdown-item" href="#" (click)="deleteProduct(product._id)">
+                  <a class="dropdown-item" href="#" (click)="deleteProduct(product._id)"  *ngIf=" isOwner || hasDeletePermissions()">
                     Eliminar producto
                   </a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="#" (click)="openUpdateProductForm(product._id)">
+                  <a class="dropdown-item" href="#" (click)="openUpdateProductForm(product._id)" *ngIf = "isOwner || hasEditPermissions()">
                     Actualizar producto
                   </a>
                 </li>

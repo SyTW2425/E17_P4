@@ -516,9 +516,32 @@ export default class TablesComponent implements OnInit {
 
   hasAddPermissions(warehouse: any): boolean {
     const id = this.authService.getUserInfo().id;
-    const employee = warehouse.employees.find((obj: any) => obj.id === id);
-    console.log(warehouse, this.authService.getUserInfo());
-    return employee && employee.permissions.find((obj: any) => obj === 'ADD');
+    const employee = warehouse.employees.find((obj: any) => 
+      obj.employeeId === id && obj.permissions.includes('ADD')
+    );
+
+    return employee ;
+
+  }
+
+  hasDeletePermissions(): boolean {
+    console.log('EL ID DEL ALMACEN: ', this.selectedWarehouseId);
+    const warehouse = this.warehouses.find((w: any) => w._id === this.selectedWarehouseId);
+    const id = this.authService.getUserInfo().id;
+    const employee = warehouse.employees.find((obj: any) => 
+      obj.employeeId === id && obj.permissions.includes('DELETE')
+    );
+    return employee;
+  }
+
+  hasEditPermissions(): boolean {
+    console.log('EL ID DEL ALMACEN: ', this.selectedWarehouseId);
+    const warehouse = this.warehouses.find((w: any) => w._id === this.selectedWarehouseId);
+    const id = this.authService.getUserInfo().id;
+    const employee = warehouse.employees.find((obj: any) => 
+      obj.employeeId === id && obj.permissions.includes('EDIT')
+    );
+    return employee;
   }
 
 }

@@ -70,7 +70,7 @@ export class WarehouseService {
     });
   }
 
-  // Obtener almacenes del usuario (dueños o empleados)
+  // Obtener almacenes del usuario (dueños)
   getUserWarehouses(token: string): Observable<any> {
     return this.http.get(this.baseUrl, { headers: this.getHeaders(token) });
   }
