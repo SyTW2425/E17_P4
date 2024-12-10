@@ -1,0 +1,69 @@
+<div class="container mx-auto p-6">
+  <h1 class="text-2xl font-bold mb-6 text-center">Métricas</h1>
+
+  <!-- Sección para Dueños -->
+  <div *ngIf="role === 'Dueño'">
+    <!-- Ventas Totales -->
+    <div class="mb-8">
+      <h2 class="text-lg font-semibold mb-2">Ventas Totales</h2>
+      <p-chart type="bar" [data]="salesData" class="w-full h-80"></p-chart>
+    </div>
+
+    <!-- Productos Más Vendidos -->
+    <div class="mb-8">
+      <h2 class="text-lg font-semibold mb-2">Productos Más Vendidos</h2>
+      <p-chart type="bar" [data]="topProductsData" class="w-full h-80"></p-chart>
+    </div>
+
+    <!-- Beneficio Neto -->
+    <div class="mb-8">
+      <h2 class="text-lg font-semibold mb-2">Beneficio Neto</h2>
+      <p-chart type="pie" [data]="profitData" class="w-full h-80"></p-chart>
+    </div>
+
+    <!-- Stock Crítico -->
+    <div class="mb-8">
+      <h2 class="text-lg font-semibold mb-2">Stock Crítico</h2>
+      <ul class="list-disc pl-5">
+        <li *ngFor="let product of criticalStock" class="text-red-500">
+          {{ product.name }} - {{ product.stock }} unidades
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Sección para Empleados -->
+  <div *ngIf="role === 'Empleado'">
+    <!-- Stock Disponible -->
+    <div class="mb-8">
+      <h2 class="text-lg font-semibold mb-2">Stock Disponible</h2>
+      <p-chart type="bar" [data]="stockData" class="w-full h-80"></p-chart>
+    </div>
+
+    <!-- Productos Próximos a Agotarse -->
+    <div class="mb-8">
+      <h2 class="text-lg font-semibold mb-2">Productos Próximos a Agotarse</h2>
+      <ul class="list-disc pl-5">
+        <li *ngFor="let product of lowStockProducts" class="text-red-500">
+          {{ product.name }} - {{ product.stock }} unidades
+        </li>
+      </ul>
+    </div>
+
+    <!-- Historial de Actividad -->
+    <div class="mb-8">
+      <h2 class="text-lg font-semibold mb-2">Historial de Actividad</h2>
+      <ul class="list-disc pl-5">
+        <li *ngFor="let log of activityLog">
+          {{ log.date }}: {{ log.action }} - {{ log.details }}
+        </li>
+      </ul>
+    </div>
+
+    <!-- Productos con Alta Demanda -->
+    <div class="mb-8">
+      <h2 class="text-lg font-semibold mb-2">Productos con Alta Demanda</h2>
+      <p-chart type="bar" [data]="highDemandProducts" class="w-full h-80"></p-chart>
+    </div>
+  </div>
+</div>
