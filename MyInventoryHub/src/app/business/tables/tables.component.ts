@@ -141,6 +141,7 @@ export default class TablesComponent implements OnInit {
       return;
     }
     if (this.selectedWarehouseId) {
+      console.log("TOKEN" + this.token)
       this.productService.getProducts(this.token, this.selectedWarehouseId).subscribe(
         (response) => {
           this.products = response;

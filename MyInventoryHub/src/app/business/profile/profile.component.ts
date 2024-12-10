@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
 
 export class ProfileComponent implements OnInit {
   profileForm: FormGroup;
-
+  token: string | null = null; 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -28,7 +28,16 @@ export class ProfileComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadToken(); // Obtiene el token al inicializar
     this.loadUserProfile();
+  }
+
+  // Método para obtener el token
+  loadToken(): void {
+    this.token = this.authService.getToken(); // Usa el método del AuthService
+    if (!this.token) {
+      console.error('No se encontró el token. Por favor, inicia sesión.');
+    }
   }
 
   loadUserProfile(): void {
@@ -42,11 +51,13 @@ export class ProfileComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.profileForm.valid) {
-      this.authService.updateUserProfile(this.profileForm.value).subscribe(
+    if (this.profileForm.valid && this.token) {
+      this.authService.updateUserProfile(this.token, this.profileForm.value).subscribe(
         () => alert('Perfil actualizado con éxito'),
         (error) => console.error('Error al actualizar el perfil', error)
       );
+    } else {
+      console.error('Token no válido. No se puede actualizar el perfil.');
     }
   }
 

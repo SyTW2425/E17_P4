@@ -522,25 +522,32 @@ app.delete('/warehouses/:warehouseId/products/:productId', authenticateToken, as
 });
 
 app.put('/api/update-profile', authenticateToken, async (req, res) => {
-  const { firstName, lastName } = req.body;
+  const userId = req.body.user;
+  const userData = req.body.data; 
 
   try {
-    const user = await User.findById(req.user.id);
+    // Buscar por el ID y actualizar los campos correspondientes
+    let user = await User.findOneAndUpdate(
+      { _id: userId },               
+      {                              
+        firstName: userData.firstName,
+        lastName: userData.lastName
+      },
+      { new: true }                 
+    );
+
     if (!user) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
 
-    user.firstName = firstName;
-    user.lastName = lastName;
-
-    await user.save();
-
-    res.status(200).json({ message: 'Perfil actualizado correctamente', user });
+    console.log("Usuario actualizado: ", user);
+    return res.status(200).json({ message: 'Perfil actualizado correctamente', user });
   } catch (error) {
     console.error('Error al actualizar el perfil:', error);
     res.status(500).json({ message: 'Error interno del servidor', error });
   }
 });
+
 
 app.put('/api/change-password', authenticateToken, async (req, res) => {
   const { currentPassword, newPassword } = req.body;

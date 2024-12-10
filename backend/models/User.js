@@ -9,6 +9,11 @@ const userSchema = new mongoose.Schema({
   role: { type: String, required: true }
 });
 
+// Función estática para buscar usuario por username
+userSchema.statics.findByUsername = async function (username) {
+  return await this.findOne({ username });
+};
+
 const User = mongoose.model('User', userSchema);
 module.exports = User;
 
