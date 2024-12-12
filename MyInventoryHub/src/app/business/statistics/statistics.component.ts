@@ -45,33 +45,22 @@ export class StatisticsComponent implements OnInit {
     }
   }
 
-  // Cargar todos los almacenes del usuario
-  loadWarehouses(): void {
-    if (!this.token) {
-      console.error('No se puede cargar almacenes sin token.');
-      return;
-    }
-
-    // this.warehouseService.getUserWarehouses(this.token).subscribe(
-    //   (data) => {
-    //     this.warehouses = data;
-    //   },
-    //   (error) => {
-    //     console.error('Error al cargar almacenes:', error);
-    //   }
-    // );
-    this.warehouseService.getUserWarehouses(this.token).subscribe(
-      (data) => {
-        this.warehouses = data.map((warehouse: any) => ({
-          label: warehouse.name,  // Ajusta estos campos según la respuesta de tu API
-          value: warehouse.id      // Ajusta estos campos según la respuesta de tu API
-        }));
-      },
-      (error) => {
-        console.error('Error al cargar los almacenes', error);
+    // Cargar todos los almacenes del usuario
+    loadWarehouses(): void {
+      if (!this.token) {
+        console.error('No se puede cargar almacenes sin token.');
+        return;
       }
-    );
-  }
+
+      this.warehouseService.getUserWarehouses(this.token).subscribe(
+        (data) => {
+          this.warehouses = data;
+        },
+        (error) => {
+          console.error('Error fetching warehouses:', error);
+        }
+      );
+    }
 
   // Método para cargar estadísticas de productos del almacén seleccionado
   loadProductStats(): void {
