@@ -18,7 +18,6 @@ import TablesComponent from './business/tables/tables.component';
 import { SignInComponent } from './components/sign-in/sign-in.component';
 import { RegisterComponent } from './components/register/register.component';
 import { PasswordComponent } from './business/password/password.component';
-import { MetricsComponent } from './business/metrics/metrics.component';
 
 export const routes: Routes = [
   { path: '', component: IndexComponent },
@@ -44,11 +43,6 @@ export const routes: Routes = [
     path: 'password',
     component: LayoutComponent,
     children: [{ path: '', component: PasswordComponent }],
-  },
-  {
-    path: 'metrics',
-    component: LayoutComponent,
-    children: [{ path: '', component: MetricsComponent }],
   },
   { path: 'signin', component: SignInComponent },
   { path: 'register', component: RegisterComponent },
