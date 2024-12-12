@@ -1,1 +1,40 @@
-<p>employees works!</p>
+<div class="p-6 max-w-4xl mx-auto bg-white shadow-md rounded-md mt-10">
+  <h2 class="text-2xl font-bold mb-4 text-center">Empleados de Mis Almacenes</h2>
+
+  <p-toast></p-toast>
+
+  <div *ngIf="isLoading" class="text-center">
+    <p>Loading...</p>
+  </div>
+
+  <div *ngIf="!isLoading && employees.length === 0" class="text-center text-gray-500">
+    <p>No hay empleados asignados a tus almacenes.</p>
+  </div>
+
+  <div class="overflow-x-auto mt-6">
+    <table class="min-w-full border-collapse border border-gray-200">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Nombre</th>
+          <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Apellido</th>
+          <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Correo</th>
+          <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Permisos</th>
+          <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Almacenes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let employee of employees" class="even:bg-gray-50">
+          <td class="px-4 py-2 border border-gray-300">{{ employee.firstName }}</td>
+          <td class="px-4 py-2 border border-gray-300">{{ employee.lastName }}</td>
+          <td class="px-4 py-2 border border-gray-300">{{ employee.email }}</td>
+          <td class="px-4 py-2 border border-gray-300">{{ employee.permissions }}</td>
+          <td class="px-4 py-2 border border-gray-300">
+            <span *ngFor="let warehouse of employee.warehouses; let i = index">
+              {{ warehouse }}<span *ngIf="i < employee.warehouses.length - 1">, </span>
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

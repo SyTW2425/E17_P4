@@ -89,5 +89,15 @@ export class WarehouseService {
       headers: this.getHeaders(token),
     });
   }
+
+  getOwnerWarehouses(token: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}`, {
+      headers: this.getHeaders(token),
+    });
+  }
+
+  getEmployeesByWarehouse(warehouseId: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/${warehouseId}/employees`);
+  }
   
 }
