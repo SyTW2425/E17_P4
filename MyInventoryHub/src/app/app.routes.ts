@@ -19,6 +19,7 @@ import { SignInComponent } from './components/sign-in/sign-in.component';
 import { RegisterComponent } from './components/register/register.component';
 import { PasswordComponent } from './business/password/password.component';
 import { EmployeesComponent } from './business/employees/employees.component';
+import { SuppliersComponent } from './business/supplier/supplier.component';
 
 export const routes: Routes = [
   { path: '', component: IndexComponent },
@@ -49,6 +50,11 @@ export const routes: Routes = [
     path: 'employees',
     component: LayoutComponent,
     children: [{ path: '', component: EmployeesComponent }],
+  },
+  {
+    path: 'suppliers',
+    component: LayoutComponent,
+    children: [{ path: '', component: SuppliersComponent}],
   },
   { path: 'signin', component: SignInComponent },
   { path: 'register', component: RegisterComponent },

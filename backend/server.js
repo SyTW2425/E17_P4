@@ -573,11 +573,38 @@ app.put('/api/change-password', authenticateToken, async (req, res) => {
   }
 });
 
+const Supplier = require('./models/Suppliers');
 
+app.get('/suppliers', authenticateToken, async (req, res) => {
+  try {
+    const suppliers = await Supplier.find({ userId: req.user.id });
+    res.status(200).json(suppliers);
+  } catch (error) {
+    console.error('Error al obtener proveedores:', error);
+    res.status(500).json({ message: 'Error al obtener proveedores', error });
+  }
+});
+
+app.post('/suppliers', authenticateToken, async (req, res) => {
+  try {
+    const { name, phone, email, address } = req.body;
+    const newSupplier = new Supplier({
+      name,
+      phone,
+      email,
+      address,
+      userId: req.user.id, // Asociar con el usuario autenticado
+    });
+    await newSupplier.save();
+    res.status(201).json({ message: 'Proveedor creado exitosamente', supplier: newSupplier });
+  } catch (error) {
+    console.error('Error al crear proveedor:', error);
+    res.status(500).json({ message: 'Error al crear proveedor', error });
+  }
+});
 
 // Exportar app para pruebas
 module.exports = app;
-
 
 // Solo inicia el servidor si no se está ejecutando en un entorno de pruebas
 if (process.env.NODE_ENV !== 'test') {
