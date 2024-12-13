@@ -80,14 +80,14 @@
   <div *ngIf="selectedWarehouseId">
     <div class="card mt-4">
       <div class="card-header">
-        <h4>Gráficas del Almacén</h4>
+        <h4>Gráfica del Almacén</h4>
       </div>
       <div class="card-body">
-        <canvas id="warehouseChart"></canvas>
+        <p-chart type="pie" [data]="data" [options]="options"></p-chart>
       </div>
     </div>
 
-    <!-- Gráfico de estadísticas de productos -->
+    <!-- Gráfico de estadísticas d  e productos -->
     <div *ngIf="products.length > 0">
       <div class="card mt-4">
         <div class="card-header">

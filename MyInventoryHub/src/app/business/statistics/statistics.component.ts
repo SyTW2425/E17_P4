@@ -1,4 +1,3 @@
-import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { WarehouseService } from '../../services/warehouse-service/warehouse.service';
@@ -7,6 +6,9 @@ import { AuthService } from '../../services/auth/auth.service';
 import { Chart } from 'chart.js';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
+import { ChangeDetectorRef, Component, effect, inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { ChartModule } from 'primeng/chart';
+import { AfterViewInit } from '@angular/core';
 
 interface ProductStats {
   stock: number;
@@ -23,7 +25,7 @@ interface WarehouseStats {
 @Component({
   selector: 'app-statistics',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DialogModule, ButtonModule],
+  imports: [CommonModule, ReactiveFormsModule, DialogModule, ButtonModule, ChartModule],
   templateUrl: './statistics.component.html',
   styleUrls: ['./statistics.component.css'],
 })
@@ -36,7 +38,10 @@ export class StatisticsComponent implements OnInit {
   warehouseStats: WarehouseStats = { totalStock: 0, totalInvested: 0, totalEarned: 0 };
   productStats: { [key: string]: ProductStats } = {}; // Tipo para indexar por producto
   isOwner: boolean = false;
-  
+  data: any;
+
+  options: any;
+
 
   constructor(
     private warehouseService: WarehouseService,
@@ -48,6 +53,15 @@ export class StatisticsComponent implements OnInit {
     this.isOwner = this.authService.isOwner();
     this.loadToken(); // Obtener el token al inicializar
     this.loadWarehouses(); // Cargar almacenes
+  }
+
+  ngAfterViewInit(): void {
+    if (this.selectedWarehouseId) {
+      this.generateWarehouseChartPrimeNG();
+    }
+    if (this.products.length > 0) {
+      this.generateProductChart();
+    }
   }
 
   loadToken(): void {
@@ -76,31 +90,44 @@ export class StatisticsComponent implements OnInit {
 
   loadProductStats(): void {
     if (!this.token || !this.selectedWarehouseId) {
-      console.error(
-        'No se puede cargar estadísticas de productos sin token o almacén seleccionado.'
-      );
+      console.error('No se puede cargar estadísticas sin token o almacén seleccionado.');
       return;
     }
   
-    this.productService
-      .getProducts(this.token, this.selectedWarehouseId)
-      .subscribe(
-        (response) => {
-          console.log('Productos recibidos:', response); // Verificar datos
-          this.products = response;
-          if (!this.products || this.products.length === 0) {
-            console.warn('No hay productos disponibles.');
-            return;
-          }
-          this.productStats = this.calculateProductStats(this.products);
-          this.warehouseStats = this.calculateWarehouseStats(this.products);
-          this.generateProductChart();
-          this.generateWarehouseChart();
-        },
-        (error) => {
-          console.error('Error al cargar productos:', error);
-        }
-      );
+    this.productService.getProducts(this.token, this.selectedWarehouseId).subscribe(
+      (response) => {
+        this.products = response;
+        this.productStats = this.calculateProductStats(this.products);
+        this.warehouseStats = this.calculateWarehouseStats(this.products);
+  
+        // Configurar datos para PrimeNG
+        this.data = {
+          labels: ['Total Stock', 'Total Invested', 'Total Earned'],
+          datasets: [
+            {
+              data: [
+                this.warehouseStats.totalStock,
+                this.warehouseStats.totalInvested,
+                this.warehouseStats.totalEarned
+              ],
+              backgroundColor: ['#f44336', '#ffeb3b', '#4caf50'],
+            },
+          ],
+        };
+  
+        this.options = {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+          },
+        };
+      },
+      (error) => {
+        console.error('Error al cargar productos:', error);
+      }
+    );
   }
   
 
@@ -183,28 +210,54 @@ export class StatisticsComponent implements OnInit {
     });
   }
 
-  generateWarehouseChart(): void {
-    const ctx = document.getElementById('warehouseChart') as HTMLCanvasElement;
-    new Chart(ctx, {
-      type: 'pie',
-      data: {
-        labels: ['Total Stock', 'Total Invested', 'Total Earned'],
-        datasets: [
-          {
-            data: [
-              this.warehouseStats.totalStock,
-              this.warehouseStats.totalInvested,
-              this.warehouseStats.totalEarned
-            ],
-            backgroundColor: ['#f44336', '#ffeb3b', '#4caf50'],
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-      },
-    });
+  // generateWarehouseChart(): void {
+  //   const ctx = document.getElementById('warehouseChart') as HTMLCanvasElement;
+  //   new Chart(ctx, {
+  //     type: 'pie',
+  //     data: {
+  //       labels: ['Total Stock', 'Total Invested', 'Total Earned'],
+  //       datasets: [
+  //         {
+  //           data: [
+  //             this.warehouseStats.totalStock,
+  //             this.warehouseStats.totalInvested,
+  //             this.warehouseStats.totalEarned
+  //           ],
+  //           backgroundColor: ['#f44336', '#ffeb3b', '#4caf50'],
+  //         },
+  //       ],
+  //     },
+  //     options: {
+  //       responsive: true,
+  //     },
+  //   });
+  // }
+
+  generateWarehouseChartPrimeNG(): void {
+    this.data = {
+      labels: ['Total Stock', 'Total Invested', 'Total Earned'],
+      datasets: [
+        {
+          data: [
+            this.warehouseStats.totalStock,
+            this.warehouseStats.totalInvested,
+            this.warehouseStats.totalEarned
+          ],
+          backgroundColor: ['#f44336', '#ffeb3b', '#4caf50']
+        }
+      ]
+    };
+  
+    this.options = {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+      }
+    };
   }
+  
 
   onWarehouseSelect(warehouseId: string, action: string): void {
     this.selectedWarehouseId = warehouseId;
