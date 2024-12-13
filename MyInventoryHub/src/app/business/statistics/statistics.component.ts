@@ -62,7 +62,8 @@ export class StatisticsComponent implements OnInit {
   isOwner: boolean = false;
   data: any;
   total: any;
-
+  monthlyEarningsData: any;
+  monthlyEarningsOptions: any;
   options: any;
 
   constructor(
@@ -113,142 +114,232 @@ export class StatisticsComponent implements OnInit {
   }
 
   loadProductStats(): void {
+    // Verificar si el token y el almacén están disponibles
     if (!this.token || !this.selectedWarehouseId) {
-      console.error(
-        'No se puede cargar estadísticas sin token o almacén seleccionado.'
-      );
+      console.error('No se puede cargar estadísticas sin token o almacén seleccionado.');
       return;
     }
-
-    this.productService
-      .getProducts(this.token, this.selectedWarehouseId)
-      .subscribe(
-        (response) => {
-          this.products = response;
-          this.productStats = this.calculateProductStats(this.products);
-          this.warehouseStats = this.calculateWarehouseStats(this.products);
-
-          // Crear datos para el gráfico principal (dinero generado por producto)
-          const productNames = this.products.map((product) => product.name);
-          const productEarnings = this.products.map(
-            (product) => this.productStats[product._id].earned
-          );
-
-          this.data = {
-            labels: productNames,
+  
+    this.productService.getProducts(this.token, this.selectedWarehouseId).subscribe({
+      next: (response) => {
+        this.products = response; // Guardar los productos
+        this.productStats = this.calculateProductStats(this.products); // Calcular estadísticas de productos
+        this.warehouseStats = this.calculateWarehouseStats(this.products); // Calcular estadísticas de almacén
+  
+        // Calcular las ganancias mensuales
+        const monthlyEarnings = this.calculateMonthlyEarnings(this.products);
+  
+        // Preparar los datos para el gráfico de ganancias mensuales
+        const months = [
+          'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
+          'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+        ];
+        const earnings = months.map((month, index) => monthlyEarnings[index]);
+  
+        // Asignar los datos al gráfico de ganancias mensuales
+        this.monthlyEarningsData = {
+          labels: months,
+          datasets: [
+            {
+              data: earnings,
+              backgroundColor: '#66bb6a', // Color de las barras
+            },
+          ],
+        };
+  
+        // Definir las opciones del gráfico de ganancias mensuales
+        this.monthlyEarningsOptions = {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+          },
+          scales: {
+            x: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Meses',
+              },
+            },
+            y: {
+              title: {
+                display: true,
+                text: 'Ganancias',
+              },
+            },
+          },
+        };
+  
+        // Generar gráfico principal de dinero generado por producto
+        const productNames = this.products.map((product) => product.name);
+        const productEarnings = this.products.map(
+          (product) => this.productStats[product._id].earned
+        );
+  
+        this.data = {
+          labels: productNames,
+          datasets: [
+            {
+              data: productEarnings,
+              backgroundColor: this.generateColors(productNames.length), // Genera colores dinámicos
+            },
+          ],
+        };
+  
+        this.options = {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+          },
+        };
+  
+        // Generar datos para cada producto
+        this.products.forEach((product) => {
+          const stats = this.productStats[product._id];
+  
+          // Calcular el total (Invertido + Ganado)
+          const total = stats.invested + stats.earned;
+  
+          product.chartData = {
+            labels: ['Stock', 'Invertido', 'Ganado', 'Total'], // Nuevas categorías
             datasets: [
               {
-                data: productEarnings,
-                backgroundColor: this.generateColors(productNames.length), // Genera colores dinámicos
+                label: 'Stock',
+                data: [stats.stock, null, null, null],
+                backgroundColor: '#42a5f5',
+              },
+              {
+                label: 'Invertido',
+                data: [null, stats.invested, null, null],
+                backgroundColor: '#66bb6a',
+              },
+              {
+                label: 'Ganado',
+                data: [null, null, stats.earned, null],
+                backgroundColor: '#ff7043',
+              },
+              {
+                label: 'Total',
+                data: [null, null, null, total],
+                backgroundColor: '#ffeb3b',
               },
             ],
           };
-
-          this.options = {
+  
+          product.chartOptions = {
             responsive: true,
             plugins: {
               legend: {
-                position: 'top',
+                display: false, // Ocultar la leyenda
+              },
+            },
+            scales: {
+              x: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: 'Categorías',
+                },
+                stacked: true,
+                barPercentage: 0.9, // Tamaño de las barras
+                categoryPercentage: 1.0, // Distribución uniforme de las barras
+              },
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: 'Valores',
+                },
               },
             },
           };
-
-          // Generar datos para cada producto
-          // Generar datos para cada producto
-          this.products.forEach((product) => {
-            const stats = this.productStats[product._id];
-            
-            // Calcular el total (Invertido + Ganado)
-            const total = stats.invested + stats.earned;
-          
-            product.chartData = {
-              labels: ['Stock', 'Invertido', 'Ganado', 'Total'], // Nuevas categorías
-              datasets: [
-                {
-                  label: 'Stock',
-                  data: [stats.stock, null, null, null],
-                  backgroundColor: '#42a5f5',
-                },
-                {
-                  label: 'Invertido',
-                  data: [null, stats.invested, null, null],
-                  backgroundColor: '#66bb6a',
-                },
-                {
-                  label: 'Ganado',
-                  data: [null, null, stats.earned, null],
-                  backgroundColor: '#ff7043',
-                },
-                {
-                  label: 'Total',
-                  data: [null, null, null, total],
-                  backgroundColor: '#ffeb3b',
-                },
-              ],
-            };
-          
-            product.chartOptions = {
-              responsive: true,
-              plugins: {
-                legend: {
-                  display: false, // Ocultar la leyenda
-                },
-              },
-              scales: {
-                x: {
-                  beginAtZero: true,
-                  title: {
-                    display: true,
-                    text: 'Categorías',
-                  },
-                  // Aquí agregamos el ajuste para centrar las barras
-                  ticks: {
-                    padding: 10, // Espaciado entre las categorías
-                  },
-                  grid: {
-                    offset: true, // Asegura que las barras no se "pegue" a la línea de la cuadrícula
-                  },
-                  // Ajustamos el espacio y centramiento de las barras
-                  stacked: true,
-                  barPercentage: 0.9, // Tamaño de las barras, lo puedes ajustar según tus preferencias
-                  categoryPercentage: 1.0, // Esto asegura que las barras se distribuyan uniformemente y se centren
-                },
-                y: {
-                  beginAtZero: true,
-                  title: {
-                    display: true,
-                    text: 'Valores',
-                  },
-                },
-              },
-            };
-          });
-          
-        },
-        (error) => {
-          console.error('Error al cargar productos:', error);
-        }
-      );
+        });
+      },
+      error: (error) => {
+        console.error('Error al cargar productos:', error);
+      },
+    });
   }
+  
+  
 
-  calculateMonthlyEarnings(products: any[]): { [key: string]: number } {
-    const monthlyEarnings: { [key: string]: number } = {};
+  calculateMonthlyEarnings(products: any[]): { [month: string]: number } {
+    const earningsByMonth: { [month: string]: number } = {};
   
     products.forEach((product) => {
-      const date = new Date(product.date); // Asegúrate de tener un campo 'date' en tu producto
-      const monthYear = `${date.getMonth() + 1}-${date.getFullYear()}`;
-  
-      const earned = this.productStats[product._id]?.earned || 0;
-  
-      if (!monthlyEarnings[monthYear]) {
-        monthlyEarnings[monthYear] = 0;
+      const stats = this.productStats[product._id];
+      const productEarnings = stats.earned;
+      
+      const soldMonth = new Date(product.spoil).getMonth(); // Esto obtiene el mes de la fecha de venta (0 = enero, 11 = diciembre)
+      
+      // Sumar las ganancias a la fecha correspondiente del mes
+      if (earningsByMonth[soldMonth]) {
+        earningsByMonth[soldMonth] += productEarnings;
+      } else {
+        earningsByMonth[soldMonth] = productEarnings;
       }
-      monthlyEarnings[monthYear] += earned; // Sumar las ganancias por mes
     });
   
-    return monthlyEarnings;
+    // Asegurar que todos los meses (0 a 11) estén presentes en los datos (si no se vendieron productos en un mes, se pone 0)
+    for (let i = 0; i < 12; i++) {
+      if (!earningsByMonth[i]) {
+        earningsByMonth[i] = 0;
+      }
+    }
+  
+    return earningsByMonth;
   }
   
+
+  generateMonthlyEarningsChart(): void {
+    // Calcular las ganancias mensuales
+    const monthlyEarnings = this.calculateMonthlyEarnings(this.products);
+
+    // Organizar los datos para el gráfico
+    const months = Object.keys(monthlyEarnings);
+    const earnings = months.map((month) => monthlyEarnings[month]);
+
+    this.monthlyEarningsData = {
+      labels: months, // Meses y años (ej: "1-2024", "2-2024")
+      datasets: [
+        {
+          label: 'Ganancias Mensuales',
+          data: earnings,
+          backgroundColor: '#42a5f5', // Puedes elegir otro color
+        },
+      ],
+    };
+
+    // Configuración para el gráfico (Barras horizontales)
+    this.monthlyEarningsOptions = {
+      responsive: true,
+      indexAxis: 'y', // Esto cambia las barras a horizontales
+      scales: {
+        x: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Ganancias',
+          },
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Meses',
+          },
+        },
+      },
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+      },
+    };
+  }
 
   calculateWarehouseStats(products: any[]): WarehouseStats {
     let totalStock = 0;
