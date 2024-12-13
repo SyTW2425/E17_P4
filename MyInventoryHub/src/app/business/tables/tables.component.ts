@@ -9,12 +9,16 @@ import { DialogModule } from 'primeng/dialog'
 import { ButtonModule } from 'primeng/button'
 import { CheckboxModule } from 'primeng/checkbox';
 import { TableModule } from 'primeng/table';
-
+import { FloatLabelModule } from "primeng/floatlabel"
+import { PaginatorModule } from 'primeng/paginator';
+import { MenuModule } from 'primeng/menu';
+import { MenuItem } from 'primeng/api';
 
 @Component({
   selector: 'app-tables',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, ReactiveFormsModule, FormsModule, PermissionPipe, DialogModule, ButtonModule, CheckboxModule,TableModule],
+  imports: [CommonModule, CurrencyPipe, ReactiveFormsModule, FormsModule, PermissionPipe, DialogModule, ButtonModule, CheckboxModule,TableModule, FloatLabelModule,
+    PaginatorModule, MenuModule],
   templateUrl: './tables.component.html',
   styleUrls: ['./tables.component.css']
 })
@@ -30,6 +34,7 @@ export default class TablesComponent implements OnInit {
   employeeUpdateForm: FormGroup;
   productForm: FormGroup;
   productUpdateForm: FormGroup;
+  newEmployeeForm: FormGroup;
   employeeForm: FormGroup;
   token: string | null = null; 
   isFormOpen: boolean = false;
@@ -44,7 +49,7 @@ export default class TablesComponent implements OnInit {
   public permissionsEmployee: string[] = [];
   showErrorModal: boolean = false; 
   errorMessage: string = '';
-  
+  isAddEmployeeFormOpen: boolean = false;
   constructor(
     private warehouseService: WarehouseService,
     private authService: AuthService,
@@ -92,6 +97,10 @@ export default class TablesComponent implements OnInit {
       unit: [null],
       spoil: [null],
       supplier: ['', Validators.required],
+    });
+    this.newEmployeeForm = this.fb.group({
+      employeeUserName: ['', Validators.required],
+      newPermissions: ['', Validators.required],
     });
   }
 
@@ -230,17 +239,18 @@ export default class TablesComponent implements OnInit {
       return;
     }
 
-    if (this.employeeForm.valid) {
+    if (this.newEmployeeForm.valid) {
+      console.log('gaga:',this.newEmployeeForm.value, this.newEmployeeForm.value.newPermissions )
       const data = {
-        username: this.employeeForm.value.userName,
-        permissions: this.employeeForm.value.permissions.split(','),
+        username: this.newEmployeeForm.value.employeeUserName,
+        permissions: this.newEmployeeForm.value.newPermissions,
       };
       console.log('GEGE: ', this.selectedWarehouseId)
       this.warehouseService.assignEmployee(this.token, this.selectedWarehouseId, data).subscribe(
         (response) => {
           console.log('Employee assigned:', response);
           this.viewEmployees(this.selectedWarehouseId!);
-          this.employeeForm.reset();
+          this.newEmployeeForm.reset();
         },
         (error) => {
           console.error('Error assigning employee:', error);
@@ -542,6 +552,11 @@ export default class TablesComponent implements OnInit {
       obj.employeeId === id && obj.permissions.includes('EDIT')
     );
     return employee;
+  }
+
+  openAddEmployee(warehouseId: any) : void{
+    this.selectedWarehouseId = warehouseId;
+    this.isAddEmployeeFormOpen = true;
   }
 
 }

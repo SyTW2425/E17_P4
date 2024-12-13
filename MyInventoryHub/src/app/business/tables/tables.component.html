@@ -2,35 +2,48 @@
   <!-- Formulario para crear un almacén -->
   <div class="card mb-4" *ngIf="isOwner">
     <h2>Gestión de Almacenes</h2>
-    <div class="card-header">
-      <h4>Crear Nuevo Almacén</h4>
-    </div>
+
+
+    <!-- Otro menu -->
     <div class="card-body">
-      <form [formGroup]="warehouseForm" (ngSubmit)="createWarehouse()">
-        <div class="form-group">
-          <label for="name">Nombre del Almacén:</label>
-          <input id="name" type="text" class="form-control" formControlName="name"
-            placeholder="Escribe el nombre del almacén" />
+
+      <h5 class="text-secondary mb-3">
+        Crear Nuevo Almacén
+      </h5>
+      <form [formGroup]="warehouseForm" (ngSubmit)="createWarehouse()" class="warehouse-form-inline">
+        <!-- Campo: Nombre del Almacén -->
+        <div class="warehouse-form-group">
+          <p-floatlabel>
+            <input id="name" pInputText formControlName="name" />
+            <label for="name">Nombre del Almacén</label>
+          </p-floatlabel>
           <div *ngIf="warehouseForm.get('name')?.invalid && warehouseForm.get('name')?.touched" class="text-danger">
             El nombre es obligatorio.
           </div>
         </div>
 
-        <div class="form-group mt-3">
-          <label for="location">Ubicación:</label>
-          <input id="location" type="text" class="form-control" formControlName="location"
-            placeholder="Escribe la ubicación del almacén" />
+        <!-- Campo: Ubicación -->
+        <div class="warehouse-form-group">
+          <p-floatlabel>
+            <input id="location" pInputText formControlName="location" />
+            <label for="location">Ubicación</label>
+          </p-floatlabel>
           <div *ngIf="warehouseForm.get('location')?.invalid && warehouseForm.get('location')?.touched"
             class="text-danger">
             La ubicación es obligatoria.
           </div>
         </div>
 
-        <button type="submit" class="btn btn-primary mt-3" [disabled]="warehouseForm.invalid">
-          Crear Almacén
-        </button>
+        <!-- Botón de envío -->
+        <div class="warehouse-form-group warehouse-form-button">
+          <button type="submit" class="btn btn-primary" [disabled]="warehouseForm.invalid">
+            Crear Almacén
+          </button>
+        </div>
       </form>
     </div>
+
+    <!-- hasta aqyu -->
   </div>
 
   <!-- Tabla de almacenes -->
@@ -65,7 +78,7 @@
                     </a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#" (click)="assignEmployeeDirectly(warehouse._id)" *ngIf="isOwner">
+                    <a class="dropdown-item" href="#" (click)="openAddEmployee(warehouse._id)" *ngIf="isOwner">
                       Asignar empleado
                     </a>
                   </li>
@@ -99,7 +112,7 @@
       </table>
     </div>
   </div>
-<!-- 675185617d067e58135d4755 -->
+
   <!-- Detalle de empleados del almacén seleccionado -->
   <div class="card mt-4" *ngIf="selectedWarehouseId && isEmployeesViewOpen">
     <div class="card-header">
@@ -133,7 +146,8 @@
                     </a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#" (click)="openUpdateEmployeeForm(employee.employeeId._id, employee.permissions)">
+                    <a class="dropdown-item" href="#"
+                      (click)="openUpdateEmployeeForm(employee.employeeId._id, employee.permissions)">
                       actualizar permisos
                     </a>
                   </li>
@@ -154,76 +168,205 @@
   <div class="card-header">
     <h4>Productos del almacén: {{ selectedWarehouseName }}</h4>
   </div>
-  <div class="card-body">
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Descripción</th>
-          <th>Stock</th>
-          <th>Stock Mínimo</th>
-          <th>Precio</th>
-          <th>Unidad</th>
-          <th>Fecha de Caducidad</th>
-          <th>Proveedor</th>
-          <th>Categoría</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let product of products">
-          <td>{{ product.name }}</td>
-          <td>{{ product.description }}</td>
-          <td>{{ product.stock }}</td>
-          <td>{{ product.minimunStock }}</td>
-          <td>{{ product.price | currency:'EUR' }}</td>
-          <td>{{ product.unit }}</td>
-          <td>{{ product.spoil | date: 'dd/MM/yyyy' }}</td>
-          <td>{{ product.supplier }}</td>
-          <td>{{ product.category }}</td>
-          <td>
-            <!-- Menú desplegable con acciones -->
-            <div class="dropdown">
-              <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                aria-expanded="false">
-                Acciones
-              </button>
-              <ul class="dropdown-menu">
-                <li>
-                  <a class="dropdown-item" href="#" (click)="deleteProduct(product._id)"  *ngIf=" isOwner || hasDeletePermissions()">
-                    Eliminar producto
-                  </a>
-                </li>
-                <li>
-                  <a class="dropdown-item" href="#" (click)="openUpdateProductForm(product._id)" *ngIf = "isOwner || hasEditPermissions()">
-                    Actualizar producto
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <!-- TABLA CON FILTROS -->
+  <p-table [value]="products" dataKey="id" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10, 25, 50]"
+    [tableStyle]="{ 'min-width': '75rem' }">
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="name">Nombre <p-sortIcon field="name"></p-sortIcon></th>
+        <th pSortableColumn="description">Descripción <p-sortIcon field="description"></p-sortIcon></th>
+        <th pSortableColumn="stock">Stock <p-sortIcon field="stock"></p-sortIcon></th>
+        <th pSortableColumn="minimunStock">Stock Mínimo <p-sortIcon field="minimunStock"></p-sortIcon></th>
+        <th pSortableColumn="price">Precio <p-sortIcon field="price"></p-sortIcon></th>
+        <th pSortableColumn="unit">Unidad<p-sortIcon field="unit"></p-sortIcon></th>
+        <th pSortableColumn="spoil">Fecha de Caducidad<p-sortIcon field="spoil"></p-sortIcon></th>
+        <th pSortableColumn="supplier">Proveedor<p-sortIcon field="supplier"></p-sortIcon></th>
+        <th pSortableColumn="category">Categoría<p-sortIcon field="category"></p-sortIcon></th>
+        <th>Acciones</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-product>
+      <tr>
+        <!-- Columna editable condicional -->
+        <td>
+          <p-cellEditor *ngIf="isOwner || hasEditPermissions()">
+            <ng-template pTemplate="input">
+              <input pInputText [(ngModel)]="product.name" />
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ product.name }}
+            </ng-template>
+          </p-cellEditor>
+          <ng-container *ngIf="!(isOwner || hasEditPermissions())">
+            {{ product.name }}
+          </ng-container>
+        </td>
+
+        <td>
+          <p-cellEditor *ngIf="isOwner || hasEditPermissions()">
+            <ng-template pTemplate="input">
+              <input pInputText [(ngModel)]="product.description" />
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ product.description }}
+            </ng-template>
+          </p-cellEditor>
+          <ng-container *ngIf="!(isOwner || hasEditPermissions())">
+            {{ product.description }}
+          </ng-container>
+        </td>
+        <!-- Stock -->
+        <td>
+          <p-cellEditor *ngIf="isOwner || hasEditPermissions()">
+            <ng-template pTemplate="input">
+              <input type="number" pInputText [(ngModel)]="product.stock" />
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ product.stock }}
+            </ng-template>
+          </p-cellEditor>
+          <ng-container *ngIf="!(isOwner || hasEditPermissions())">
+            {{ product.stock }}
+          </ng-container>
+        </td>
+
+        <!-- Stock Mínimo -->
+        <td>
+          <p-cellEditor *ngIf="isOwner || hasEditPermissions()">
+            <ng-template pTemplate="input">
+              <input type="number" pInputText [(ngModel)]="product.minimunStock" />
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ product.minimunStock }}
+            </ng-template>
+          </p-cellEditor>
+          <ng-container *ngIf="!(isOwner || hasEditPermissions())">
+            {{ product.minimunStock }}
+          </ng-container>
+        </td>
+
+        <!-- Precio -->
+        <td>
+          <p-cellEditor *ngIf="isOwner || hasEditPermissions()">
+            <ng-template pTemplate="input">
+              <input type="number" pInputText [(ngModel)]="product.price" />
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ product.price | currency: 'EUR' }}
+            </ng-template>
+          </p-cellEditor>
+          <ng-container *ngIf="!(isOwner || hasEditPermissions())">
+            {{ product.price | currency: 'EUR' }}
+          </ng-container>
+        </td>
+
+        <!-- Unidad -->
+        <td>
+          <p-cellEditor *ngIf="isOwner || hasEditPermissions()">
+            <ng-template pTemplate="input">
+              <input pInputText [(ngModel)]="product.unit" />
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ product.unit }}
+            </ng-template>
+          </p-cellEditor>
+          <ng-container *ngIf="!(isOwner || hasEditPermissions())">
+            {{ product.unit }}
+          </ng-container>
+        </td>
+
+        <!-- Fecha de Caducidad -->
+        <td>
+          <p-cellEditor *ngIf="isOwner || hasEditPermissions()">
+            <ng-template pTemplate="input">
+              <input type="date" pInputText [(ngModel)]="product.spoil" />
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ product.spoil | date: 'dd/MM/yyyy' }}
+            </ng-template>
+          </p-cellEditor>
+          <ng-container *ngIf="!(isOwner || hasEditPermissions())">
+            {{ product.spoil | date: 'dd/MM/yyyy' }}
+          </ng-container>
+        </td>
+
+        <!-- Proveedor -->
+        <td>
+          <p-cellEditor *ngIf="isOwner || hasEditPermissions()">
+            <ng-template pTemplate="input">
+              <input pInputText [(ngModel)]="product.supplier" />
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ product.supplier }}
+            </ng-template>
+          </p-cellEditor>
+          <ng-container *ngIf="!(isOwner || hasEditPermissions())">
+            {{ product.supplier }}
+          </ng-container>
+        </td>
+
+        <!-- Categoría -->
+        <td>
+          <p-cellEditor *ngIf="isOwner || hasEditPermissions()">
+            <ng-template pTemplate="input">
+              <input pInputText [(ngModel)]="product.category" />
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ product.category }}
+            </ng-template>
+          </p-cellEditor>
+          <ng-container *ngIf="!(isOwner || hasEditPermissions())">
+            {{ product.category }}
+          </ng-container>
+        </td>
+
+        <td>
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              Acciones
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <a class="dropdown-item" href="#" (click)="deleteProduct(product._id)"
+                  *ngIf="isOwner || hasDeletePermissions()">
+                  Eliminar producto
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#" (click)="openUpdateProductForm(product._id)"
+                  *ngIf="isOwner || hasEditPermissions()">
+                  Actualizar producto
+                </a>
+              </li>
+            </ul>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <!-- FIN TABLA CON FILTROS -->
 </div>
 
 
+
 <!-- MODAL ACTUALIZAR WAREHOUSE -->
-<p-dialog header="Edita el almacén" [modal]="true" [(visible)]="isFormOpen" [style]="{ width: '30rem' }">
-  <span class="p-text-secondary block mb-5">Actualiza tu información.</span>
+<p-dialog header="Edita el almacén" [modal]="true" [(visible)]="isFormOpen" [style]="{ width: '36rem' }">
+
   <form [formGroup]="warehouseUpdateForm" (ngSubmit)="updateWarehouse()">
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="warehousename" class="font-semibold w-6rem">Nombre del almacén</label>
-      <input id="name" class="flex-auto" autocomplete="off" formControlName="name" />
+    <div class="flex align-items-center gap-3 mb-3 grid">
+      <label for="warehousename" class="font-semibold w-6rem col-5">Nombre del almacén</label>
+      <input id="name" class="flex-auto col-6" autocomplete="off" formControlName="name" />
       <div *ngIf="warehouseUpdateForm.get('name')?.invalid && warehouseUpdateForm.get('name')?.touched"
         class="text-danger">
         El nombre es obligatorio.
       </div>
     </div>
-    <div class="flex align-items-center gap-3 mb-5">
-      <label for="warehouselocation" class="font-semibold w-6rem">Ubicación del almacén</label>
-      <input id="location" class="flex-auto" autocomplete="off" formControlName="location" />
+    <div class="flex align-items-center gap-3 mb-5 grid">
+      <label for="warehouselocation" class="font-semibold w-6rem col-5">Ubicación del almacén</label>
+      <input id="location" class="flex-auto col-6" autocomplete="off" formControlName="location" />
       <div *ngIf="warehouseUpdateForm.get('location')?.invalid && warehouseUpdateForm.get('location')?.touched"
         class="text-danger">
         La ubicación es obligatoria.
@@ -239,102 +382,95 @@
 <!-- MODAL EDICION DE PERMISOS -->
 <p-dialog header="Editar permisos de empleado" [modal]="true" [(visible)]="isUpdateEmployeeFormOpen"
   [style]="{ width: '30rem' }">
-  <span class="p-text-secondary block mb-5">Actualiza los permisos del empleado.</span>
-  <!-- <form [formGroup]="employeeUpdateForm" (ngSubmit)="updateEmployeePermissions()"> -->
-    <!-- <div class="flex align-items-center gap-3 mb-5">
-      <label for="permissions" class="font-semibold w-6rem">Permisos</label>
-      <input id="permissions" class="flex-auto" formControlName="permissions" autocomplete="off"
-        placeholder="Ej: ADD,EDIT,DELETE" />
-      <div *ngIf="employeeUpdateForm.get('permissions')?.invalid && employeeUpdateForm.get('permissions')?.touched"
-        class="text-danger">
-        Los permisos son obligatorios.
-      </div>
-    </div> -->
-    <!-- CHECKBOX -->
-    <div class="flex items-center">
-      <p-checkbox inputId="addPermission" name="permissions" value="ADD" [(ngModel)]="permissionsEmployee" />
-      <label for="addPermission" class="ml-2"> Añadir </label>
-    </div>
-    <div class="flex items-center">
-      <p-checkbox inputId="editPermission" name="permissions" value="EDIT" [(ngModel)]="permissionsEmployee" />
-      <label for="editPermission" class="ml-2"> Editar </label>
-    </div>
-    <div class="flex items-center">
-      <p-checkbox inputId="deletePermission" name="permissions" value="DELETE" [(ngModel)]="permissionsEmployee" />
-      <label for="deletePermission" class="ml-2"> Borrar </label>
-    </div>
+  <!-- CHECKBOX -->
+  <div class="flex items-center">
+    <p-checkbox inputId="addPermission" name="permissions" value="ADD" [(ngModel)]="permissionsEmployee" />
+    <span>&nbsp;&nbsp;</span>
+    <label for="addPermission" class="ml-2 col"> Añadir </label>
+  </div>
+  <div class="flex items-center">
+    <p-checkbox inputId="editPermission" name="permissions" value="EDIT" [(ngModel)]="permissionsEmployee" />
+    <span>&nbsp;&nbsp;</span>
+    <label for="editPermission" class="ml-2"> Editar </label>
+  </div>
+  <div class="flex items-center">
+    <p-checkbox inputId="deletePermission" name="permissions" value="DELETE" [(ngModel)]="permissionsEmployee" />
+    <span>&nbsp;&nbsp;</span>
+    <label for="deletePermission" class="ml-2"> Borrar </label>
+  </div>
+  <br />
   <!-- GUARDAR PERMISOS -->
-    <div class="flex justify-content-end gap-2">
-      <p-button label="Cancelar" severity="secondary" (onClick)="isUpdateEmployeeFormOpen = false" />
-      <p-button label="Guardar" (onClick)="updateEmployeePermissions()" [disabled]="permissionsEmployee.length == 0" />
-    </div>
+  <div class="flex justify-content-end gap-2">
+    <p-button label="Cancelar" severity="secondary" (onClick)="isUpdateEmployeeFormOpen = false" />
+    <p-button label="Guardar" (onClick)="updateEmployeePermissions()" [disabled]="permissionsEmployee.length == 0" />
+  </div>
   <!-- </form> -->
 </p-dialog>
 
 
 <!-- MODAL AÑADIR PRODUCTO -->
 <p-dialog header="Añadir Producto" [modal]="true" [(visible)]="isProductModalVisible" [style]="{ width: '30rem' }">
-  <span class="p-text-secondary block mb-5">Rellena la información del producto.</span>
   <form [formGroup]="productForm" (ngSubmit)="createProduct()">
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="name" class="font-semibold w-6rem">Nombre del producto</label>
-      <input id="name" class="flex-auto" autocomplete="off" formControlName="name" />
+    <div class="flex align-items-center gap-3 mb-3 grid">
+      <label for="name" class="font-semibold w-6rem col-4">Nombre del producto</label>
+      <input id="name" class="flex-auto col-6" autocomplete="off" formControlName="name" />
       <div *ngIf="productForm.get('name')?.invalid && productForm.get('name')?.touched" class="text-danger">
         El nombre es obligatorio.
       </div>
     </div>
 
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="description" class="font-semibold w-6rem">Descripción</label>
-      <input id="description" class="flex-auto" autocomplete="off" formControlName="description" />
+    <div class="flex align-items-center gap-3 mb-3 grid">
+      <label for="description" class="font-semibold w-6rem col-4">Descripción</label>
+      <input id="description" class="flex-auto col-6" autocomplete="off" formControlName="description" />
       <div *ngIf="productForm.get('description')?.invalid && productForm.get('description')?.touched"
         class="text-danger">
         La descripción es obligatoria.
       </div>
     </div>
 
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="stock" class="font-semibold w-6rem">Stock</label>
-      <input id="stock" class="flex-auto" type="number" autocomplete="off" formControlName="stock" />
+    <div class="flex align-items-center gap-3 mb-3 grid">
+      <label for="stock" class="font-semibold w-6rem col-4">Stock</label>
+      <input id="stock" class="flex-auto col-6" type="number" autocomplete="off" formControlName="stock" />
       <div *ngIf="productForm.get('stock')?.invalid && productForm.get('stock')?.touched" class="text-danger">
         El stock debe ser un número válido.
       </div>
     </div>
 
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="minimunStock" class="font-semibold w-6rem">Stock Mínimo</label>
-      <input id="minimunStock" class="flex-auto" type="number" autocomplete="off" formControlName="minimunStock" />
+    <div class="flex align-items-center gap-3 mb-3 grid">
+      <label for="minimunStock" class="font-semibold w-6rem col-4">Stock Mínimo</label>
+      <input id="minimunStock" class="flex-auto col-6" type="number" autocomplete="off"
+        formControlName="minimunStock" />
     </div>
 
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="category" class="font-semibold w-6rem">Categoría</label>
-      <input id="category" class="flex-auto" autocomplete="off" formControlName="category" />
+    <div class="flex align-items-center gap-3 mb-3 grid">
+      <label for="category" class="font-semibold w-6rem col-4">Categoría</label>
+      <input id="category" class="flex-auto col-6" autocomplete="off" formControlName="category" />
       <div *ngIf="productForm.get('category')?.invalid && productForm.get('category')?.touched" class="text-danger">
         La categoría es obligatoria.
       </div>
     </div>
 
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="price" class="font-semibold w-6rem">Precio</label>
-      <input id="price" class="flex-auto" type="number" autocomplete="off" formControlName="price" />
+    <div class="flex align-items-center gap-3 mb-3 grid">
+      <label for="price" class="font-semibold w-6rem col-4">Precio</label>
+      <input id="price" class="flex-auto col-6" type="number" autocomplete="off" formControlName="price" />
       <div *ngIf="productForm.get('price')?.invalid && productForm.get('price')?.touched" class="text-danger">
         El precio es obligatorio.
       </div>
     </div>
 
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="unit" class="font-semibold w-6rem">Unidad</label>
-      <input id="unit" class="flex-auto" autocomplete="off" formControlName="unit" />
+    <div class="flex align-items-center gap-3 mb-3 grid">
+      <label for="unit" class="font-semibold w-6rem col-4">Unidad</label>
+      <input id="unit" class="flex-auto col-6" autocomplete="off" formControlName="unit" />
     </div>
 
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="spoil" class="font-semibold w-6rem">Fecha de Vencimiento</label>
-      <input id="spoil" class="flex-auto" type="date" formControlName="spoil" />
+    <div class="flex align-items-center gap-3 mb-3 grid">
+      <label for="spoil" class="font-semibold w-6rem col-4">Fecha de Vencimiento</label>
+      <input id="spoil" class="flex-auto col-6" type="date" formControlName="spoil" />
     </div>
 
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="supplier" class="font-semibold w-6rem">Proveedor</label>
-      <input id="supplier" class="flex-auto" autocomplete="off" formControlName="supplier" />
+    <div class="flex align-items-center gap-3 mb-3 grid">
+      <label for="supplier" class="font-semibold w-6rem col-4">Proveedor</label>
+      <input id="supplier" class="flex-auto col-6" autocomplete="off" formControlName="supplier" />
       <div *ngIf="productForm.get('supplier')?.invalid && productForm.get('supplier')?.touched" class="text-danger">
         El proveedor es obligatorio.
       </div>
@@ -350,21 +486,20 @@
 <!-- MODAL ACTUALIZAR PRODUCTO -->
 <p-dialog header="Actualizar Producto" [modal]="true" [(visible)]="isUpdateProductFormOpen"
   [style]="{ width: '30rem' }">
-  <span class="p-text-secondary block mb-5">Actualiza la información del producto.</span>
   <form [formGroup]="productUpdateForm" (ngSubmit)="updateProduct()">
     <!-- Nombre del producto -->
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="name" class="font-semibold w-6rem">Nombre del producto</label>
-      <input id="name" class="flex-auto" autocomplete="off" formControlName="name" />
+    <div class="flex align-items-center gap-3 mb-3 grid">
+      <label for="name" class="font-semibold w-6rem col-4">Nombre del producto</label>
+      <input id="name" class="flex-auto col-6" autocomplete="off" formControlName="name" />
       <div *ngIf="productUpdateForm.get('name')?.invalid && productUpdateForm.get('name')?.touched" class="text-danger">
         El nombre es obligatorio.
       </div>
     </div>
 
     <!-- Descripción -->
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="description" class="font-semibold w-6rem">Descripción</label>
-      <input id="description" class="flex-auto" autocomplete="off" formControlName="description" />
+    <div class="flex align-items-center gap-3 mb-3 grid">
+      <label for="description" class="font-semibold w-6rem col-4">Descripción</label>
+      <input id="description" class="flex-auto col-6" autocomplete="off" formControlName="description" />
       <div *ngIf="productUpdateForm.get('description')?.invalid && productUpdateForm.get('description')?.touched"
         class="text-danger">
         La descripción es obligatoria.
@@ -372,9 +507,9 @@
     </div>
 
     <!-- Stock -->
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="stock" class="font-semibold w-6rem">Stock</label>
-      <input id="stock" class="flex-auto" type="number" autocomplete="off" formControlName="stock" />
+    <div class="flex align-items-center gap-3 mb-3 grid">
+      <label for="stock" class="font-semibold w-6rem col-4">Stock</label>
+      <input id="stock" class="flex-auto col-6" type="number" autocomplete="off" formControlName="stock" />
       <div *ngIf="productUpdateForm.get('stock')?.invalid && productUpdateForm.get('stock')?.touched"
         class="text-danger">
         El stock debe ser un número válido.
@@ -382,15 +517,16 @@
     </div>
 
     <!-- Stock mínimo -->
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="minimunStock" class="font-semibold w-6rem">Stock Mínimo</label>
-      <input id="minimunStock" class="flex-auto" type="number" autocomplete="off" formControlName="minimunStock" />
+    <div class="flex align-items-center gap-3 mb-3 grid">
+      <label for="minimunStock" class="font-semibold w-6rem col-4">Stock Mínimo</label>
+      <input id="minimunStock" class="flex-auto col-6" type="number" autocomplete="off"
+        formControlName="minimunStock" />
     </div>
 
     <!-- Categoría -->
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="category" class="font-semibold w-6rem">Categoría</label>
-      <input id="category" class="flex-auto" autocomplete="off" formControlName="category" />
+    <div class="flex align-items-center gap-3 mb-3 grid">
+      <label for="category" class="font-semibold w-6rem col-4">Categoría</label>
+      <input id="category" class="flex-auto col-6" autocomplete="off" formControlName="category" />
       <div *ngIf="productUpdateForm.get('category')?.invalid && productUpdateForm.get('category')?.touched"
         class="text-danger">
         La categoría es obligatoria.
@@ -398,9 +534,9 @@
     </div>
 
     <!-- Precio -->
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="price" class="font-semibold w-6rem">Precio</label>
-      <input id="price" class="flex-auto" type="number" autocomplete="off" formControlName="price" />
+    <div class="flex align-items-center gap-3 mb-3 grid">
+      <label for="price" class="font-semibold w-6rem col-4">Precio</label>
+      <input id="price" class="flex-auto col-6" type="number" autocomplete="off" formControlName="price" />
       <div *ngIf="productUpdateForm.get('price')?.invalid && productUpdateForm.get('price')?.touched"
         class="text-danger">
         El precio es obligatorio.
@@ -408,21 +544,21 @@
     </div>
 
     <!-- Unidad -->
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="unit" class="font-semibold w-6rem">Unidad</label>
-      <input id="unit" class="flex-auto" autocomplete="off" formControlName="unit" />
+    <div class="flex align-items-center gap-3 mb-3 grid">
+      <label for="unit" class="font-semibold w-6rem col-4">Unidad</label>
+      <input id="unit" class="flex-auto col-6" autocomplete="off" formControlName="unit" />
     </div>
 
     <!-- Fecha de Vencimiento -->
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="spoil" class="font-semibold w-6rem">Fecha de Vencimiento</label>
-      <input id="spoil" class="flex-auto" type="date" formControlName="spoil" />
+    <div class="flex align-items-center gap-3 mb-3 grid">
+      <label for="spoil" class="font-semibold w-6rem col-4">Fecha de Vencimiento</label>
+      <input id="spoil" class="flex-auto col-6" type="date" formControlName="spoil" />
     </div>
 
     <!-- Proveedor -->
-    <div class="flex align-items-center gap-3 mb-3">
-      <label for="supplier" class="font-semibold w-6rem">Proveedor</label>
-      <input id="supplier" class="flex-auto" autocomplete="off" formControlName="supplier" />
+    <div class="flex align-items-center gap-3 mb-3 grid">
+      <label for="supplier" class="font-semibold w-6rem col-4">Proveedor</label>
+      <input id="supplier" class="flex-auto col-6" autocomplete="off" formControlName="supplier" />
       <div *ngIf="productUpdateForm.get('supplier')?.invalid && productUpdateForm.get('supplier')?.touched"
         class="text-danger">
         El proveedor es obligatorio.
@@ -442,3 +578,41 @@
   <p>{{ errorMessage }}</p>
   <button type="button" pButton label="Cerrar" (click)="closeErrorModal()"></button>
 </p-dialog>
+
+<!-- MODAL ASIGNAR EMPLEADO -->
+<p-dialog header="Añadir empleado" [modal]="true" [(visible)]="isAddEmployeeFormOpen" [style]="{ width: '30rem' }">
+  <form [formGroup]="newEmployeeForm" (ngSubmit)="assignEmployee()">
+<div class="flex align-items-center gap-3 mb-3 grid">
+  <label for="employeeUserName" class="font-semibold w-6rem col-4">Nombre de usuario</label>
+  <input id="employeeUserName" class="flex-auto col-6" autocomplete="off" formControlName="employeeUserName" />
+  <div *ngIf="newEmployeeForm.get('employeeUserName')?.invalid && newEmployeeForm.get('employeeUserName')?.touched" class="text-danger">
+    El nombre es obligatorio.
+  </div>
+</div>
+<!-- CHECKBOX -->
+<div class="flex items-center">
+  <p-checkbox  formControlName="newPermissions" inputId="addPermission" name="permissions" value="ADD" />
+  <span>&nbsp;&nbsp;</span>
+  <label for="addPermission" class="ml-2 col"> Añadir </label>
+</div>
+<div class="flex items-center">
+  <p-checkbox formControlName="newPermissions" inputId="editPermission" name="permissions" value="EDIT" />
+  <span>&nbsp;&nbsp;</span>
+  <label for="editPermission" class="ml-2"> Editar </label>
+</div>
+<div class="flex items-center">
+  <p-checkbox formControlName="newPermissions" inputId="deletePermission" name="permissions" value="DELETE" />
+  <span>&nbsp;&nbsp;</span>
+  <label for="deletePermission" class="ml-2"> Borrar </label>
+</div>
+<br />
+<!-- GUARDAR PERMISOS -->
+<div class="flex justify-content-end gap-2">
+  <p-button label="Cancelar" severity="secondary" (onClick)="isAddEmployeeFormOpen = false" />
+  <p-button label="Guardar" type="submit"  />
+</div>
+<!-- </form> -->
+  </form>
+</p-dialog>
+
+ <!-- fin modal asignar empleado -->

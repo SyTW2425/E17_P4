@@ -1,2 +1,20 @@
-@import "primeng/resources/themes/lara-light-blue/theme.css";
-@import "primeng/resources/primeng.css";
+.warehouse-form-inline {
+    display: flex;
+    align-items: center; /* Alinear verticalmente los elementos */
+    gap: 1rem; /* Espaciado entre los elementos */
+    flex-wrap: wrap; /* Permitir que los campos se acomoden en varias líneas si el espacio es limitado */
+  }
+  
+  .warehouse-form-group {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  
+  .warehouse-form-group input {
+    min-width: 200px; /* Asegurar un tamaño mínimo para los inputs */
+  }
+  
+  .warehouse-form-button {
+    white-space: nowrap; /* Evitar que el texto del botón se rompa */
+  }
