@@ -1,0 +1,20 @@
+/* .card {
+  margin-bottom: 1rem;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+} */
+.card {
+  margin-bottom: 1rem;
+}
+
+.card-header {
+  font-weight: bold;
+}
+
+.card-body p-chart {
+  margin-top: 1rem;
+}

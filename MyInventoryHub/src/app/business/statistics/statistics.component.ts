@@ -8,6 +8,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { ChangeDetectorRef, Component, effect, inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { ChartModule } from 'primeng/chart';
+
 import { AfterViewInit } from '@angular/core';
 
 interface ProductStats {
@@ -100,7 +101,7 @@ export class StatisticsComponent implements OnInit {
         this.productStats = this.calculateProductStats(this.products);
         this.warehouseStats = this.calculateWarehouseStats(this.products);
   
-        // Configurar datos para PrimeNG
+        // Configurar datos para el almacén
         this.data = {
           labels: ['Total Stock', 'Total Invested', 'Total Earned'],
           datasets: [
@@ -108,7 +109,7 @@ export class StatisticsComponent implements OnInit {
               data: [
                 this.warehouseStats.totalStock,
                 this.warehouseStats.totalInvested,
-                this.warehouseStats.totalEarned
+                this.warehouseStats.totalEarned,
               ],
               backgroundColor: ['#f44336', '#ffeb3b', '#4caf50'],
             },
@@ -123,6 +124,29 @@ export class StatisticsComponent implements OnInit {
             },
           },
         };
+  
+        // Generar datos para cada producto
+        this.products.forEach((product) => {
+          const stats = this.productStats[product._id];
+          product.chartData = {
+            labels: ['Stock', 'Invested', 'Earned'],
+            datasets: [
+              {
+                data: [stats.stock, stats.invested, stats.earned],
+                backgroundColor: ['#42a5f5', '#66bb6a', '#ff7043'],
+              },
+            ],
+          };
+  
+          product.chartOptions = {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: 'top',
+              },
+            },
+          };
+        });
       },
       (error) => {
         console.error('Error al cargar productos:', error);
@@ -130,31 +154,6 @@ export class StatisticsComponent implements OnInit {
     );
   }
   
-
-  calculateProductStats(products: any[]): { [key: string]: ProductStats } {
-    const productStats: { [key: string]: ProductStats } = {};
-    products.forEach(product => {
-      // Asegurarse de que el precio y stock son válidos
-      const price = product.price || 0;
-      const stock = product.stock || 0;
-      
-      // Verificar que el stock y precio son mayores que cero antes de hacer cálculos
-      if (price > 0 && stock > 0) {
-        // Suponiendo un margen de ganancia (por ejemplo, 20%)
-        const profitMargin = 0.20;
-        const invested = price * stock;  // Inversión total en el producto
-        const earned = invested * profitMargin;  // Ganancia sobre la inversión
-  
-        const id = product.id || product._id || `product_${Math.random()}`; // Asegurarse de tener una clave
-        productStats[id] = {
-          stock: stock,
-          invested,
-          earned,
-        };
-      }
-    });
-    return productStats;
-  }
   
   calculateWarehouseStats(products: any[]): WarehouseStats {
     let totalStock = 0;
@@ -179,6 +178,33 @@ export class StatisticsComponent implements OnInit {
       totalEarned,
     };
   }
+
+  calculateProductStats(products: any[]): { [key: string]: ProductStats } {
+    const productStats: { [key: string]: ProductStats } = {};
+    
+    products.forEach(product => {
+      const price = product.price || 0; // Asegurarse de que el precio está definido
+      const stock = product.stock || 0; // Asegurarse de que el stock está definido
+  
+      // Verificar que el precio y el stock sean mayores que 0 antes de hacer cálculos
+      if (price > 0 && stock > 0) {
+        const profitMargin = 0.20; // Suponiendo un margen de ganancia del 20%
+        const invested = price * stock; // Total invertido en este producto
+        const earned = invested * profitMargin; // Total ganado basado en la inversión
+        
+        const id = product._id || product.id || `product_${Math.random()}`; // Asegurarse de tener una clave única
+        
+        productStats[id] = {
+          stock: stock,
+          invested: invested,
+          earned: earned,
+        };
+      }
+    });
+  
+    return productStats;
+  }
+  
   
 
   generateProductChart(): void {
@@ -210,28 +236,6 @@ export class StatisticsComponent implements OnInit {
     });
   }
 
-  // generateWarehouseChart(): void {
-  //   const ctx = document.getElementById('warehouseChart') as HTMLCanvasElement;
-  //   new Chart(ctx, {
-  //     type: 'pie',
-  //     data: {
-  //       labels: ['Total Stock', 'Total Invested', 'Total Earned'],
-  //       datasets: [
-  //         {
-  //           data: [
-  //             this.warehouseStats.totalStock,
-  //             this.warehouseStats.totalInvested,
-  //             this.warehouseStats.totalEarned
-  //           ],
-  //           backgroundColor: ['#f44336', '#ffeb3b', '#4caf50'],
-  //         },
-  //       ],
-  //     },
-  //     options: {
-  //       responsive: true,
-  //     },
-  //   });
-  // }
 
   generateWarehouseChartPrimeNG(): void {
     this.data = {

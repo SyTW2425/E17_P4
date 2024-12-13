@@ -1,100 +1,102 @@
-<div class="card">
-  <div class="card-header">
-    <h4>Lista de Almacenes</h4>
-  </div>
-  <div class="card-body">
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Ubicación</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let warehouse of warehouses">
-          <td>{{ warehouse.name }}</td>
-          <td>{{ warehouse.location }}</td>
-          <td>
-            <!-- Menú desplegable con acciones -->
-            <div class="dropdown">
-              <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                aria-expanded="false">
-                Acciones
-              </button>
-              <ul class="dropdown-menu">
-                <!-- <li>
-                  <a class="dropdown-item" role="button" (click)="onWarehouseSelect(warehouse._id, 'stats')"
-                    *ngIf="isOwner">
-                    Ver Estadísticas
-                  </a>
-                </li> -->
-                <li>
-                  <a class="dropdown-item" role="button" (click)="onWarehouseSelect(warehouse._id, 'charts')"
-                    *ngIf="isOwner">
-                    Ver Estadísticas
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<!-- Sección para mostrar estadísticas del almacén -->
-<div *ngIf="selectedWarehouseId">
-  <div class="card mt-4">
-    <div class="card-header">
-      <h4>Estadísticas del Almacén</h4>
-    </div>
-    <div class="card-body">
-      <p><strong>Total de Stock:</strong> {{ warehouseStats.totalStock }}</p>
-      <p><strong>Total Invertido:</strong> {{ warehouseStats.totalInvested | currency }}</p>
-      <p><strong>Total Ganado:</strong> {{ warehouseStats.totalEarned | currency }}</p>
-    </div>
-  </div>
-
-  <!-- Mostrar estadísticas de productos -->
-  <div *ngIf="products.length > 0">
-    <div class="card mt-4">
+<div class="row">
+  <!-- Lista de Almacenes -->
+  <div class="col-md-12">
+    <div class="card">
       <div class="card-header">
-        <h4>Estadísticas de Productos</h4>
+        <h4>Lista de Almacenes</h4>
       </div>
       <div class="card-body">
-        <div *ngFor="let product of products">
-          <div class="mb-3">
-            <h5>Producto: {{ product.name }}</h5>
-            <p><strong>Total Stock:</strong> {{ productStats[product._id].stock }}</p>
-            <p><strong>Total Invertido:</strong> {{ productStats[product._id].invested | currency }}</p>
-            <p><strong>Total Ganado:</strong> {{ productStats[product._id].earned | currency }}</p>
-          </div>
-        </div>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Ubicación</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let warehouse of warehouses">
+              <td>{{ warehouse.name }}</td>
+              <td>{{ warehouse.location }}</td>
+              <td>
+                <div class="dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    Acciones
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a class="dropdown-item" role="button" (click)="onWarehouseSelect(warehouse._id, 'charts')"
+                        *ngIf="isOwner">
+                        Ver Estadísticas
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
 
-  <!-- Sección para mostrar los gráficos -->
-  <div *ngIf="selectedWarehouseId">
+  <!-- Estadísticas y Gráficas del Almacén y Productos -->
+  <div class="col-md-12" *ngIf="selectedWarehouseId">
+    <!-- Estadísticas del Almacén -->
+    <div class="card mt-4">
+      <div class="card-header">
+        <h4>Estadísticas del Almacén</h4>
+      </div>
+      <div class="card-body">
+        <p><strong>Total de Stock:</strong> {{ warehouseStats.totalStock }}</p>
+        <p><strong>Total Invertido:</strong> {{ warehouseStats.totalInvested | currency }}</p>
+        <p><strong>Total Ganado:</strong> {{ warehouseStats.totalEarned | currency }}</p>
+      </div>
+    </div>
+
+    <!-- Gráfica del Almacén -->
     <div class="card mt-4">
       <div class="card-header">
         <h4>Gráfica del Almacén</h4>
       </div>
       <div class="card-body">
-        <p-chart type="pie" [data]="data" [options]="options"></p-chart>
+        <div class="row">
+          <div class="col-6">
+            <p-chart type="pie" [data]="data" [options]="options" style="width: 100%; height: 300px;"></p-chart>
+          </div>
+          <!-- Puedes agregar más gráficas aquí si es necesario -->
+        </div>
       </div>
     </div>
 
-    <!-- Gráfico de estadísticas d  e productos -->
-    <div *ngIf="products.length > 0">
-      <div class="card mt-4">
+    <!-- Estadísticas y Gráficas de Productos -->
+    <div *ngIf="products.length > 0" class="mt-4">
+      <div class="card">
         <div class="card-header">
-          <h4>Gráfico de Estadísticas de Productos</h4>
+          <h4>Estadísticas de Productos</h4>
         </div>
         <div class="card-body">
-          <canvas id="productChart"></canvas>
+          <div *ngFor="let product of products; let i = index" class="mt-3">
+            <div class="card">
+              <div class="card-header">
+                <h5>{{ product.name }}</h5>
+              </div>
+              <div class="card-body">
+                <p><strong>Stock Total:</strong> {{ productStats[product._id].stock }}</p>
+                <p><strong>Invertido Total:</strong> {{ productStats[product._id].invested | currency }}</p>
+                <p><strong>Ganado Total:</strong> {{ productStats[product._id].earned | currency }}</p>
+
+                <!-- Gráficas de Productos en una fila -->
+                <div class="row">
+                  <div class="col-6">
+                    <p-chart type="pie" [data]="product.chartData" [options]="product.chartOptions" style="width: 100%; height: 300px;"></p-chart>
+                  </div>
+                  <!-- Puedes agregar más gráficas si es necesario -->
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
