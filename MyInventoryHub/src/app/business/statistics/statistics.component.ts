@@ -152,6 +152,7 @@ export class StatisticsComponent implements OnInit {
           responsive: true,
           plugins: {
             legend: {
+              display: false,
               position: 'top',
             },
           },
