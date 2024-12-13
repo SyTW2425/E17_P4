@@ -23,14 +23,16 @@
                 Acciones
               </button>
               <ul class="dropdown-menu">
-                <li>
-                  <a class="dropdown-item" href="#" (click)="onWarehouseSelect(warehouse.id)" *ngIf="isOwner">
+                <!-- <li>
+                  <a class="dropdown-item" role="button" (click)="onWarehouseSelect(warehouse._id, 'stats')"
+                    *ngIf="isOwner">
                     Ver Estadísticas
                   </a>
-                </li>
+                </li> -->
                 <li>
-                  <a class="dropdown-item" href="#" (click)="onWarehouseSelect(warehouse.id)" *ngIf="isOwner">
-                    Ver Gráficas
+                  <a class="dropdown-item" role="button" (click)="onWarehouseSelect(warehouse._id, 'charts')"
+                    *ngIf="isOwner">
+                    Ver Estadísticas
                   </a>
                 </li>
               </ul>
@@ -42,7 +44,7 @@
   </div>
 </div>
 
-<!-- Sección para mostrar estadísticas -->
+<!-- Sección para mostrar estadísticas del almacén -->
 <div *ngIf="selectedWarehouseId">
   <div class="card mt-4">
     <div class="card-header">
@@ -50,43 +52,50 @@
     </div>
     <div class="card-body">
       <p><strong>Total de Stock:</strong> {{ warehouseStats.totalStock }}</p>
-      <p><strong>Precio Promedio de Productos:</strong> {{ warehouseStats.averagePrice | currency }}</p>
+      <p><strong>Total Invertido:</strong> {{ warehouseStats.totalInvested | currency }}</p>
+      <p><strong>Total Ganado:</strong> {{ warehouseStats.totalEarned | currency }}</p>
     </div>
   </div>
 
   <!-- Mostrar estadísticas de productos -->
-  <div *ngIf="productStats">
+  <div *ngIf="products.length > 0">
     <div class="card mt-4">
       <div class="card-header">
         <h4>Estadísticas de Productos</h4>
       </div>
       <div class="card-body">
-        <p><strong>Total Stock de Productos:</strong> {{ productStats.totalStock }}</p>
-        <p><strong>Precio Promedio de Productos:</strong> {{ productStats.averagePrice | currency }}</p>
+        <div *ngFor="let product of products">
+          <div class="mb-3">
+            <h5>Producto: {{ product.name }}</h5>
+            <p><strong>Total Stock:</strong> {{ productStats[product._id].stock }}</p>
+            <p><strong>Total Invertido:</strong> {{ productStats[product._id].invested | currency }}</p>
+            <p><strong>Total Ganado:</strong> {{ productStats[product._id].earned | currency }}</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- Sección para mostrar los gráficos -->
-<div *ngIf="selectedWarehouseId">
-  <div class="card mt-4">
-    <div class="card-header">
-      <h4>Gráficas del Almacén</h4>
-    </div>
-    <div class="card-body">
-      <canvas id="warehouseChart"></canvas>
-    </div>
-  </div>
-
-  <!-- Gráfico de estadísticas de productos -->
-  <div *ngIf="productStats">
+  <!-- Sección para mostrar los gráficos -->
+  <div *ngIf="selectedWarehouseId">
     <div class="card mt-4">
       <div class="card-header">
-        <h4>Gráfico de Estadísticas de Productos</h4>
+        <h4>Gráficas del Almacén</h4>
       </div>
       <div class="card-body">
-        <canvas id="productChart"></canvas>
+        <canvas id="warehouseChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Gráfico de estadísticas de productos -->
+    <div *ngIf="products.length > 0">
+      <div class="card mt-4">
+        <div class="card-header">
+          <h4>Gráfico de Estadísticas de Productos</h4>
+        </div>
+        <div class="card-body">
+          <canvas id="productChart"></canvas>
+        </div>
       </div>
     </div>
   </div>
