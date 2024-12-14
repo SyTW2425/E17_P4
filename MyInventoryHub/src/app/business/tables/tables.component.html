@@ -168,9 +168,24 @@
   <div class="card-header">
     <h4>Productos del almacén: {{ selectedWarehouseName }}</h4>
   </div>
+
+  <!-- Barra de búsqueda -->
+  <div class="card-body">
+    <div class="mb-3">
+      <label for="search" class="form-label">Buscar producto:</label>
+      <input 
+        id="search" 
+        type="text" 
+        pInputText 
+        placeholder="Escriba para buscar..." 
+        [(ngModel)]="globalFilterValue" 
+        (input)="applyGlobalFilter(dt)" />
+    </div>
+  </div>
+
   <!-- TABLA CON FILTROS -->
-  <p-table [value]="products" dataKey="id" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10, 25, 50]"
-    [tableStyle]="{ 'min-width': '75rem' }">
+  <p-table #dt [value]="products" dataKey="id" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10, 25, 50]"
+    [tableStyle]="{ 'min-width': '75rem' }" [globalFilterFields]="['name', 'description', 'stock', 'minimunStock', 'price', 'unit', 'spoil', 'supplier', 'category']">
 
     <ng-template pTemplate="header">
       <tr>

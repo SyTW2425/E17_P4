@@ -13,6 +13,7 @@ import { FloatLabelModule } from "primeng/floatlabel"
 import { PaginatorModule } from 'primeng/paginator';
 import { MenuModule } from 'primeng/menu';
 import { MenuItem } from 'primeng/api';
+import { Table } from 'primeng/table';
 
 @Component({
   selector: 'app-tables',
@@ -50,6 +51,7 @@ export default class TablesComponent implements OnInit {
   showErrorModal: boolean = false; 
   errorMessage: string = '';
   isAddEmployeeFormOpen: boolean = false;
+  globalFilterValue: string = '';
   constructor(
     private warehouseService: WarehouseService,
     private authService: AuthService,
@@ -557,6 +559,13 @@ export default class TablesComponent implements OnInit {
   openAddEmployee(warehouseId: any) : void{
     this.selectedWarehouseId = warehouseId;
     this.isAddEmployeeFormOpen = true;
+  }
+  applyGlobalFilter(dt: Table) {
+    if (this.globalFilterValue) {
+      dt.filterGlobal(this.globalFilterValue, 'contains');
+    } else {
+      dt.clear();
+    }
   }
 
 }
