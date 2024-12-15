@@ -5,6 +5,7 @@ const cors = require('cors'); // Solicitudes desde frontend
 const bcrypt = require('bcryptjs'); // Encriptar contraseñas
 const jwt = require('jsonwebtoken'); // Manejar tokens JWT
 require('dotenv').config(); // Se cargan variables de entorno desde .env
+const setupCronJob = require('./alertsCron');
 
 // Inicializa la aplicación Express
 const app = express();
@@ -12,7 +13,7 @@ const app = express();
 // Middlewares
 app.use(cors()); // Permitir solicitudes desde diferentes orígenes
 app.use(express.json()); // Para analizar JSON en las solicitudes
-
+setupCronJob();
 //models
 const User = require('./models/User');
 const Product = require('./models/Product');
@@ -518,6 +519,55 @@ app.delete('/warehouses/:warehouseId/products/:productId', authenticateToken, as
   } catch (error) {
     console.error('Error al eliminar el producto:', error);
     res.status(500).json({ message: 'Error al eliminar el producto.', error });
+  }
+});
+
+//endpoint para alertas
+app.get('/alerts', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id; // ID del usuario autenticado (dueño)
+    const today = new Date();
+
+    // Buscar almacenes que pertenezcan al usuario
+    const warehouses = await Warehouse.find({ userId }).select('_id');
+
+    if (!warehouses.length) {
+      return res.status(404).json({ message: 'No se encontraron almacenes asociados al usuario.' });
+    }
+
+    // Extraer los IDs de los almacenes
+    const warehouseIds = warehouses.map(warehouse => warehouse._id);
+
+    // Buscar productos en los almacenes del usuario
+    const products = await Product.find({ warehouseId: { $in: warehouseIds } });
+
+    // Filtrar productos con stock bajo o caducidad próxima
+    const alerts = products.filter(product => {
+      return (
+        product.stock <= product.minimunStock || // Stock bajo
+        (product.spoil && (new Date(product.spoil) - today) / (1000 * 60 * 60 * 24) <= 10) // Caducidad próxima
+      );
+    });
+
+    // Transformar los datos para hacerlos más legibles
+    const formattedAlerts = alerts.map(product => {
+      const messages = [];
+
+      if (product.stock <= product.minimunStock) {
+        messages.push(`El stock de "${product.name}" es bajo (${product.stock} unidades).`);
+      }
+
+      if (product.spoil && (new Date(product.spoil) - today) / (1000 * 60 * 60 * 24) <= 10) {
+        messages.push(`El producto "${product.name}" caduca pronto (${product.spoil.toLocaleDateString()}).`);
+      }
+
+      return { product: product.name, messages };
+    });
+
+    res.json(formattedAlerts);
+  } catch (error) {
+    console.error('Error al obtener alertas:', error);
+    res.status(500).json({ message: 'Error al obtener alertas', error: error.message });
   }
 });
 

@@ -17,6 +17,7 @@ import ProfileComponent from './business/profile/profile.component';
 import TablesComponent from './business/tables/tables.component';
 import { SignInComponent } from './components/sign-in/sign-in.component';
 import { RegisterComponent } from './components/register/register.component';
+import {AlertsComponent} from './business/alerts/alerts.component'
 
 export const routes: Routes = [
   { path: '', component: IndexComponent },
@@ -37,6 +38,11 @@ export const routes: Routes = [
     path: 'tables',
     component: LayoutComponent,
     children: [{ path: '', component: TablesComponent }],
+  },
+  {
+    path: 'alerts',
+    component: LayoutComponent,
+    children: [{ path: '', component: AlertsComponent }],
   },
   { path: 'signin', component: SignInComponent },
   { path: 'register', component: RegisterComponent },
