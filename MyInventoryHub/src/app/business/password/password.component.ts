@@ -16,13 +16,22 @@ export class PasswordComponent {
   passwordForm: FormGroup;
   errorMessage: string = '';
   successMessage: string = '';
+  token: string = '';
 
-  constructor(private fb: FormBuilder, private http: HttpClient, private router: Router) {
+  constructor(private fb: FormBuilder, private http: HttpClient, private router: Router, private authService: AuthService) {
     this.passwordForm = this.fb.group({
       currentPassword: ['', [Validators.required]],
       newPassword: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]]
     }, { validator: this.passwordMatchValidator });
+    this.loadToken(); 
+  }
+
+  loadToken(): void {
+    this.token = this.authService.getToken() as string;
+    if (!this.token) {
+      console.error('No se encontró el token. Por favor, inicia sesión.');
+    }
   }
 
   // Validador personalizado para confirmar que las nuevas contraseñas coinciden
@@ -41,22 +50,20 @@ export class PasswordComponent {
     if (this.passwordForm.invalid) {
       return;
     }
-
-    const formData = {
-      currentPassword: this.f['currentPassword'].value,
-      newPassword: this.f['newPassword'].value
-    };
-
-    this.http.post('/api/change-password', formData).subscribe({
-      next: (response) => {
-        this.successMessage = 'Contraseña actualizada exitosamente.';
-        this.errorMessage = '';
+  
+    this.authService.updateUserPassword(this.token, this.f['currentPassword'].value, this.f['newPassword'].value).subscribe(
+      () => {
+        alert('Perfil actualizado con éxito');
         this.passwordForm.reset();
+        this.authService.logout();
       },
-      error: (error) => {
-        this.errorMessage = error.error.message || 'Error al actualizar la contraseña.';
-        this.successMessage = '';
+      (error) => {
+        if (error.status === 400) {
+          alert('La contraseña actual es incorrecta');
+        } else {
+          alert('Error al actualizar la contraseña');
+        }
       }
-    });
+    );
   }
 }

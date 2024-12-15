@@ -70,7 +70,7 @@ export class AuthService {
   logout(): void {
     this.currentUserToken = null;
     localStorage.removeItem('token');  // Elimina el token de localStorage
-    this.router.navigate(['']);  // Redirige al usuario al login
+    this.router.navigate(['signin']);  // Redirige al usuario al login
   }
 
   decodeToken(): DecodedToken | null {
@@ -103,16 +103,16 @@ export class AuthService {
 
   // Actualizar perfil del usuario
   updateUserProfile(token: string, profileData: any): Observable<any> {
-    console.log("token" + token);
-    console.log("profileData" + profileData);
-    console.log("profileData" + profileData.value);
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     return this.http.put(`${this.apiUrl}/update-profile`, { user: this.decodeToken()?.id, data: profileData }, { headers } );
   }
 
-  // Método para cambiar la contraseña
-  changePassword(currentPassword: string, newPassword: string): Observable<any> {
-    return this.http.put(`${this.apiUrl}/change-password`, { currentPassword, newPassword });
+  updateUserPassword(token: string, currentPassword: string, newPassword: string): Observable<any> {
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    console.log('Token:', token);
+    console.log('Current Password:', currentPassword);
+    console.log('New Password:', newPassword);
+    return this.http.put(`${this.apiUrl}/change-password`, { userId: this.decodeToken()?.id, currentPassword: currentPassword, newPassword: newPassword }, { headers } );
   }
 
   getUserProfile(): Observable<any> {
