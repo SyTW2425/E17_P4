@@ -65,6 +65,8 @@ export class StatisticsComponent implements OnInit {
   monthlyEarningsData: any;
   monthlyEarningsOptions: any;
   options: any;
+  selectedAction: any;
+  selectedView: any;
 
   constructor(
     private warehouseService: WarehouseService,
@@ -112,160 +114,6 @@ export class StatisticsComponent implements OnInit {
         }
       );
   }
-
-  loadProductStats(): void {
-    // Verificar si el token y el almacén están disponibles
-    if (!this.token || !this.selectedWarehouseId) {
-      console.error('No se puede cargar estadísticas sin token o almacén seleccionado.');
-      return;
-    }
-  
-    this.productService.getProducts(this.token, this.selectedWarehouseId).subscribe({
-      next: (response) => {
-        this.products = response; // Guardar los productos
-        this.productStats = this.calculateProductStats(this.products); // Calcular estadísticas de productos
-        this.warehouseStats = this.calculateWarehouseStats(this.products); // Calcular estadísticas de almacén
-  
-        // Calcular las ganancias mensuales
-        const monthlyEarnings = this.calculateMonthlyEarnings(this.products);
-  
-        // Preparar los datos para el gráfico de ganancias mensuales
-        const months = [
-          'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
-          'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-        ];
-        const earnings = months.map((month, index) => monthlyEarnings[index]);
-  
-        // Asignar los datos al gráfico de ganancias mensuales
-        this.monthlyEarningsData = {
-          labels: months,
-          datasets: [
-            {
-              data: earnings,
-              backgroundColor: '#66bb6a', // Color de las barras
-            },
-          ],
-        };
-  
-        // Definir las opciones del gráfico de ganancias mensuales
-        this.monthlyEarningsOptions = {
-          responsive: true,
-          plugins: {
-            legend: {
-              display: false,
-              position: 'top',
-            },
-          },
-          scales: {
-            x: {
-              beginAtZero: true,
-              title: {
-                display: true,
-                text: 'Meses',
-              },
-            },
-            y: {
-              title: {
-                display: true,
-                text: 'Ganancias',
-              },
-            },
-          },
-        };
-  
-        // Generar gráfico principal de dinero generado por producto
-        const productNames = this.products.map((product) => product.name);
-        const productEarnings = this.products.map(
-          (product) => this.productStats[product._id].earned
-        );
-  
-        this.data = {
-          labels: productNames,
-          datasets: [
-            {
-              data: productEarnings,
-              backgroundColor: this.generateColors(productNames.length), // Genera colores dinámicos
-            },
-          ],
-        };
-  
-        this.options = {
-          responsive: true,
-          plugins: {
-            legend: {
-              position: 'top',
-            },
-          },
-        };
-  
-        // Generar datos para cada producto
-        this.products.forEach((product) => {
-          const stats = this.productStats[product._id];
-  
-          // Calcular el total (Invertido + Ganado)
-          const total = stats.invested + stats.earned;
-  
-          product.chartData = {
-            labels: ['Stock', 'Invertido', 'Ganado', 'Total'], // Nuevas categorías
-            datasets: [
-              {
-                label: 'Stock',
-                data: [stats.stock, null, null, null],
-                backgroundColor: '#42a5f5',
-              },
-              {
-                label: 'Invertido',
-                data: [null, stats.invested, null, null],
-                backgroundColor: '#66bb6a',
-              },
-              {
-                label: 'Ganado',
-                data: [null, null, stats.earned, null],
-                backgroundColor: '#ff7043',
-              },
-              {
-                label: 'Total',
-                data: [null, null, null, total],
-                backgroundColor: '#ffeb3b',
-              },
-            ],
-          };
-  
-          product.chartOptions = {
-            responsive: true,
-            plugins: {
-              legend: {
-                display: false, // Ocultar la leyenda
-              },
-            },
-            scales: {
-              x: {
-                beginAtZero: true,
-                title: {
-                  display: true,
-                  text: 'Categorías',
-                },
-                stacked: true,
-                barPercentage: 0.9, // Tamaño de las barras
-                categoryPercentage: 1.0, // Distribución uniforme de las barras
-              },
-              y: {
-                beginAtZero: true,
-                title: {
-                  display: true,
-                  text: 'Valores',
-                },
-              },
-            },
-          };
-        });
-      },
-      error: (error) => {
-        console.error('Error al cargar productos:', error);
-      },
-    });
-  }
-  
   
 
   calculateMonthlyEarnings(products: any[]): { [month: string]: number } {
@@ -294,7 +142,6 @@ export class StatisticsComponent implements OnInit {
   
     return earningsByMonth;
   }
-  
 
   generateMonthlyEarningsChart(): void {
     // Calcular las ganancias mensuales
@@ -401,6 +248,258 @@ export class StatisticsComponent implements OnInit {
     return colors;
   }
 
+  generateWarehouseChartPrimeNG(): void {
+    this.data = {
+      labels: ['Total Stock', 'Total Invested', 'Total Earned'],
+      datasets: [
+        {
+          data: [
+            this.warehouseStats.totalStock,
+            this.warehouseStats.totalInvested,
+            this.warehouseStats.totalEarned,
+          ],
+          backgroundColor: ['#f44336', '#ffeb3b', '#4caf50'],
+        },
+      ],
+    };
+
+    this.options = {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+      },
+    };
+    console.log(this.data)
+  }
+
+  onWarehouseSelect(warehouseId: string, action: string): void {
+    this.selectedWarehouseId = warehouseId;
+    console.log('ID del almacén seleccionado:', warehouseId);
+    this.loadProductStats();
+    // this.loadProducts();
+  
+    // Actualiza la vista seleccionada según la acción
+    switch (action) {
+      case 'warehouseStats':
+        // Cargar estadísticas del almacén
+        this.calculateWarehouseStats(this.products); // Asegúrate de que esta función esté definida
+        this.selectedView = 'warehouseStats'; // Establecer la vista a 'warehouseStats'
+        break;
+  
+      case 'charts':
+        // Generar gráficos relacionados con el almacén
+        this.generateWarehouseChartPrimeNG();  // Aquí usas la función que ya definiste para el gráfico del almacén
+        // this.generateProductChart();
+        this.selectedView = 'charts';  // Establecer la vista a 'charts'
+        break;
+  
+      case 'productStats':
+        // Cargar estadísticas de productos
+        // Generar el gráfico principal de dinero generado por producto
+        this.generateProductChartData();
+        // Generar gráficos para cada producto
+        this.generateProductCharts();
+        this.selectedView = 'productStats'; // Establecer la vista a 'productStats'
+        break;
+  
+      case 'annualChart':
+        // Cargar gráfico anual si es necesario
+        this.generateMonthlyEarningsChart();  // Asegúrate de tener la función para el gráfico anual
+        this.selectedView = 'annualChart'; // Establecer la vista a 'annualChart'
+        break;
+  
+      default:
+        console.error('Acción no válida:', action);
+        this.selectedView = '';  // Restablecer la vista si la acción no es válida
+        break;
+    }
+  }
+  
+  onWarehouseChange(event: any) {
+    console.log('Almacén seleccionado:', this.selectedWarehouse);
+  }
+
+  loadProductStats(): void {
+    // Verificar si el token y el almacén están disponibles
+    if (!this.token || !this.selectedWarehouseId) {
+      console.error('No se puede cargar estadísticas sin token o almacén seleccionado.');
+      return;
+    }
+  
+    this.loadProducts()
+      .then(() => {
+        // Calcular estadísticas de productos y almacén
+        this.productStats = this.calculateProductStats(this.products);
+        this.warehouseStats = this.calculateWarehouseStats(this.products);
+      })
+      .catch((error) => {
+        console.error('Error al cargar productos:', error);
+      });
+  }
+  
+  loadProducts(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (!this.token) {
+        console.error('Token no disponible.');
+        reject('Token no disponible.');
+        return;
+      }
+  
+      if (!this.selectedWarehouseId) {
+        console.error('No se ha seleccionado un almacén.');
+        reject('No se ha seleccionado un almacén.');
+        return;
+      }
+  
+      this.productService.getProducts(this.token, this.selectedWarehouseId).subscribe({
+        next: (response) => {
+          this.products = response; // Guardar los productos
+          resolve();
+        },
+        error: (error) => {
+          console.error('Error al cargar productos:', error);
+          reject(error);
+        },
+      });
+    });
+  }
+  
+
+  prepareMonthlyEarningsData(): void {
+    const monthlyEarnings = this.calculateMonthlyEarnings(this.products);
+    const months = [
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+    const earnings = months.map((month, index) => monthlyEarnings[index]);
+  
+    this.monthlyEarningsData = {
+      labels: months,
+      datasets: [
+        {
+          data: earnings,
+          backgroundColor: '#66bb6a', // Color de las barras
+        },
+      ],
+    };
+  
+    this.monthlyEarningsOptions = {
+      responsive: true,
+      plugins: {
+        legend: {
+          display: false,
+          position: 'top',
+        },
+      },
+      scales: {
+        x: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Meses',
+          },
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Ganancias',
+          },
+        },
+      },
+    };
+  }
+  
+  generateProductChartData(): void {
+    const productNames = this.products.map((product) => product.name);
+    const productEarnings = this.products.map(
+      (product) => this.productStats[product._id].earned
+    );
+  
+    this.data = {
+      labels: productNames,
+      datasets: [
+        {
+          data: productEarnings,
+          backgroundColor: this.generateColors(productNames.length), // Genera colores dinámicos
+        },
+      ],
+    };
+  
+    this.options = {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+      },
+    };
+  }
+  
+  generateProductCharts(): void {
+    this.products.forEach((product) => {
+      const stats = this.productStats[product._id];
+      const total = stats.invested + stats.earned;
+
+      console.log(this.products)
+  
+      product.chartData = {
+        labels: ['Stock', 'Invertido', 'Ganado', 'Total'],
+        datasets: [
+          {
+            label: 'Stock',
+            data: [stats.stock, null, null, null],
+            backgroundColor: '#42a5f5',
+          },
+          {
+            label: 'Invertido',
+            data: [null, stats.invested, null, null],
+            backgroundColor: '#66bb6a',
+          },
+          {
+            label: 'Ganado',
+            data: [null, null, stats.earned, null],
+            backgroundColor: '#ff7043',
+          },
+          {
+            label: 'Total',
+            data: [null, null, null, total],
+            backgroundColor: '#ffeb3b',
+          },
+        ],
+      };
+  
+      product.chartOptions = {
+        responsive: true,
+        plugins: {
+          legend: {
+            display: false,
+          },
+        },
+        scales: {
+          x: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Categorías',
+            },
+            stacked: true,
+            barPercentage: 0.9,
+            categoryPercentage: 1.0,
+          },
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Valores',
+            },
+          },
+        },
+      };
+    });
+  }
+  
   generateProductChart(): void {
     const ctx = document.getElementById('productChart') as HTMLCanvasElement;
     new Chart(ctx, {
@@ -428,81 +527,5 @@ export class StatisticsComponent implements OnInit {
         },
       },
     });
-  }
-
-  generateWarehouseChartPrimeNG(): void {
-    this.data = {
-      labels: ['Total Stock', 'Total Invested', 'Total Earned'],
-      datasets: [
-        {
-          data: [
-            this.warehouseStats.totalStock,
-            this.warehouseStats.totalInvested,
-            this.warehouseStats.totalEarned,
-          ],
-          backgroundColor: ['#f44336', '#ffeb3b', '#4caf50'],
-        },
-      ],
-    };
-
-    this.options = {
-      responsive: true,
-      plugins: {
-        legend: {
-          position: 'top',
-        },
-      },
-    };
-  }
-
-  onWarehouseSelect(warehouseId: string, action: string): void {
-    this.selectedWarehouseId = warehouseId;
-    console.log('ID del almacén seleccionado:', warehouseId);
-
-    if (action === 'stats') {
-      this.loadWarehouses()
-        .then(() => {
-          // Obtener información del almacén seleccionado
-          const selectedWarehouse = this.warehouses.find(
-            (warehouse) => warehouse._id === warehouseId
-          );
-          if (selectedWarehouse) {
-            console.log('Información del almacén:', selectedWarehouse);
-            this.selectedWarehouse = selectedWarehouse;
-            this.selectedWarehouseId = selectedWarehouse._id;
-          } else {
-            console.error('Almacén no encontrado en la lista.');
-          }
-        })
-        .catch((error) => {
-          console.error('Error al cargar almacenes:', error);
-        });
-    } else if (action === 'charts') {
-      this.loadWarehouses()
-        .then(() => {
-          const selectedWarehouse = this.warehouses.find(
-            (warehouse) => warehouse._id === warehouseId
-          );
-          if (selectedWarehouse) {
-            console.log('Información del almacén:', selectedWarehouse);
-            this.selectedWarehouse = selectedWarehouse;
-            this.selectedWarehouseId = selectedWarehouse._id;
-
-            // Cargar estadísticas de productos del almacén seleccionado
-            this.loadProductStats();
-          } else {
-            console.error('Almacén no encontrado en la lista.');
-          }
-        })
-        .catch((error) => {
-          console.error('Error al cargar almacenes:', error);
-        });
-    } else {
-      console.error('Acción no válida:', action);
-    }
-  }
-
-  onWarehouseChange(event: any) {
-    console.log('Almacén seleccionado:', this.selectedWarehouse);
   }
 }
