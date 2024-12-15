@@ -4,7 +4,7 @@
   <!-- Botón para mostrar/ocultar formulario -->
   <div class="flex justify-center mb-6">
     <button (click)="toggleForm()" class="btn btn-primary px-6 py-2 rounded-full text-white font-semibold shadow-md">
-      <i class="pi pi-plus-circle mr-2"></i> {{ showForm ? 'Ocultar Formulario' : 'Añadir Proveedor' }}
+      <i class="pi pi-plus-circle mr-2"></i> {{ showForm ? 'Añadiendo...' : 'Añadir Proveedor' }}
     </button>
   </div>
 
@@ -60,8 +60,25 @@
         <td>{{ supplier.email }}</td>
         <td>{{ supplier.address }}</td>
         <td>
-          <button class="btn btn-sm btn-primary" (click)="openUpdateSupplierForm(supplier)">Editar</button>
-          <button class="btn btn-sm btn-danger" (click)="deleteSupplier(supplier.name)">Eliminar</button>
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              Acciones
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <a class="dropdown-item" href="#"
+                  (click)="openUpdateSupplierForm(supplier)">
+                  Actualizar
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#" (click)="deleteSupplier(supplier.name)">
+                  Eliminar
+                </a>
+              </li>
+            </ul>
+          </div>
         </td>
       </tr>
     </ng-template>

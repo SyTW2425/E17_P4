@@ -2,12 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { WarehouseService } from '../../services/warehouse-service/warehouse.service';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { TableModule } from 'primeng/table';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-employees',
   standalone: true,
-  imports: [CommonModule, ToastModule],
+  imports: [CommonModule, ToastModule, TableModule],
   templateUrl: './employees.component.html',
   styleUrls: ['./employees.component.css'],
   providers: [MessageService],
