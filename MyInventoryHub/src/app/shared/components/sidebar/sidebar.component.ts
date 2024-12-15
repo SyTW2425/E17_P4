@@ -13,11 +13,13 @@ import { CommonModule } from '@angular/common';
 export class SidebarComponent implements OnInit {
   userRole: string = '';
   userName: string = '';
+  isOwner: boolean = false;
 
   constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     const decodedToken = this.authService.decodeToken();
+    this.isOwner = this.authService.isOwner();
     if (decodedToken) {
       this.userName = decodedToken.firstName
         ? `${decodedToken.firstName} ${decodedToken.lastName || ''}`

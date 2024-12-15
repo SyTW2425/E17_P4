@@ -87,6 +87,11 @@ export class AuthService {
     }
   }
 
+  isOwner(): boolean {
+    const decodedToken = this.decodeToken();
+    return decodedToken?.role === 'Dueño';
+  }
+
   // Obtener detalles del usuario desde el token almacenado
   getUserDetails() {
     const token = localStorage.getItem('token');

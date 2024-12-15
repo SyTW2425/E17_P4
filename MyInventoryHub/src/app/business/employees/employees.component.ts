@@ -14,8 +14,7 @@ import { CommonModule } from '@angular/common';
 })
 export class EmployeesComponent implements OnInit {
   employees: any[] = [];
-  isLoading = false;
-
+  isLoading: boolean = false;
   constructor(
     private warehouseService: WarehouseService,
     private messageService: MessageService
@@ -69,5 +68,6 @@ export class EmployeesComponent implements OnInit {
       },
     });
   }
+  
   
 }

@@ -1,68 +1,118 @@
-<div class="container mx-auto p-6">
-  <h1 class="text-2xl font-bold mb-4">Lista de Proveedores</h1>
+<div class="container mx-auto mt-10 p-6">
+  <h2 class="text-3xl font-bold mb-6 text-center">Gestión de Proveedores</h2>
 
-  <!-- Formulario para agregar un nuevo proveedor -->
-  <form (ngSubmit)="onSubmit()" [formGroup]="supplierForm" class="mb-6 bg-white p-6 rounded-md shadow-md">
-    <div class="mb-4">
-      <label for="name" class="block text-gray-700 font-medium mb-2">Nombre</label>
-      <input
-        type="text"
-        id="name"
-        formControlName="name"
-        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-    </div>
-
-    <div class="mb-4">
-      <label for="phone" class="block text-gray-700 font-medium mb-2">Teléfono</label>
-      <input
-        type="text"
-        id="phone"
-        formControlName="phone"
-        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-    </div>
-
-    <div class="mb-4">
-      <label for="email" class="block text-gray-700 font-medium mb-2">Correo Electrónico</label>
-      <input
-        type="email"
-        id="email"
-        formControlName="email"
-        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-    </div>
-
-    <div class="mb-4">
-      <label for="address" class="block text-gray-700 font-medium mb-2">Dirección</label>
-      <input
-        type="text"
-        id="address"
-        formControlName="address"
-        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-    </div>
-
+  <!-- Botón para mostrar/ocultar formulario -->
+  <div class="flex justify-center mb-6">
     <button
-      type="submit"
-      class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      (click)="toggleForm()"
+      class="btn btn-primary"
     >
-      Agregar Proveedor
+      {{ showForm ? 'Ocultar Formulario' : 'Añadir Proveedor' }}
     </button>
-  </form>
-
-  <!-- Lista de proveedores -->
-  <div *ngIf="isLoading" class="text-center">Cargando...</div>
-
-  <div *ngIf="!isLoading && suppliers.length > 0">
-    <ul class="list-disc pl-5">
-      <li *ngFor="let supplier of suppliers" class="mb-2">
-        <strong>{{ supplier.name }}</strong> - {{ supplier.phone }} - {{ supplier.email }} - {{ supplier.address }}
-      </li>
-    </ul>
   </div>
 
-  <div *ngIf="!isLoading && suppliers.length === 0">
-    <p class="text-gray-500">No tienes proveedores registrados.</p>
+  <!-- Formulario Desplegable para Crear/Actualizar Proveedores -->
+  <div *ngIf="showForm" class="card mb-6 max-w-lg mx-auto">
+    <div class="card-header">
+      <h4 class="text-lg font-bold">{{ isEditMode ? 'Actualizar Proveedor' : 'Añadir Proveedor' }}</h4>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="supplierForm" (ngSubmit)="onSubmit()">
+        <div class="form-group mb-4">
+          <label for="name" class="block font-medium mb-1">Nombre</label>
+          <input
+            id="name"
+            type="text"
+            formControlName="name"
+            class="form-control"
+          />
+        </div>
+
+        <div class="form-group mb-4">
+          <label for="phone" class="block font-medium mb-1">Teléfono</label>
+          <input
+            id="phone"
+            type="text"
+            formControlName="phone"
+            class="form-control"
+          />
+        </div>
+
+        <div class="form-group mb-4">
+          <label for="email" class="block font-medium mb-1">Correo</label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            class="form-control"
+          />
+        </div>
+
+        <div class="form-group mb-4">
+          <label for="address" class="block font-medium mb-1">Dirección</label>
+          <input
+            id="address"
+            type="text"
+            formControlName="address"
+            class="form-control"
+          />
+        </div>
+
+        <div class="flex justify-end">
+          <button type="submit" class="btn btn-success">
+            {{ isEditMode ? 'Actualizar' : 'Guardar' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Tabla de Proveedores -->
+  <div class="card">
+    <div class="card-header">
+      <h4 class="text-lg font-bold">Lista de Proveedores</h4>
+    </div>
+    <div class="card-body">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Teléfono</th>
+            <th>Correo</th>
+            <th>Dirección</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let supplier of suppliers">
+            <td>{{ supplier.name }}</td>
+            <td>{{ supplier.phone }}</td>
+            <td>{{ supplier.email }}</td>
+            <td>{{ supplier.address }}</td>
+            <td>
+              <!-- Menú desplegable con acciones -->
+              <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+                  Acciones
+                </button>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a class="dropdown-item" href="#" (click)="openUpdateSupplierForm(supplier)">
+                      Actualizar proveedor
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item text-danger" href="#" (click)="deleteSupplier(supplier.name)">
+                      Eliminar proveedor
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>

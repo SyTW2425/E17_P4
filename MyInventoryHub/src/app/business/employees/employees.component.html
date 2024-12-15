@@ -18,7 +18,6 @@
           <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Nombre</th>
           <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Apellido</th>
           <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Correo</th>
-          <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Permisos</th>
           <th class="px-4 py-2 border border-gray-300 text-left font-semibold">Almacenes</th>
         </tr>
       </thead>
@@ -27,7 +26,6 @@
           <td class="px-4 py-2 border border-gray-300">{{ employee.firstName }}</td>
           <td class="px-4 py-2 border border-gray-300">{{ employee.lastName }}</td>
           <td class="px-4 py-2 border border-gray-300">{{ employee.email }}</td>
-          <td class="px-4 py-2 border border-gray-300">{{ employee.permissions }}</td>
           <td class="px-4 py-2 border border-gray-300">
             <span *ngFor="let warehouse of employee.warehouses; let i = index">
               {{ warehouse }}<span *ngIf="i < employee.warehouses.length - 1">, </span>
