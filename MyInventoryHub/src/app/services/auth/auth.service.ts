@@ -69,7 +69,7 @@ export class AuthService {
   // Cerrar sesión
   logout(): void {
     this.currentUserToken = null;
-    localStorage.removeItem('token');  // Elimina el token de localStorage
+    localStorage.removeItem('token');  // Elimina el token deg localStorage
     this.router.navigate(['signin']);  // Redirige al usuario al login
   }
 
