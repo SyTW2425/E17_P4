@@ -14,12 +14,15 @@ import { PaginatorModule } from 'primeng/paginator';
 import { MenuModule } from 'primeng/menu';
 import { MenuItem } from 'primeng/api';
 import { Table } from 'primeng/table';
+import { IconField } from 'primeng/iconfield';
+import { InputIcon } from 'primeng/inputicon';
+
 
 @Component({
   selector: 'app-tables',
   standalone: true,
   imports: [CommonModule, CurrencyPipe, ReactiveFormsModule, FormsModule, PermissionPipe, DialogModule, ButtonModule, CheckboxModule,TableModule, FloatLabelModule,
-    PaginatorModule, MenuModule],
+    PaginatorModule, MenuModule, IconField, InputIcon ],
   templateUrl: './tables.component.html',
   styleUrls: ['./tables.component.css']
 })
@@ -52,6 +55,8 @@ export default class TablesComponent implements OnInit {
   errorMessage: string = '';
   isAddEmployeeFormOpen: boolean = false;
   globalFilterValue: string = '';
+  nameFilterValue: string = ''; // Filtro para la columna "name"
+
   constructor(
     private warehouseService: WarehouseService,
     private authService: AuthService,
@@ -110,6 +115,7 @@ export default class TablesComponent implements OnInit {
     this.loadToken(); // Obtiene el token al inicializar
     this.loadWarehouses();
     this.isOwner = this.authService.isOwner();
+    
   }
 
   // Método para obtener el token
@@ -565,6 +571,13 @@ export default class TablesComponent implements OnInit {
       dt.filterGlobal(this.globalFilterValue, 'contains');
     } else {
       dt.clear();
+    }
+  }
+  applyColumnFilter(dt: Table, field: string, value: string) {
+    if (value) {
+      dt.filter(value, field, 'contains');
+    } else {
+      dt.filter('', field, 'contains');
     }
   }
 

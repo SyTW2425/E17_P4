@@ -1,0 +1,22 @@
+.column-filter-input {
+    width: 90%; /* Adapta al 90% del ancho de la celda */
+    padding: 0.2rem; /* Espaciado interno más pequeño */
+    font-size: 0.9rem; /* Fuente más pequeña */
+  }
+  .p-inputgroup-addon {
+    background-color: #f4f4f4; /* Fondo gris claro */
+    color: #6c757d; /* Color del icono */
+    border-radius: 0; /* Elimina bordes redondeados */
+  }
+  
+  .p-inputgroup input {
+    border-radius: 0; /* Consistencia en los bordes */
+  }
+  
+   /* .container {
+    max-width: 81rem;
+  } 
+
+  .subcontainer{
+    width: 100%;
+} */

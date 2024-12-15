@@ -1,14 +1,15 @@
 <div class="container">
   <!-- Formulario para crear un almacén -->
   <div class="card mb-4" *ngIf="isOwner">
-    <h2>Gestión de Almacenes</h2>
-
-
+    <div class="card-header">
+      <h4>Gestión de Almacenes</h4>
+    </div>
+  
     <!-- Otro menu -->
     <div class="card-body">
 
       <h5 class="text-secondary mb-3">
-        Crear Nuevo Almacén
+        Crear nuevo almacén
       </h5>
       <form [formGroup]="warehouseForm" (ngSubmit)="createWarehouse()" class="warehouse-form-inline">
         <!-- Campo: Nombre del Almacén -->
@@ -43,11 +44,11 @@
       </form>
     </div>
 
-    <!-- hasta aqyu -->
+    <!-- hasta aqui -->
   </div>
 
   <!-- Tabla de almacenes -->
-  <div class="card">
+  <div class="card subcontainer">
     <div class="card-header">
       <h4>Lista de Almacenes</h4>
     </div>
@@ -89,7 +90,7 @@
                   </li>
                   <li>
                     <a class="dropdown-item" href="#" (click)="openForm(warehouse._id)" *ngIf="isOwner">
-                      actualizar almacén
+                      Actualizar almacén
                     </a>
                   </li>
                   <li>
@@ -114,7 +115,7 @@
   </div>
 
   <!-- Detalle de empleados del almacén seleccionado -->
-  <div class="card mt-4" *ngIf="selectedWarehouseId && isEmployeesViewOpen">
+  <div class="card mt-4 subcontainer" *ngIf="selectedWarehouseId && isEmployeesViewOpen">
     <div class="card-header">
       <h4>Empleados en Almacén</h4>
     </div>
@@ -148,7 +149,7 @@
                   <li>
                     <a class="dropdown-item" href="#"
                       (click)="openUpdateEmployeeForm(employee.employeeId._id, employee.permissions)">
-                      actualizar permisos
+                      Actualizar permisos
                     </a>
                   </li>
                 </ul>
@@ -160,11 +161,11 @@
     </div>
   </div>
 
-</div>
+
 
 
 <!-- Detalle de productos del almacén seleccionado -->
-<div class="card mt-4" *ngIf="selectedWarehouseId && isProductsViewOpen" style="max-width: 81rem; margin-left: 7.5rem;">
+<div class="card mt-4 subcontainer" *ngIf="selectedWarehouseId && isProductsViewOpen">
   <div class="card-header">
     <h4>Productos del almacén: {{ selectedWarehouseName }}</h4>
   </div>
@@ -172,7 +173,7 @@
   <!-- Barra de búsqueda -->
   <div class="card-body">
     <div class="mb-3">
-      <label for="search" class="form-label">Buscar producto:</label>
+      <label for="search" class="form-label">Buscar: &nbsp;</label>
       <input 
         id="search" 
         type="text" 
@@ -180,25 +181,47 @@
         placeholder="Escriba para buscar..." 
         [(ngModel)]="globalFilterValue" 
         (input)="applyGlobalFilter(dt)" />
+
+        <!-- <label for="searchName" class="form-label">Buscar por Nombre:</label>
+        <input 
+          id="searchName" 
+          type="text" 
+          pInputText 
+          placeholder="Buscar por nombre..." 
+          [(ngModel)]="nameFilterValue" 
+          (input)="applyColumnFilter(dt, 'name', nameFilterValue)" /> -->
+      
     </div>
   </div>
 
   <!-- TABLA CON FILTROS -->
   <p-table #dt [value]="products" dataKey="id" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10, 25, 50]"
-    [tableStyle]="{ 'min-width': '75rem' }" [globalFilterFields]="['name', 'description', 'stock', 'minimunStock', 'price', 'unit', 'spoil', 'supplier', 'category']">
+    [tableStyle]="{ 'min-width': '75rem' }" [globalFilterFields]="['name', 'description', 'stock', 'minimunStock', 'price', 'unit', 'spoil', 'supplier', 'category']" [scrollable]="true">
 
     <ng-template pTemplate="header">
       <tr>
-        <th pSortableColumn="name">Nombre <p-sortIcon field="name"></p-sortIcon></th>
+        <th pSortableColumn="name">
+          Nombre 
+          <p-sortIcon field="name" ></p-sortIcon>
+          <p-columnFilter type="text" field="name" display="menu"/>
+        </th>
         <th pSortableColumn="description">Descripción <p-sortIcon field="description"></p-sortIcon></th>
         <th pSortableColumn="stock">Stock <p-sortIcon field="stock"></p-sortIcon></th>
         <th pSortableColumn="minimunStock">Stock Mínimo <p-sortIcon field="minimunStock"></p-sortIcon></th>
         <th pSortableColumn="price">Precio <p-sortIcon field="price"></p-sortIcon></th>
         <th pSortableColumn="unit">Unidad<p-sortIcon field="unit"></p-sortIcon></th>
         <th pSortableColumn="spoil">Fecha de Caducidad<p-sortIcon field="spoil"></p-sortIcon></th>
-        <th pSortableColumn="supplier">Proveedor<p-sortIcon field="supplier"></p-sortIcon></th>
-        <th pSortableColumn="category">Categoría<p-sortIcon field="category"></p-sortIcon></th>
-        <th>Acciones</th>
+        <th pSortableColumn="supplier">
+          Proveedor
+          <p-sortIcon field="supplier"></p-sortIcon>
+          <p-columnFilter type="text" field="supplier" display="menu"/>
+        </th>
+        <th pSortableColumn="category">
+          Categoría
+          <p-sortIcon field="category"></p-sortIcon>
+          <p-columnFilter type="text" field="category" display="menu"/>
+        </th>
+        <th *ngIf="isOwner || hasEditPermissions() || hasDeletePermissions()">Acciones</th>
       </tr>
     </ng-template>
 
@@ -336,21 +359,22 @@
             {{ product.category }}
           </ng-container>
         </td>
-
-        <td>
+        <!-- Acciones -->
+        <td *ngIf="isOwner || hasEditPermissions() || hasDeletePermissions()">
           <div class="dropdown">
             <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
               aria-expanded="false">
               Acciones
             </button>
-            <ul class="dropdown-menu">
-              <li>
+            <div style="position:relative; display:contents;z-index: 99;">
+            <ul class="dropdown-menu" style="position:absolute;z-index: 99;">
+              <li style="position:relative;z-index: 99;">
                 <a class="dropdown-item" href="#" (click)="deleteProduct(product._id)"
                   *ngIf="isOwner || hasDeletePermissions()">
                   Eliminar producto
                 </a>
               </li>
-              <li>
+              <li style="position:relative;z-index: 99;">
                 <a class="dropdown-item" href="#" (click)="openUpdateProductForm(product._id)"
                   *ngIf="isOwner || hasEditPermissions()">
                   Actualizar producto
@@ -358,11 +382,13 @@
               </li>
             </ul>
           </div>
+          </div>
         </td>
       </tr>
     </ng-template>
   </p-table>
   <!-- FIN TABLA CON FILTROS -->
+</div>
 </div>
 
 
