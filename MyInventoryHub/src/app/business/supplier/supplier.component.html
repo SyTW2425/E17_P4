@@ -3,117 +3,67 @@
 
   <!-- Botón para mostrar/ocultar formulario -->
   <div class="flex justify-center mb-6">
-    <button
-      (click)="toggleForm()"
-      class="btn btn-primary px-6 py-2 rounded-full text-white font-semibold shadow-md transition-transform transform hover:scale-105 hover:bg-blue-600"
-    >
-      <i class="pi pi-plus-circle mr-2"></i> <!-- Icono de PrimeNG -->
-      {{ showForm ? 'Ocultar Formulario' : 'Añadir Proveedor' }}
+    <button (click)="toggleForm()" class="btn btn-primary px-6 py-2 rounded-full text-white font-semibold shadow-md">
+      <i class="pi pi-plus-circle mr-2"></i> {{ showForm ? 'Ocultar Formulario' : 'Añadir Proveedor' }}
     </button>
   </div>
 
-  <!-- Formulario Desplegable para Crear/Actualizar Proveedores -->
-  <div *ngIf="showForm" class="card mb-6 max-w-lg mx-auto">
-    <div class="card-header">
-      <h4 class="text-lg font-bold">{{ isEditMode ? 'Actualizar Proveedor' : 'Añadir Proveedor' }}</h4>
+<!-- Formulario Desplegable -->
+<p-dialog header="{{ isEditMode ? 'Actualizar Proveedor' : 'Añadir Proveedor' }}" [(visible)]="showForm" [modal]="true" [style]="{ width: '36rem' }">
+  <form [formGroup]="supplierForm" (ngSubmit)="onSubmit()">
+    <div class="form-container">
+      
+      <div class="form-group">
+        <label for="name" class="form-label">Nombre</label>
+        <input id="name" type="text" pInputText formControlName="name" class="form-input" />
+      </div>
+
+      <div class="form-group">
+        <label for="phone" class="form-label">Teléfono</label>
+        <input id="phone" type="text" pInputText formControlName="phone" class="form-input" />
+      </div>
+
+      <div class="form-group">
+        <label for="email" class="form-label">Correo</label>
+        <input id="email" type="email" pInputText formControlName="email" class="form-input" />
+      </div>
+
+      <div class="form-group">
+        <label for="address" class="form-label">Dirección</label>
+        <input id="address" type="text" pInputText formControlName="address" class="form-input" />
+      </div>
+
     </div>
-    <div class="card-body">
-      <form [formGroup]="supplierForm" (ngSubmit)="onSubmit()">
-        <div class="form-group mb-4">
-          <label for="name" class="block font-medium mb-1">Nombre</label>
-          <input
-            id="name"
-            type="text"
-            formControlName="name"
-            class="form-control"
-          />
-        </div>
 
-        <div class="form-group mb-4">
-          <label for="phone" class="block font-medium mb-1">Teléfono</label>
-          <input
-            id="phone"
-            type="text"
-            formControlName="phone"
-            class="form-control"
-          />
-        </div>
-
-        <div class="form-group mb-4">
-          <label for="email" class="block font-medium mb-1">Correo</label>
-          <input
-            id="email"
-            type="email"
-            formControlName="email"
-            class="form-control"
-          />
-        </div>
-
-        <div class="form-group mb-4">
-          <label for="address" class="block font-medium mb-1">Dirección</label>
-          <input
-            id="address"
-            type="text"
-            formControlName="address"
-            class="form-control"
-          />
-        </div>
-
-        <div class="flex justify-end">
-          <button type="submit" class="btn btn-success">
-            {{ isEditMode ? 'Actualizar' : 'Guardar' }}
-          </button>
-        </div>
-      </form>
+    <div class="button-group">
+      <p-button label="Cancelar" severity="secondary" (onClick)="toggleForm()" />
+      <p-button label="{{ isEditMode ? 'Actualizar' : 'Guardar' }}" type="submit" />
     </div>
-  </div>
+  </form>
+</p-dialog>
 
   <!-- Tabla de Proveedores -->
-  <div class="card">
-    <div class="card-header">
-      <h4 class="text-lg font-bold">Lista de Proveedores</h4>
-    </div>
-    <div class="card-body">
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Teléfono</th>
-            <th>Correo</th>
-            <th>Dirección</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let supplier of suppliers">
-            <td>{{ supplier.name }}</td>
-            <td>{{ supplier.phone }}</td>
-            <td>{{ supplier.email }}</td>
-            <td>{{ supplier.address }}</td>
-            <td>
-              <!-- Menú desplegable con acciones -->
-              <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                  aria-expanded="false">
-                  Acciones
-                </button>
-                <ul class="dropdown-menu">
-                  <li>
-                    <a class="dropdown-item" href="#" (click)="openUpdateSupplierForm(supplier)">
-                      Actualizar proveedor
-                    </a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item text-danger" href="#" (click)="deleteSupplier(supplier.name)">
-                      Eliminar proveedor
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+  <p-table [value]="suppliers" dataKey="name" [paginator]="true" [rows]="5">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Nombre</th>
+        <th>Teléfono</th>
+        <th>Correo</th>
+        <th>Dirección</th>
+        <th>Acciones</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-supplier>
+      <tr>
+        <td>{{ supplier.name }}</td>
+        <td>{{ supplier.phone }}</td>
+        <td>{{ supplier.email }}</td>
+        <td>{{ supplier.address }}</td>
+        <td>
+          <button class="btn btn-sm btn-primary" (click)="openUpdateSupplierForm(supplier)">Editar</button>
+          <button class="btn btn-sm btn-danger" (click)="deleteSupplier(supplier.name)">Eliminar</button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
 </div>

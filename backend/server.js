@@ -416,7 +416,6 @@ app.post('/warehouses/:warehouseId/products', authenticateToken, async (req, res
     if (!warehouse) {
       return res.status(404).json({ message: 'Almacén no encontrado.' });
     }
-
     // Verificar permisos
     if (req.user.role === 'Empleado') {
       const employee = warehouse.employees.find(e => e.employeeId.toString() === req.user.id);
@@ -439,7 +438,6 @@ app.post('/warehouses/:warehouseId/products', authenticateToken, async (req, res
       supplier,
       warehouseId,
     });
-
     await newProduct.save();
     res.status(201).json({ message: 'Producto creado exitosamente', product: newProduct });
   } catch (error) {
@@ -585,21 +583,28 @@ app.get('/suppliers', authenticateToken, async (req, res) => {
   }
 });
 
+// Crear un proveedor (POST /suppliers)
 app.post('/suppliers', authenticateToken, async (req, res) => {
   try {
     const { name, phone, email, address } = req.body;
+
+    if (!name || !phone || !email || !address) {
+      return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
+    }
+
     const newSupplier = new Supplier({
       name,
       phone,
       email,
       address,
-      userId: req.user.id, // Asociar con el usuario autenticado
+      userId: req.user.id,
     });
+
     await newSupplier.save();
-    res.status(201).json({ message: 'Proveedor creado exitosamente', supplier: newSupplier });
+    res.status(201).json({ message: 'Proveedor añadido correctamente.', supplier: newSupplier });
   } catch (error) {
-    console.error('Error al crear proveedor:', error);
-    res.status(500).json({ message: 'Error al crear proveedor', error });
+    console.error('Error al añadir el proveedor:', error);
+    res.status(500).json({ message: 'Error interno del servidor.' });
   }
 });
 
@@ -622,24 +627,24 @@ app.delete('/suppliers/:name', authenticateToken, async (req, res) => {
 
 app.put('/suppliers/:name', authenticateToken, async (req, res) => {
   try {
-    const { name } = req.params;
-    const updates = req.body;
-    console.log('Token:', token);
+    const supplierName = req.params.name;
+    const updatedData = req.body;
 
+    // Busca y actualiza el proveedor por su nombre
     const supplier = await Supplier.findOneAndUpdate(
-      { name, userId: req.user.id },
-      updates,
+      { name: supplierName },
+      updatedData,
       { new: true }
     );
 
     if (!supplier) {
-      return res.status(404).json({ message: 'Proveedor no encontrado o no tienes acceso.' });
+      return res.status(404).json({ message: 'Proveedor no encontrado' });
     }
 
-    res.status(200).json({ message: 'Proveedor actualizado exitosamente.', supplier });
+    res.status(200).json({ message: 'Proveedor actualizado', supplier });
   } catch (error) {
     console.error('Error al actualizar el proveedor:', error);
-    res.status(500).json({ message: 'Error al actualizar el proveedor.', error });
+    res.status(500).json({ message: 'Error interno del servidor', error });
   }
 });
 

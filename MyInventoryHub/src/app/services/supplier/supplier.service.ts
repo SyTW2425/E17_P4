@@ -1,3 +1,4 @@
+// supplier.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -25,18 +26,15 @@ export class SupplierService {
   addSupplier(data: any): Observable<any> {
     return this.http.post(this.baseUrl, data, { headers: this.getHeaders() });
   }
-  
-  deleteSupplier(name: string, token: string): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/${encodeURIComponent(name)}`, {
-      headers: new HttpHeaders({
-        Authorization: `Bearer ${token}`
-      })
-    });
-  }
 
-  updateSupplier(name: string, data: any, token: string): Observable<any> {
-    const url = `${this.baseUrl}/${name}`;
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    return this.http.put(url, data, { headers });
+  updateSupplier(name: string, data: any): Observable<any> {
+    const url = `${this.baseUrl}/${encodeURIComponent(name)}`;
+    return this.http.put(url, data, { headers: this.getHeaders() });
+  }
+  
+
+  deleteSupplier(name: string): Observable<any> {
+    const url = `${this.baseUrl}/${encodeURIComponent(name)}`;
+    return this.http.delete(url, { headers: this.getHeaders() });
   }
 }

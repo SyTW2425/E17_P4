@@ -1,0 +1,30 @@
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* Espacio entre los grupos de formulario */
+}
+
+.form-group {
+  display: flex;
+  align-items: center;
+}
+
+.form-label {
+  width: 120px;          /* Ancho fijo para todas las etiquetas */
+  font-weight: 500;      /* Peso de la fuente */
+}
+
+.form-input {
+  flex: 1;               /* Los inputs ocuparán el espacio restante */
+  padding: 0.5rem;       /* Espaciado interno para los inputs */
+  border: 1px solid #ccc;/* Borde para los inputs */
+  border-radius: 4px;    /* Bordes redondeados */
+  font-size: 1rem;       /* Tamaño de la fuente */
+}
+
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;             /* Espacio entre los botones */
+  margin-top: 1rem;      /* Espacio superior para separar de los campos */
+}
