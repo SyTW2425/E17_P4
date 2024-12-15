@@ -550,10 +550,10 @@ app.put('/api/update-profile', authenticateToken, async (req, res) => {
 
 
 app.put('/api/change-password', authenticateToken, async (req, res) => {
-  const { currentPassword, newPassword } = req.body;
+  const { userId, currentPassword, newPassword } = req.body;
 
   try {
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
@@ -600,6 +600,46 @@ app.post('/suppliers', authenticateToken, async (req, res) => {
   } catch (error) {
     console.error('Error al crear proveedor:', error);
     res.status(500).json({ message: 'Error al crear proveedor', error });
+  }
+});
+
+app.delete('/suppliers/:name', authenticateToken, async (req, res) => {
+  try {
+    const { name } = req.params;
+
+    const supplier = await Supplier.findOneAndDelete({ name, userId: req.user.id });
+
+    if (!supplier) {
+      return res.status(404).json({ message: 'Proveedor no encontrado o no tienes acceso.' });
+    }
+
+    res.status(200).json({ message: 'Proveedor eliminado exitosamente.', supplier });
+  } catch (error) {
+    console.error('Error al eliminar el proveedor:', error);
+    res.status(500).json({ message: 'Error al eliminar el proveedor.', error });
+  }
+});
+
+app.put('/suppliers/:name', authenticateToken, async (req, res) => {
+  try {
+    const { name } = req.params;
+    const updates = req.body;
+    console.log('Token:', token);
+
+    const supplier = await Supplier.findOneAndUpdate(
+      { name, userId: req.user.id },
+      updates,
+      { new: true }
+    );
+
+    if (!supplier) {
+      return res.status(404).json({ message: 'Proveedor no encontrado o no tienes acceso.' });
+    }
+
+    res.status(200).json({ message: 'Proveedor actualizado exitosamente.', supplier });
+  } catch (error) {
+    console.error('Error al actualizar el proveedor:', error);
+    res.status(500).json({ message: 'Error al actualizar el proveedor.', error });
   }
 });
 
