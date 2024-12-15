@@ -99,20 +99,33 @@
   </div>
 
   <!-- Gráfica del Almacén -->
-  <div class="col-md-12" *ngIf="selectedView === 'charts'">
-    <div class="row">
-      <div class="col-md-6">
-        <div class="card">
-          <div class="card-header">
-            <h4>Gráfica del Almacén</h4>
-          </div>
-          <div class="card-body">
-            <p-chart type="pie" [data]="data" [options]="options" style="width: 100%; height: 300px;"></p-chart>
-          </div>
+<!-- Gráfica del Almacén -->
+<div class="col-md-12" *ngIf="selectedView === 'charts'">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h4>Gráfica del Almacén</h4>
+        </div>
+        <div class="card-body">
+          <p-chart type="pie" [data]="data" [options]="options" style="width: 100%; height: 300px;"></p-chart>
+        </div>
+      </div>
+    </div>
+    <!-- Nueva Gráfica de Stock de Productos -->
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h4>Gráfica de Stock de Productos</h4>
+        </div>
+        <div class="card-body">
+          <p-chart type="polarArea" [data]="stockData" [options]="stockOptions" style="width: 100%; height: 300px;"></p-chart>
         </div>
       </div>
     </div>
   </div>
+</div>
+
 
   <!-- Estadísticas de Productos -->
   <div class="col-md-12" *ngIf="selectedView === 'productStats'">

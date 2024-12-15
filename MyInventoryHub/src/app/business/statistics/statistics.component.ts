@@ -67,6 +67,8 @@ export class StatisticsComponent implements OnInit {
   options: any;
   selectedAction: any;
   selectedView: any;
+  stockData: any;
+  stockOptions: any;
 
   constructor(
     private warehouseService: WarehouseService,
@@ -114,17 +116,16 @@ export class StatisticsComponent implements OnInit {
         }
       );
   }
-  
 
   calculateMonthlyEarnings(products: any[]): { [month: string]: number } {
     const earningsByMonth: { [month: string]: number } = {};
-  
+
     products.forEach((product) => {
       const stats = this.productStats[product._id];
       const productEarnings = stats.earned;
-      
+
       const soldMonth = new Date(product.spoil).getMonth(); // Esto obtiene el mes de la fecha de venta (0 = enero, 11 = diciembre)
-      
+
       // Sumar las ganancias a la fecha correspondiente del mes
       if (earningsByMonth[soldMonth]) {
         earningsByMonth[soldMonth] += productEarnings;
@@ -132,14 +133,14 @@ export class StatisticsComponent implements OnInit {
         earningsByMonth[soldMonth] = productEarnings;
       }
     });
-  
+
     // Asegurar que todos los meses (0 a 11) estén presentes en los datos (si no se vendieron productos en un mes, se pone 0)
     for (let i = 0; i < 12; i++) {
       if (!earningsByMonth[i]) {
         earningsByMonth[i] = 0;
       }
     }
-  
+
     return earningsByMonth;
   }
 
@@ -271,15 +272,69 @@ export class StatisticsComponent implements OnInit {
         },
       },
     };
-    console.log(this.data)
+    console.log(this.data);
+  }
+
+  generateStockChart(): void {
+    // Preparar los datos para la gráfica de stock de productos
+    const labels = this.products.map((product) => product.name); // Etiquetas con los nombres de los productos
+    const stockValues = this.products.map((product) => product.stock); // Cantidades de stock de cada producto
+    
+    // Asignar los datos y opciones para el gráfico
+    this.stockData = {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Stock de Productos',
+          data: stockValues,
+          backgroundColor: this.generateColors(labels.length), // Genera colores dinámicos
+          borderColor: '#1e88e5', // Color del borde de las barras
+          borderWidth: 1,
+        },
+      ],
+    };
+  
+    // Opciones para la gráfica
+    this.stockOptions = {
+      responsive: true,
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'Productos',
+          },
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Cantidad de Stock',
+          },
+          beginAtZero: true, // Asegurarse de que el eje Y comience desde cero
+        },
+      },
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+      },
+    };
   }
 
   onWarehouseSelect(warehouseId: string, action: string): void {
     this.selectedWarehouseId = warehouseId;
     console.log('ID del almacén seleccionado:', warehouseId);
     this.loadProductStats();
-    // this.loadProducts();
-  
+    this.loadProducts()
+    .then(() => {
+      // Generar el gráfico de stock después de cargar los productos
+      this.generateStockChart();  // Generar la nueva gráfica
+      this.generateWarehouseChartPrimeNG(); // Aquí usas la función que ya definiste para el gráfico del almacén
+      this.generateProductCharts();
+      this.generateMonthlyEarningsChart()
+    })
+    .catch((error) => {
+      console.error('Error al cargar productos:', error);
+    });
     // Actualiza la vista seleccionada según la acción
     switch (action) {
       case 'warehouseStats':
@@ -287,36 +342,36 @@ export class StatisticsComponent implements OnInit {
         this.calculateWarehouseStats(this.products); // Asegúrate de que esta función esté definida
         this.selectedView = 'warehouseStats'; // Establecer la vista a 'warehouseStats'
         break;
-  
+
       case 'charts':
         // Generar gráficos relacionados con el almacén
-        this.generateWarehouseChartPrimeNG();  // Aquí usas la función que ya definiste para el gráfico del almacén
+        // this.generateWarehouseChartPrimeNG(); // Aquí usas la función que ya definiste para el gráfico del almacén
         // this.generateProductChart();
-        this.selectedView = 'charts';  // Establecer la vista a 'charts'
+        this.selectedView = 'charts'; // Establecer la vista a 'charts'
         break;
-  
+
       case 'productStats':
         // Cargar estadísticas de productos
         // Generar el gráfico principal de dinero generado por producto
         this.generateProductChartData();
         // Generar gráficos para cada producto
-        this.generateProductCharts();
+        // this.generateProductCharts();
         this.selectedView = 'productStats'; // Establecer la vista a 'productStats'
         break;
-  
+
       case 'annualChart':
         // Cargar gráfico anual si es necesario
-        this.generateMonthlyEarningsChart();  // Asegúrate de tener la función para el gráfico anual
+        this.generateMonthlyEarningsChart(); // Asegúrate de tener la función para el gráfico anual
         this.selectedView = 'annualChart'; // Establecer la vista a 'annualChart'
         break;
-  
+
       default:
         console.error('Acción no válida:', action);
-        this.selectedView = '';  // Restablecer la vista si la acción no es válida
+        this.selectedView = ''; // Restablecer la vista si la acción no es válida
         break;
     }
   }
-  
+
   onWarehouseChange(event: any) {
     console.log('Almacén seleccionado:', this.selectedWarehouse);
   }
@@ -324,10 +379,12 @@ export class StatisticsComponent implements OnInit {
   loadProductStats(): void {
     // Verificar si el token y el almacén están disponibles
     if (!this.token || !this.selectedWarehouseId) {
-      console.error('No se puede cargar estadísticas sin token o almacén seleccionado.');
+      console.error(
+        'No se puede cargar estadísticas sin token o almacén seleccionado.'
+      );
       return;
     }
-  
+
     this.loadProducts()
       .then(() => {
         // Calcular estadísticas de productos y almacén
@@ -338,7 +395,7 @@ export class StatisticsComponent implements OnInit {
         console.error('Error al cargar productos:', error);
       });
   }
-  
+
   loadProducts(): Promise<void> {
     return new Promise((resolve, reject) => {
       if (!this.token) {
@@ -346,35 +403,46 @@ export class StatisticsComponent implements OnInit {
         reject('Token no disponible.');
         return;
       }
-  
+
       if (!this.selectedWarehouseId) {
         console.error('No se ha seleccionado un almacén.');
         reject('No se ha seleccionado un almacén.');
         return;
       }
-  
-      this.productService.getProducts(this.token, this.selectedWarehouseId).subscribe({
-        next: (response) => {
-          this.products = response; // Guardar los productos
-          resolve();
-        },
-        error: (error) => {
-          console.error('Error al cargar productos:', error);
-          reject(error);
-        },
-      });
+
+      this.productService
+        .getProducts(this.token, this.selectedWarehouseId)
+        .subscribe({
+          next: (response) => {
+            this.products = response; // Guardar los productos
+            resolve();
+          },
+          error: (error) => {
+            console.error('Error al cargar productos:', error);
+            reject(error);
+          },
+        });
     });
   }
-  
 
   prepareMonthlyEarningsData(): void {
     const monthlyEarnings = this.calculateMonthlyEarnings(this.products);
     const months = [
-      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
-      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+      'Enero',
+      'Febrero',
+      'Marzo',
+      'Abril',
+      'Mayo',
+      'Junio',
+      'Julio',
+      'Agosto',
+      'Septiembre',
+      'Octubre',
+      'Noviembre',
+      'Diciembre',
     ];
     const earnings = months.map((month, index) => monthlyEarnings[index]);
-  
+
     this.monthlyEarningsData = {
       labels: months,
       datasets: [
@@ -384,7 +452,7 @@ export class StatisticsComponent implements OnInit {
         },
       ],
     };
-  
+
     this.monthlyEarningsOptions = {
       responsive: true,
       plugins: {
@@ -410,13 +478,13 @@ export class StatisticsComponent implements OnInit {
       },
     };
   }
-  
+
   generateProductChartData(): void {
     const productNames = this.products.map((product) => product.name);
     const productEarnings = this.products.map(
       (product) => this.productStats[product._id].earned
     );
-  
+
     this.data = {
       labels: productNames,
       datasets: [
@@ -426,7 +494,7 @@ export class StatisticsComponent implements OnInit {
         },
       ],
     };
-  
+
     this.options = {
       responsive: true,
       plugins: {
@@ -436,14 +504,14 @@ export class StatisticsComponent implements OnInit {
       },
     };
   }
-  
+
   generateProductCharts(): void {
     this.products.forEach((product) => {
       const stats = this.productStats[product._id];
       const total = stats.invested + stats.earned;
 
-      console.log(this.products)
-  
+      console.log(this.products);
+
       product.chartData = {
         labels: ['Stock', 'Invertido', 'Ganado', 'Total'],
         datasets: [
@@ -469,7 +537,7 @@ export class StatisticsComponent implements OnInit {
           },
         ],
       };
-  
+
       product.chartOptions = {
         responsive: true,
         plugins: {
@@ -499,7 +567,7 @@ export class StatisticsComponent implements OnInit {
       };
     });
   }
-  
+
   generateProductChart(): void {
     const ctx = document.getElementById('productChart') as HTMLCanvasElement;
     new Chart(ctx, {
