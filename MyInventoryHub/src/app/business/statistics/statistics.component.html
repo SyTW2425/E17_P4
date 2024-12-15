@@ -81,22 +81,27 @@
   </div>
 
   <!-- Estadísticas del Almacén -->
-  <div class="col-md-12" *ngIf="selectedView === 'warehouseStats'">
-    <div class="row">
-      <div class="col-md-6">
-        <div class="card">
-          <div class="card-header">
-            <h4>Estadísticas del Almacén</h4>
-          </div>
-          <div class="card-body">
-            <p><strong>Total de Stock:</strong> {{ warehouseStats.totalStock }}</p>
-            <p><strong>Total Invertido:</strong> {{ warehouseStats.totalInvested | currency }}</p>
-            <p><strong>Total Ganado:</strong> {{ warehouseStats.totalEarned | currency }}</p>
-          </div>
+<!-- Estadísticas del Almacén --> 
+<div class="col-md-12" *ngIf="selectedView === 'warehouseStats'">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h4>Estadísticas del Almacén</h4>
+        </div>
+        <div class="card-body">
+          <p><strong>Total de Stock:</strong> {{ warehouseStats.totalStock }}</p>
+          <p><strong>Total Invertido:</strong> {{ warehouseStats.totalInvested | currency }}</p>
+          <p><strong>Total Ganado:</strong> {{ warehouseStats.totalEarned | currency }}</p>
+          <p><strong>Cantidad de Empleados:</strong> {{ warehouseStats.totalEmployees }}</p>
+          <!-- <p><strong>Localización:</strong> {{ warehouseStats.location }}</p> -->
+          <!-- <p><strong>Cantidad de Productos Diferentes:</strong> {{ warehouseStats.totalProducts }}</p> -->
         </div>
       </div>
     </div>
   </div>
+</div>
+
 
   <!-- Gráfica del Almacén -->
 <!-- Gráfica del Almacén -->
@@ -162,7 +167,7 @@
   <!-- Gráfico Anual -->
   <div class="col-md-12" *ngIf="selectedView === 'annualChart'">
     <div class="row">
-      <div class="col-md-6">
+      <div class="col-md-12">
         <div class="card">
           <div class="card-header">
             <h4>Gráfico Anual</h4>

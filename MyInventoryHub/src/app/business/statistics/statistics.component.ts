@@ -19,6 +19,8 @@ import { FormsModule } from '@angular/forms';
 import { NgFor } from '@angular/common';
 
 import { AfterViewInit } from '@angular/core';
+import { StatisticsService } from '../../services/statistics/statistics.service';
+import { ChartService } from '../../services/chart/chart.service';
 
 interface ProductStats {
   stock: number;
@@ -30,6 +32,7 @@ interface WarehouseStats {
   totalStock: number;
   totalInvested: number;
   totalEarned: number;
+  totalEmployees: number;
 }
 
 @Component({
@@ -57,6 +60,7 @@ export class StatisticsComponent implements OnInit {
     totalStock: 0,
     totalInvested: 0,
     totalEarned: 0,
+    totalEmployees: 0,
   };
   productStats: { [key: string]: ProductStats } = {}; // Tipo para indexar por producto
   isOwner: boolean = false;
@@ -69,11 +73,14 @@ export class StatisticsComponent implements OnInit {
   selectedView: any;
   stockData: any;
   stockOptions: any;
+  totalEmployees = 0;
 
   constructor(
     private warehouseService: WarehouseService,
     private productService: ProductService,
-    private authService: AuthService
+    private authService: AuthService,
+    private statisticsService: StatisticsService,
+    private chartService: ChartService
   ) {}
 
   ngOnInit(): void {
@@ -190,10 +197,11 @@ export class StatisticsComponent implements OnInit {
     };
   }
 
-  calculateWarehouseStats(products: any[]): WarehouseStats {
+  calculateWarehouseStats(products: any[]): WarehouseStats | any {
     let totalStock = 0;
     let totalInvested = 0;
     let totalEarned = 0;
+    let totalEmployees= 0;
 
     products.forEach((product) => {
       const price = product.price || 0;
@@ -207,10 +215,35 @@ export class StatisticsComponent implements OnInit {
       }
     });
 
+    if (!this.token) {
+      console.error('No se puede cargar almacenes sin token.');
+      return;
+    }
+
+    if (!this.selectedWarehouseId) {
+      console.error('No se puede cargar almacenes sin token.');
+      return;
+    }
+
+    // console.log("DEPURAR",this.warehouseService.getWarehouseEmployees(this.token, this.selectedWarehouseId))
+
+    this.warehouseService.getWarehouseEmployees(this.token, this.selectedWarehouseId!).subscribe(
+      (data) => {
+        this.totalEmployees = data.length;
+      },
+      (error) => {
+        console.error('Error cargando empleados.', error);
+      }
+    );
+
+    totalEmployees = this.totalEmployees;
+    console.log("DATA", totalEmployees)
+
     return {
       totalStock,
       totalInvested,
       totalEarned,
+      totalEmployees,
     };
   }
 
