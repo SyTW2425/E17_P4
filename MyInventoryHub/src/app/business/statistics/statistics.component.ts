@@ -21,6 +21,8 @@ import { NgFor } from '@angular/common';
 import { AfterViewInit } from '@angular/core';
 import { StatisticsService } from '../../services/statistics/statistics.service';
 import { ChartService } from '../../services/chart/chart.service';
+import { catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 interface ProductStats {
   stock: number;
@@ -197,48 +199,50 @@ export class StatisticsComponent implements OnInit {
     };
   }
 
-  calculateWarehouseStats(products: any[]): WarehouseStats | any {
+  async calculateWarehouseStats(products: any[]): Promise<WarehouseStats | any> {
     let totalStock = 0;
     let totalInvested = 0;
     let totalEarned = 0;
-    let totalEmployees= 0;
-
+    let totalEmployees = 0;
+  
+    // Calcular estadísticas de productos
     products.forEach((product) => {
       const price = product.price || 0;
       const stock = product.stock || 0;
-
-      // Verificar que el precio y stock son mayores que cero
+  
       if (price > 0 && stock > 0) {
         totalStock += stock;
         totalInvested += price * stock;
         totalEarned += price * stock * 0.2; // Ganancia total del 20% sobre la inversión
       }
     });
-
+  
+    // Verificar el token antes de continuar
     if (!this.token) {
       console.error('No se puede cargar almacenes sin token.');
       return;
     }
-
+  
+    // Verificar si hay un almacén seleccionado
     if (!this.selectedWarehouseId) {
-      console.error('No se puede cargar almacenes sin token.');
+      console.error('No se puede cargar almacenes sin seleccionar un almacén.');
       return;
     }
-
-    // console.log("DEPURAR",this.warehouseService.getWarehouseEmployees(this.token, this.selectedWarehouseId))
-
-    this.warehouseService.getWarehouseEmployees(this.token, this.selectedWarehouseId!).subscribe(
-      (data) => {
-        this.totalEmployees = data.length;
-      },
-      (error) => {
-        console.error('Error cargando empleados.', error);
-      }
-    );
-
-    totalEmployees = this.totalEmployees;
-    console.log("DATA", totalEmployees)
-
+  
+    // Cargar los empleados del almacén
+    try {
+      const data = await this.warehouseService
+        .getWarehouseEmployees(this.token, this.selectedWarehouseId)
+        .toPromise(); // Convertir el Observable a una Promesa
+  
+      totalEmployees = data.length;
+    } catch (error) {
+      console.error('Error cargando empleados.', error);
+      totalEmployees = 0; // En caso de error, no contar empleados
+    }
+  
+    console.log("Empleados:", totalEmployees);
+  
     return {
       totalStock,
       totalInvested,
@@ -246,6 +250,7 @@ export class StatisticsComponent implements OnInit {
       totalEmployees,
     };
   }
+  
 
   calculateProductStats(products: any[]): { [key: string]: ProductStats } {
     const productStats: { [key: string]: ProductStats } = {};
@@ -409,25 +414,25 @@ export class StatisticsComponent implements OnInit {
     console.log('Almacén seleccionado:', this.selectedWarehouse);
   }
 
-  loadProductStats(): void {
+  async loadProductStats(): Promise<void> {
     // Verificar si el token y el almacén están disponibles
     if (!this.token || !this.selectedWarehouseId) {
-      console.error(
-        'No se puede cargar estadísticas sin token o almacén seleccionado.'
-      );
+      console.error('No se puede cargar estadísticas sin token o almacén seleccionado.');
       return;
     }
-
-    this.loadProducts()
-      .then(() => {
-        // Calcular estadísticas de productos y almacén
-        this.productStats = this.calculateProductStats(this.products);
-        this.warehouseStats = this.calculateWarehouseStats(this.products);
-      })
-      .catch((error) => {
-        console.error('Error al cargar productos:', error);
-      });
+  
+    try {
+      // Cargar productos de manera asíncrona
+      await this.loadProducts();
+  
+      // Calcular estadísticas de productos y almacén
+      this.productStats = this.calculateProductStats(this.products);
+      this.warehouseStats = await this.calculateWarehouseStats(this.products); // Usar await si la función es asíncrona
+    } catch (error) {
+      console.error('Error al cargar productos:', error);
+    }
   }
+  
 
   loadProducts(): Promise<void> {
     return new Promise((resolve, reject) => {
