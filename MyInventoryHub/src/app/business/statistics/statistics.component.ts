@@ -384,7 +384,6 @@ export class StatisticsComponent implements OnInit {
       case 'charts':
         // Generar gráficos relacionados con el almacén
         // this.generateWarehouseChartPrimeNG(); // Aquí usas la función que ya definiste para el gráfico del almacén
-        // this.generateProductChart();
         this.selectedView = 'charts'; // Establecer la vista a 'charts'
         break;
 
@@ -393,7 +392,7 @@ export class StatisticsComponent implements OnInit {
         // Generar el gráfico principal de dinero generado por producto
         this.generateProductChartData();
         // Generar gráficos para cada producto
-        // this.generateProductCharts();
+        this.generateProductCharts();
         this.selectedView = 'productStats'; // Establecer la vista a 'productStats'
         break;
 
@@ -517,94 +516,124 @@ export class StatisticsComponent implements OnInit {
     };
   }
 
-  generateProductChartData(): void {
-    const productNames = this.products.map((product) => product.name);
-    const productEarnings = this.products.map(
-      (product) => this.productStats[product._id].earned
-    );
-
-    this.data = {
-      labels: productNames,
-      datasets: [
-        {
-          data: productEarnings,
-          backgroundColor: this.generateColors(productNames.length), // Genera colores dinámicos
-        },
-      ],
-    };
-
-    this.options = {
-      responsive: true,
-      plugins: {
-        legend: {
-          position: 'top',
-        },
-      },
-    };
-  }
-
-  generateProductCharts(): void {
-    this.products.forEach((product) => {
-      const stats = this.productStats[product._id];
-      const total = stats.invested + stats.earned;
-
-      console.log(this.products);
-
-      product.chartData = {
-        labels: ['Stock', 'Invertido', 'Ganado', 'Total'],
+  async generateProductChartData(): Promise<void> {
+    try {
+      // Asegurarnos de que los productos están cargados
+      if (!this.products || this.products.length === 0) {
+        console.error('No se han cargado productos.');
+        return;
+      }
+  
+      // Obtener nombres de productos y ganancias de productos
+      const productNames = this.products.map((product) => product.name);
+      const productEarnings = this.products.map(
+        (product) => this.productStats[product._id]?.earned || 0 // Evitar errores si no existe el valor
+      );
+  
+      // Generar datos para el gráfico
+      this.data = {
+        labels: productNames,
         datasets: [
           {
-            label: 'Stock',
-            data: [stats.stock, null, null, null],
-            backgroundColor: '#42a5f5',
-          },
-          {
-            label: 'Invertido',
-            data: [null, stats.invested, null, null],
-            backgroundColor: '#66bb6a',
-          },
-          {
-            label: 'Ganado',
-            data: [null, null, stats.earned, null],
-            backgroundColor: '#ff7043',
-          },
-          {
-            label: 'Total',
-            data: [null, null, null, total],
-            backgroundColor: '#ffeb3b',
+            data: productEarnings,
+            backgroundColor: this.generateColors(productNames.length), // Genera colores dinámicos
           },
         ],
       };
-
-      product.chartOptions = {
+  
+      // Configurar opciones del gráfico
+      this.options = {
         responsive: true,
         plugins: {
           legend: {
-            display: false,
-          },
-        },
-        scales: {
-          x: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: 'Categorías',
-            },
-            stacked: true,
-            barPercentage: 0.9,
-            categoryPercentage: 1.0,
-          },
-          y: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: 'Valores',
-            },
+            position: 'top',
           },
         },
       };
-    });
+    } catch (error) {
+      console.error('Error generando datos para el gráfico:', error);
+    }
   }
+  
+
+  async generateProductCharts(): Promise<void> {
+    try {
+      // Verificar si los productos y las estadísticas de productos están disponibles
+      if (!this.products || this.products.length === 0 || !this.productStats) {
+        console.error('No se han cargado productos o estadísticas.');
+        return;
+      }
+  
+      // Iterar sobre los productos y generar sus datos de gráfico
+      for (const product of this.products) {
+        const stats = this.productStats[product._id];
+  
+        if (!stats) {
+          console.warn(`No se encuentran estadísticas para el producto ${product.name}.`);
+          continue; // Saltar si no hay estadísticas disponibles para este producto
+        }
+  
+        const total = stats.invested + stats.earned;
+  
+        product.chartData = {
+          labels: ['Stock', 'Invertido', 'Ganado', 'Total'],
+          datasets: [
+            {
+              label: 'Stock',
+              data: [stats.stock, null, null, null],
+              backgroundColor: '#42a5f5',
+            },
+            {
+              label: 'Invertido',
+              data: [null, stats.invested, null, null],
+              backgroundColor: '#66bb6a',
+            },
+            {
+              label: 'Ganado',
+              data: [null, null, stats.earned, null],
+              backgroundColor: '#ff7043',
+            },
+            {
+              label: 'Total',
+              data: [null, null, null, total],
+              backgroundColor: '#ffeb3b',
+            },
+          ],
+        };
+  
+        product.chartOptions = {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: false,
+            },
+          },
+          scales: {
+            x: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Categorías',
+              },
+              stacked: true,
+              barPercentage: 0.9,
+              categoryPercentage: 1.0,
+            },
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Valores',
+              },
+            },
+          },
+        };
+      }
+    } catch (error) {
+      console.error('Error generando gráficos para los productos:', error);
+    }
+  }
+  
 
   generateProductChart(): void {
     const ctx = document.getElementById('productChart') as HTMLCanvasElement;
