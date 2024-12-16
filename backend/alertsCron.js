@@ -12,7 +12,7 @@ const setupCronJob = (user) => {
   }
 
   // Programar el cron job para ejecutarse diariamente a medianoche
-  cron.schedule('* * * * *', async () => {
+  cron.schedule('0 0 * * *', async () => {
     console.log(`Ejecutando verificación de alertas para el usuario ${user.id}...`);
     const today = new Date();
 

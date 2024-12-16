@@ -1,0 +1,54 @@
+.alert-section {
+    margin: 20px auto;
+    max-width: 800px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .alert-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .alert-card {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .alert-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .alert-header h4 {
+    font-size: 18px;
+    margin: 0;
+    color: #333;
+  }
+  
+  .alert-warehouse {
+    font-size: 14px;
+    color: #666;
+  }
+  
+  .alert-body {
+    font-size: 16px;
+    color: #555;
+  }
+  
+  .alert-body ul {
+    padding-left: 20px;
+    margin: 0;
+    list-style-type: disc;
+  }
+  
+  .alert-body li {
+    margin-bottom: 5px;
+  }
