@@ -371,7 +371,7 @@ export default class TablesComponent implements OnInit {
 
   }
   updateEmployeePermissions(): void {
-    console.log('GAGA');
+    
     if (!this.token || !this.selectedWarehouseId) {
       console.error('No se puede actualizar permisos sin token o almacén seleccionado.');
       return;
@@ -461,7 +461,7 @@ export default class TablesComponent implements OnInit {
         spoil: this.productUpdateForm.value.spoil || null, // Mantener null si no se define
         supplier: this.productUpdateForm.value.supplier,
       };
-
+      console.log('GEGE: ',data);
       this.productService.updateProduct(this.token, this.selectedWarehouseId, this.selectedProductId, data).subscribe(
         (response) => {
           console.log('Producto actualizado:', response);
@@ -507,9 +507,12 @@ export default class TablesComponent implements OnInit {
   }
 
   //abrir formulario
-  openForm(warehouseId: any): void {
-    this.selectedWarehouseId = warehouseId;
+  openForm(warehouse: any): void {
+    this.selectedWarehouseId = warehouse._id;
     this.isFormOpen = true;
+    Object.keys(warehouse).forEach(key =>{
+      this.warehouseUpdateForm.get(key)?.setValue(warehouse[key] ?? undefined);
+    })
   }
 
   openUpdateEmployeeForm(employeeId: any, permissions: string[]): void {
@@ -528,9 +531,16 @@ export default class TablesComponent implements OnInit {
     this.isProductModalVisible = true; // Abrir el modal
   }
   // Método para abrir el formulario de actualización de producto
-  openUpdateProductForm(productId: any): void {
-    this.selectedProductId = productId;
+  openUpdateProductForm(product: any): void {
+    this.selectedProductId = product._id;
     this.isUpdateProductFormOpen = true;
+
+    Object.keys(product).forEach(key =>{
+      this.productUpdateForm.get(key)?.setValue(product[key] ?? undefined);
+    })
+    console.log('GIGI: ',product.spoil)
+    this.productUpdateForm.get('spoil')?.setValue(product?.spoil?.split("T")[0] ?? undefined);
+
   }
 
   closeErrorModal(): void {

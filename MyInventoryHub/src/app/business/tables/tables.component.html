@@ -89,7 +89,7 @@
                     </a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#" (click)="openForm(warehouse._id)" *ngIf="isOwner">
+                    <a class="dropdown-item" href="#" (click)="openForm(warehouse)" *ngIf="isOwner"> 
                       Actualizar almacén
                     </a>
                   </li>
@@ -375,7 +375,7 @@
                 </a>
               </li>
               <li style="position:relative;z-index: 99;">
-                <a class="dropdown-item" href="#" (click)="openUpdateProductForm(product._id)"
+                <a class="dropdown-item" href="#" (click)="openUpdateProductForm(product)"
                   *ngIf="isOwner || hasEditPermissions()">
                   Actualizar producto
                 </a>
@@ -531,8 +531,8 @@
     <!-- Nombre del producto -->
     <div class="flex align-items-center gap-3 mb-3 grid">
       <label for="name" class="font-semibold w-6rem col-4">Nombre del producto</label>
-      <input id="name" class="flex-auto col-6" autocomplete="off" formControlName="name" />
-      <div *ngIf="productUpdateForm.get('name')?.invalid && productUpdateForm.get('name')?.touched" class="text-danger">
+      <input id="name" class="flex-auto col-6" autocomplete="off" formControlName="name"  />
+      <div *ngIf="productUpdateForm.get('name')?.invalid && productUpdateForm.get('name')?.touched" class="text-danger"> 
         El nombre es obligatorio.
       </div>
     </div>
