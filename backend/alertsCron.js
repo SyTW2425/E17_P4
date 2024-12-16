@@ -29,27 +29,38 @@ const setupCronJob = (user) => {
         // Buscar productos de este almacén
         const products = await Product.find({ warehouseId: warehouse._id });
 
-        let alertMessage = '';
+        let alertMessages = [];
 
         for (const product of products) {
           // Verificar stock bajo
           if (product.minimunStock && product.stock <= product.minimunStock) {
-            alertMessage += `El producto "${product.name}" tiene el stock bajo (${product.stock} unidades).<br>`;
+            alertMessages.push(
+              `Tu producto <strong>${product.name}</strong> tiene el stock bajo (${product.stock} unidades) en el almacén <strong>${warehouse.name}</strong>.`
+            );
           }
 
           // Verificar fecha de caducidad próxima
           if (product.spoil && (new Date(product.spoil) - today) / (1000 * 60 * 60 * 24) <= 10) {
-            alertMessage += `El producto "${product.name}" está próximo a caducar (caduca el ${product.spoil.toLocaleDateString()}).<br>`;
+            alertMessages.push(
+              `Tu producto <strong>${product.name}</strong> está próximo a caducar (caduca el ${new Date(product.spoil).toLocaleDateString()}) en el almacén <strong>${warehouse.name}</strong>.`
+            );
           }
         }
 
         // Enviar correo si hay alertas
-        if (alertMessage) {
+        if (alertMessages.length > 0) {
+          const emailBody = `
+            <p>Hola ${user.firstName},</p>
+            <p>${alertMessages.join('<br>')}</p>
+            <p>¡Date prisa!</p>
+            <p>Equipo de My InventoryHub.</p>
+          `;
+
           await sendEmail(
             user.email, // Dirección del correo
             'Alerta de inventario', // Asunto
             null, // Texto sin formato (puede ser null si solo usamos HTML)
-            `<p>${alertMessage}</p>` // Contenido HTML del mensaje
+            emailBody // Contenido HTML del mensaje
           );
 
           console.log(

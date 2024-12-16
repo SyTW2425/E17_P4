@@ -532,17 +532,24 @@ app.delete('/warehouses/:warehouseId/products/:productId', authenticateToken, as
 });
 
 //endpoint para alertas
+// Endpoint para alertas
 app.get('/alerts', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id; // ID del usuario autenticado (dueño)
     const today = new Date();
 
     // Buscar almacenes que pertenezcan al usuario
-    const warehouses = await Warehouse.find({ userId }).select('_id');
+    const warehouses = await Warehouse.find({ userId }).select('_id name');
 
     if (!warehouses.length) {
       return res.status(404).json({ message: 'No se encontraron almacenes asociados al usuario.' });
     }
+
+    // Crear un mapa de IDs de almacenes a nombres para un acceso rápido
+    const warehouseMap = warehouses.reduce((map, warehouse) => {
+      map[warehouse._id] = warehouse.name;
+      return map;
+    }, {});
 
     // Extraer los IDs de los almacenes
     const warehouseIds = warehouses.map(warehouse => warehouse._id);
@@ -570,7 +577,14 @@ app.get('/alerts', authenticateToken, async (req, res) => {
         messages.push(`El producto "${product.name}" caduca pronto (${product.spoil.toLocaleDateString()}).`);
       }
 
-      return { product: product.name, messages };
+      // Agregar el nombre del almacén
+      const warehouseName = warehouseMap[product.warehouseId];
+
+      return {
+        warehouse: warehouseName, // Nombre del almacén
+        product: product.name,
+        messages,
+      };
     });
 
     res.json(formattedAlerts);

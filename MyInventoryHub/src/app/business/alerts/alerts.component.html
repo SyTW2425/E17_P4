@@ -1,14 +1,14 @@
 <div class="alert-section">
-    <h3>Alertas de inventario</h3>
-    <div *ngIf="alerts.length > 0; else noAlerts">
-      <div *ngFor="let alert of alerts" class="alert">
-        <h4>{{ alert.product }}</h4>
-        <ul>
-          <li *ngFor="let message of alert.messages">{{ message }}</li>
-        </ul>
-      </div>
+  <h3>Alertas de inventario</h3>
+  <div *ngIf="alerts.length > 0; else noAlerts">
+    <div *ngFor="let alert of alerts" class="alert">
+      <h4>{{ alert.product }} (Almacén: {{ alert.warehouse }})</h4>
+      <ul>
+        <li *ngFor="let message of alert.messages">{{ message }}</li>
+      </ul>
     </div>
-    <ng-template #noAlerts>
-      <p>No hay alertas pendientes.</p>
-    </ng-template>
   </div>
+  <ng-template #noAlerts>
+    <p>No hay alertas pendientes.</p>
+  </ng-template>
+</div>
