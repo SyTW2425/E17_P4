@@ -117,7 +117,7 @@
   <!-- Detalle de empleados del almacén seleccionado -->
   <div class="card mt-4 subcontainer" *ngIf="selectedWarehouseId && isEmployeesViewOpen">
     <div class="card-header">
-      <h4>Empleados en Almacén</h4>
+      <h4>Empleados en Almacén: {{ selectedWarehouseName }}</h4>
     </div>
     <div class="card-body">
       <table class="table table-striped">

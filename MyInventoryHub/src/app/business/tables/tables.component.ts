@@ -229,6 +229,10 @@ export default class TablesComponent implements OnInit {
 
     this.isEmployeesViewOpen = true;
     this.isProductsViewOpen = false;
+    this.selectedWarehouseId = warehouseId;
+
+    const warehouse = this.warehouses.find(wh => wh._id === warehouseId);
+    this.selectedWarehouseName = warehouse ? warehouse.name : 'Almacén no encontrado';
 
     this.selectedWarehouseId = warehouseId;
     this.warehouseService.getWarehouseEmployees(this.token, warehouseId).subscribe(
