@@ -14,8 +14,8 @@
       <form [formGroup]="warehouseForm" (ngSubmit)="createWarehouse()" class="warehouse-form-inline">
         <!-- Campo: Nombre del Almacén -->
         <div class="warehouse-form-group">
-          <p-floatlabel>
-            <input id="name" pInputText formControlName="name" />
+          <p-floatlabel variant="on">
+            <input id="name" pInputText formControlName="name"/>
             <label for="name">Nombre del Almacén</label>
           </p-floatlabel>
           <div *ngIf="warehouseForm.get('name')?.invalid && warehouseForm.get('name')?.touched" class="text-danger">
@@ -25,7 +25,7 @@
 
         <!-- Campo: Ubicación -->
         <div class="warehouse-form-group">
-          <p-floatlabel>
+          <p-floatlabel variant="on">
             <input id="location" pInputText formControlName="location" />
             <label for="location">Ubicación</label>
           </p-floatlabel>

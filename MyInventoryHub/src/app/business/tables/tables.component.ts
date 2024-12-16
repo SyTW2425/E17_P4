@@ -16,13 +16,14 @@ import { MenuItem } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
-
+import { InputTextModule } from 'primeng/inputtext';
+import { IftaLabelModule } from 'primeng/iftalabel';
 
 @Component({
   selector: 'app-tables',
   standalone: true,
   imports: [CommonModule, CurrencyPipe, ReactiveFormsModule, FormsModule, PermissionPipe, DialogModule, ButtonModule, CheckboxModule,TableModule, FloatLabelModule,
-    PaginatorModule, MenuModule, IconField, InputIcon ],
+    PaginatorModule, MenuModule, IconField, InputIcon,InputTextModule,IftaLabelModule ],
   templateUrl: './tables.component.html',
   styleUrls: ['./tables.component.css']
 })
