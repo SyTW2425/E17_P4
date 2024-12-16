@@ -13,7 +13,7 @@ const app = express();
 // Middlewares
 app.use(cors()); // Permitir solicitudes desde diferentes orígenes
 app.use(express.json()); // Para analizar JSON en las solicitudes
-setupCronJob();
+
 //models
 const User = require('./models/User');
 const Product = require('./models/Product');
@@ -89,6 +89,8 @@ mongoose.connect(/*process.env.MONGO_URI*/mongoURI, {
 }).catch((err) => {
   console.error('Error al conectar a MongoDB:', err);
 });
+
+//setupCronJob();
 
 //endpoints para gestion de usuarios//
 app.post('/api/register', async (req, res) => {
@@ -181,6 +183,13 @@ app.post('/login', async (req, res) => {
     );
 
     res.json({ token });
+
+    // Inicializar el cron job si es un dueño
+    if (user.role === 'Dueño') {
+      setupCronJob(user);
+    }
+
+
   } catch (error) {
     res.status(500).json({ message: 'Error al iniciar sesión', error });
   }
@@ -571,7 +580,22 @@ app.get('/alerts', authenticateToken, async (req, res) => {
   }
 });
 
+// Inicializar el cron job (solo para Dueños)
+app.post('/start-cron', authenticateToken, (req, res) => {
+  const user = req.user;
 
+  if (user.role !== 'Dueño') {
+    return res.status(403).json({ message: 'No tienes permiso para iniciar el cron job.' });
+  }
+
+  try {
+    setupCronJob(user); // Pasamos el objeto `user` al cron job
+    res.status(200).json({ message: 'Cron job inicializado exitosamente.' });
+  } catch (error) {
+    console.error('Error al iniciar el cron job:', error);
+    res.status(500).json({ message: 'Error al iniciar el cron job.', error });
+  }
+});
 
 // Exportar app para pruebas
 module.exports = app;

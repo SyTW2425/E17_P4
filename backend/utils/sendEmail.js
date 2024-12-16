@@ -1,20 +1,23 @@
 const nodemailer = require('nodemailer');
 
-const sendEmail = async (to, subject, text) => {
+const sendEmail = async (to, subject, text, html) => {
   try {
     const transporter = nodemailer.createTransport({
-      service: 'Gmail', 
+      host: 'smtp.gmail.com', // El servidor SMTP de Gmail
+      port: 587,             // Puerto para conexiones TLS
+      secure: false,         // False para conexiones STARTTLS
       auth: {
-        user: 'myinventoryhubteam@gmail.com', 
-        pass: 'grupoe17',       
+        user: 'myinventoryhubteam@gmail.com',
+        pass: 'hmnt xscx hhxr gexz',
       },
     });
 
     await transporter.sendMail({
-      from: 'myinventoryhubteam@gmail.comm',  
+      from: 'myinventoryhubteam@gmail.com', 
       to,
       subject,
       text,
+      html, 
     });
 
     console.log('Correo enviado exitosamente');
