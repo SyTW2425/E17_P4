@@ -1,9 +1,9 @@
 
   .warehouse-form-inline {
     display: flex;
-    align-items: center; /* Alinear verticalmente los elementos */
-    gap: 1rem; /* Espaciado entre los elementos */
-    flex-wrap: wrap; /* Permitir que los campos se acomoden en varias líneas si el espacio es limitado */
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
   }
   
   .warehouse-form-group {
@@ -13,10 +13,10 @@
   }
   
   .warehouse-form-group input {
-    min-width: 200px; /* Asegurar un tamaño mínimo para los inputs */
+    min-width: 200px;
   }
   
   .warehouse-form-button {
-    white-space: nowrap; /* Evitar que el texto del botón se rompa */
+    white-space: nowrap;
   }
 
