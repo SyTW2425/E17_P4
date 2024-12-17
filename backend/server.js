@@ -5,6 +5,7 @@ const cors = require('cors'); // Solicitudes desde frontend
 const bcrypt = require('bcryptjs'); // Encriptar contraseñas
 const jwt = require('jsonwebtoken'); // Manejar tokens JWT
 require('dotenv').config(); // Se cargan variables de entorno desde .env
+const setupCronJob = require('./alertsCron');
 
 // Inicializa la aplicación Express
 const app = express();
@@ -88,6 +89,8 @@ mongoose.connect(/*process.env.MONGO_URI*/mongoURI, {
 }).catch((err) => {
   console.error('Error al conectar a MongoDB:', err);
 });
+
+//setupCronJob();
 
 //endpoints para gestion de usuarios//
 app.post('/api/register', async (req, res) => {
@@ -180,6 +183,13 @@ app.post('/login', async (req, res) => {
     );
 
     res.json({ token });
+
+    // Inicializar el cron job si es un dueño
+    if (user.role === 'Dueño') {
+      setupCronJob(user);
+    }
+
+
   } catch (error) {
     res.status(500).json({ message: 'Error al iniciar sesión', error });
   }
@@ -645,6 +655,85 @@ app.put('/suppliers/:name', authenticateToken, async (req, res) => {
   } catch (error) {
     console.error('Error al actualizar el proveedor:', error);
     res.status(500).json({ message: 'Error interno del servidor', error });
+  }
+});
+//endpoint para alertas
+// Endpoint para alertas
+app.get('/alerts', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id; // ID del usuario autenticado (dueño)
+    const today = new Date();
+
+    // Buscar almacenes que pertenezcan al usuario
+    const warehouses = await Warehouse.find({ userId }).select('_id name');
+
+    if (!warehouses.length) {
+      return res.status(404).json({ message: 'No se encontraron almacenes asociados al usuario.' });
+    }
+
+    // Crear un mapa de IDs de almacenes a nombres para un acceso rápido
+    const warehouseMap = warehouses.reduce((map, warehouse) => {
+      map[warehouse._id] = warehouse.name;
+      return map;
+    }, {});
+
+    // Extraer los IDs de los almacenes
+    const warehouseIds = warehouses.map(warehouse => warehouse._id);
+
+    // Buscar productos en los almacenes del usuario
+    const products = await Product.find({ warehouseId: { $in: warehouseIds } });
+
+    // Filtrar productos con stock bajo o caducidad próxima
+    const alerts = products.filter(product => {
+      return (
+        product.stock <= product.minimunStock || // Stock bajo
+        (product.spoil && (new Date(product.spoil) - today) / (1000 * 60 * 60 * 24) <= 10) // Caducidad próxima
+      );
+    });
+
+    // Transformar los datos para hacerlos más legibles
+    const formattedAlerts = alerts.map(product => {
+      const messages = [];
+
+      if (product.stock <= product.minimunStock) {
+        messages.push(`El stock de "${product.name}" es bajo (${product.stock} unidades).`);
+      }
+
+      if (product.spoil && (new Date(product.spoil) - today) / (1000 * 60 * 60 * 24) <= 10) {
+        messages.push(`El producto "${product.name}" caduca pronto (${product.spoil.toLocaleDateString()}).`);
+      }
+
+      // Agregar el nombre del almacén
+      const warehouseName = warehouseMap[product.warehouseId];
+
+      return {
+        warehouse: warehouseName, // Nombre del almacén
+        product: product.name,
+        messages,
+      };
+    });
+
+    res.json(formattedAlerts);
+  } catch (error) {
+    console.error('Error al obtener alertas:', error);
+    res.status(500).json({ message: 'Error al obtener alertas', error: error.message });
+  }
+});
+
+// Inicializar el cron job (solo para Dueños)
+app.post('/start-cron', authenticateToken, (req, res) => {
+  const user = req.user;
+
+  if (user.role !== 'Dueño') {
+    return res.status(403).json({ message: 'No tienes permiso para iniciar el cron job.' });
+  }
+
+  try {
+    setupCronJob(user); // Pasamos el objeto `user` al cron job
+    res.status(200).json({ message: 'Cron job inicializado exitosamente.' });
+  } catch (error) {
+    console.error('Error al iniciar el cron job:', error);
+    res.status(500).json({ message: 'Error al iniciar el cron job.', error });
   }
 });
 

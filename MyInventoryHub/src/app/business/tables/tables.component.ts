@@ -7,11 +7,23 @@ import { AuthService } from '../../services/auth/auth.service';
 import { PermissionPipe } from '../../components/pipes/permissions.pipe'
 import { DialogModule } from 'primeng/dialog'
 import { ButtonModule } from 'primeng/button'
+import { CheckboxModule } from 'primeng/checkbox';
+import { TableModule } from 'primeng/table';
+import { FloatLabelModule } from "primeng/floatlabel"
+import { PaginatorModule } from 'primeng/paginator';
+import { MenuModule } from 'primeng/menu';
+import { MenuItem } from 'primeng/api';
+import { Table } from 'primeng/table';
+import { IconField } from 'primeng/iconfield';
+import { InputIcon } from 'primeng/inputicon';
+import { InputTextModule } from 'primeng/inputtext';
+import { IftaLabelModule } from 'primeng/iftalabel';
 
 @Component({
   selector: 'app-tables',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, ReactiveFormsModule, FormsModule, PermissionPipe, DialogModule, ButtonModule],
+  imports: [CommonModule, CurrencyPipe, ReactiveFormsModule, FormsModule, PermissionPipe, DialogModule, ButtonModule, CheckboxModule,TableModule, FloatLabelModule,
+    PaginatorModule, MenuModule, IconField, InputIcon,InputTextModule,IftaLabelModule ],
   templateUrl: './tables.component.html',
   styleUrls: ['./tables.component.css']
 })
@@ -27,6 +39,7 @@ export default class TablesComponent implements OnInit {
   employeeUpdateForm: FormGroup;
   productForm: FormGroup;
   productUpdateForm: FormGroup;
+  newEmployeeForm: FormGroup;
   employeeForm: FormGroup;
   token: string | null = null; 
   isFormOpen: boolean = false;
@@ -37,7 +50,13 @@ export default class TablesComponent implements OnInit {
   selectedWarehouseName: string | null = null;
   isProductModalVisible: boolean = false;
   isUpdateProductFormOpen: boolean = false;
-
+  isOwner: boolean = false;
+  public permissionsEmployee: string[] = [];
+  showErrorModal: boolean = false; 
+  errorMessage: string = '';
+  isAddEmployeeFormOpen: boolean = false;
+  globalFilterValue: string = '';
+  nameFilterValue: string = ''; // Filtro para la columna "name"
 
   constructor(
     private warehouseService: WarehouseService,
@@ -87,11 +106,17 @@ export default class TablesComponent implements OnInit {
       spoil: [null],
       supplier: ['', Validators.required],
     });
+    this.newEmployeeForm = this.fb.group({
+      employeeUserName: ['', Validators.required],
+      newPermissions: ['', Validators.required],
+    });
   }
 
   ngOnInit(): void {
     this.loadToken(); // Obtiene el token al inicializar
     this.loadWarehouses();
+    this.isOwner = this.authService.isOwner();
+    
   }
 
   // Método para obtener el token
@@ -205,6 +230,10 @@ export default class TablesComponent implements OnInit {
 
     this.isEmployeesViewOpen = true;
     this.isProductsViewOpen = false;
+    this.selectedWarehouseId = warehouseId;
+
+    const warehouse = this.warehouses.find(wh => wh._id === warehouseId);
+    this.selectedWarehouseName = warehouse ? warehouse.name : 'Almacén no encontrado';
 
     this.selectedWarehouseId = warehouseId;
     this.warehouseService.getWarehouseEmployees(this.token, warehouseId).subscribe(
@@ -224,17 +253,18 @@ export default class TablesComponent implements OnInit {
       return;
     }
 
-    if (this.employeeForm.valid) {
+    if (this.newEmployeeForm.valid) {
+      console.log('gaga:',this.newEmployeeForm.value, this.newEmployeeForm.value.newPermissions )
       const data = {
-        username: this.employeeForm.value.userName,
-        permissions: this.employeeForm.value.permissions.split(','),
+        username: this.newEmployeeForm.value.employeeUserName,
+        permissions: this.newEmployeeForm.value.newPermissions,
       };
       console.log('GEGE: ', this.selectedWarehouseId)
       this.warehouseService.assignEmployee(this.token, this.selectedWarehouseId, data).subscribe(
         (response) => {
           console.log('Employee assigned:', response);
           this.viewEmployees(this.selectedWarehouseId!);
-          this.employeeForm.reset();
+          this.newEmployeeForm.reset();
         },
         (error) => {
           console.error('Error assigning employee:', error);
@@ -342,12 +372,13 @@ export default class TablesComponent implements OnInit {
 
   }
   updateEmployeePermissions(): void {
+    
     if (!this.token || !this.selectedWarehouseId) {
       console.error('No se puede actualizar permisos sin token o almacén seleccionado.');
       return;
     }
-    if (this.employeeUpdateForm.valid && this.selectedWarehouseId && this.token) {
-      const permissions = this.employeeUpdateForm.value.permissions.split(',');
+    if (this.permissionsEmployee.length != 0 && this.selectedWarehouseId && this.token) {
+      const permissions = this.permissionsEmployee;
       this.warehouseService
         .updateEmployeePermissions(this.token, this.selectedWarehouseId, this.selectedEmployeeId!, permissions)
         .subscribe(
@@ -362,6 +393,7 @@ export default class TablesComponent implements OnInit {
           () => {
             this.isUpdateEmployeeFormOpen = false
             this.employeeUpdateForm.reset()
+            this.permissionsEmployee = [] 
           }
         );
     }
@@ -395,7 +427,12 @@ export default class TablesComponent implements OnInit {
           this.productForm.reset(); // Reiniciar formulario
         },
         (error) => {
-          console.error('Error al crear el producto:', error);
+          if (error.status === 403) {
+            this.errorMessage = 'No tienes permisos para crear un producto en este almacén.';
+            this.showErrorModal = true; 
+          } else {
+            console.error('Error al crear el producto:', error);
+          }
         }
       );
     }
@@ -425,7 +462,7 @@ export default class TablesComponent implements OnInit {
         spoil: this.productUpdateForm.value.spoil || null, // Mantener null si no se define
         supplier: this.productUpdateForm.value.supplier,
       };
-
+      console.log('GEGE: ',data);
       this.productService.updateProduct(this.token, this.selectedWarehouseId, this.selectedProductId, data).subscribe(
         (response) => {
           console.log('Producto actualizado:', response);
@@ -471,14 +508,18 @@ export default class TablesComponent implements OnInit {
   }
 
   //abrir formulario
-  openForm(warehouseId: any): void {
-    this.selectedWarehouseId = warehouseId;
+  openForm(warehouse: any): void {
+    this.selectedWarehouseId = warehouse._id;
     this.isFormOpen = true;
+    Object.keys(warehouse).forEach(key =>{
+      this.warehouseUpdateForm.get(key)?.setValue(warehouse[key] ?? undefined);
+    })
   }
 
-  openUpdateEmployeeForm(employeeId: any): void {
+  openUpdateEmployeeForm(employeeId: any, permissions: string[]): void {
     this.selectedEmployeeId = employeeId;
     this.isUpdateEmployeeFormOpen = true;
+    this.permissionsEmployee = permissions;
   }
   clearProductsView(): void {
     this.products = [];
@@ -491,9 +532,69 @@ export default class TablesComponent implements OnInit {
     this.isProductModalVisible = true; // Abrir el modal
   }
   // Método para abrir el formulario de actualización de producto
-  openUpdateProductForm(productId: any): void {
-    this.selectedProductId = productId;
+  openUpdateProductForm(product: any): void {
+    this.selectedProductId = product._id;
     this.isUpdateProductFormOpen = true;
+
+    Object.keys(product).forEach(key =>{
+      this.productUpdateForm.get(key)?.setValue(product[key] ?? undefined);
+    })
+    console.log('GIGI: ',product.spoil)
+    this.productUpdateForm.get('spoil')?.setValue(product?.spoil?.split("T")[0] ?? undefined);
+
+  }
+
+  closeErrorModal(): void {
+    this.showErrorModal = false;
+  }
+
+  hasAddPermissions(warehouse: any): boolean {
+    const id = this.authService.getUserInfo().id;
+    const employee = warehouse.employees.find((obj: any) => 
+      obj.employeeId === id && obj.permissions.includes('ADD')
+    );
+
+    return employee ;
+
+  }
+
+  hasDeletePermissions(): boolean {
+    console.log('EL ID DEL ALMACEN: ', this.selectedWarehouseId);
+    const warehouse = this.warehouses.find((w: any) => w._id === this.selectedWarehouseId);
+    const id = this.authService.getUserInfo().id;
+    const employee = warehouse.employees.find((obj: any) => 
+      obj.employeeId === id && obj.permissions.includes('DELETE')
+    );
+    return employee;
+  }
+
+  hasEditPermissions(): boolean {
+    console.log('EL ID DEL ALMACEN: ', this.selectedWarehouseId);
+    const warehouse = this.warehouses.find((w: any) => w._id === this.selectedWarehouseId);
+    const id = this.authService.getUserInfo().id;
+    const employee = warehouse.employees.find((obj: any) => 
+      obj.employeeId === id && obj.permissions.includes('EDIT')
+    );
+    return employee;
+  }
+
+  openAddEmployee(warehouseId: any) : void{
+    this.selectedWarehouseId = warehouseId;
+    this.isAddEmployeeFormOpen = true;
+  }
+  applyGlobalFilter(dt: Table) {
+    if (this.globalFilterValue) {
+      dt.filterGlobal(this.globalFilterValue, 'contains');
+    } else {
+      dt.clear();
+    }
+  }
+  applyColumnFilter(dt: Table, field: string, value: string) {
+    if (value) {
+      dt.filter(value, field, 'contains');
+    } else {
+      dt.filter('', field, 'contains');
+    }
   }
 
 }

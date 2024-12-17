@@ -1,0 +1,26 @@
+<div class="alert-section">
+  <div class="card mb-4">
+    <div class="card-header">
+      <h4>Alertas de inventario</h4>
+    </div>
+
+  <!-- Mostrar alertas -->
+  <div *ngIf="alerts.length > 0; else noAlerts" class="alert-container">
+    <div *ngFor="let alert of alerts" class="alert-card">
+      <div class="alert-header">
+        <h4>{{ alert.product }}</h4>
+        <span class="alert-warehouse">(Almacén: {{ alert.warehouse }})</span>
+      </div>
+      <div class="alert-body">
+        <ul>
+          <li *ngFor="let message of alert.messages">{{ message }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sin alertas -->
+  <ng-template #noAlerts>
+    <p>No hay alertas pendientes.</p>
+  </ng-template>
+</div>

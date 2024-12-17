@@ -32,7 +32,32 @@ export const appConfig: ApplicationConfig = {
             options: {
               darkModeSelector: '.my-app-dark'
           }
-        }
+        },
+        translation: {
+          startsWith: 'Empieza con',
+          contains: 'Contiene',
+          notContains: 'No contiene',
+          endsWith: 'Termina con',
+          equals: 'Igual a',
+          notEquals: 'Diferente de',
+          noFilter: 'Sin filtro',
+          lt: 'Menor que',
+          lte: 'Menor o igual que',
+          gt: 'Mayor que',
+          gte: 'Mayor o igual que',
+          dateIs: 'Fecha es',
+          dateIsNot: 'Fecha no es',
+          dateBefore: 'Fecha antes de',
+          dateAfter: 'Fecha después de',
+          clear: 'Limpiar',
+          apply: 'Aplicar',
+          matchAll: 'Coincidir todo',
+          matchAny: 'Coincidir cualquier',
+          addRule: 'Añadir regla',
+          removeRule: 'Eliminar regla',
+          accept: 'Aceptar',
+          reject: 'Rechazar'
+      }
     })
   ],
 };
