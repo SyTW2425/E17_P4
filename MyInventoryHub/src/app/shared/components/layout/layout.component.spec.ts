@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import LayoutComponent from './layout.component';
 
-import { LayoutComponent } from './layout.component';
 
 describe('LayoutComponent', () => {
   let component: LayoutComponent;
@@ -17,7 +17,7 @@ describe('LayoutComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should be created', () => {
     expect(component).toBeTruthy();
   });
 });

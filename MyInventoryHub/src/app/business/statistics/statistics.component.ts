@@ -82,14 +82,38 @@ export class StatisticsComponent implements OnInit {
     private productService: ProductService,
     private authService: AuthService,
     private statisticsService: StatisticsService,
-    private chartService: ChartService
+    private chartService: ChartService,
   ) {}
 
   ngOnInit(): void {
-    this.isOwner = this.authService.isOwner();
-    this.loadToken(); // Obtener el token al inicializar
-    this.loadWarehouses(); // Cargar almacenes
+    this.isOwner = this.authService.isOwner(); // Comprueba si es dueño
+    this.loadToken(); // Cargar el token
+    
+    // Cargar almacenes y estadísticas en secuencia
+    this.loadWarehouses()
+      .then(() => this.loadInitialWarehouseStats())
+      .catch((error) => console.error('Error inicializando datos:', error));
   }
+  
+  // Función para cargar estadísticas del almacén inicial
+  async loadInitialWarehouseStats(): Promise<void> {
+    if (this.warehouses.length > 0) {
+      this.selectedWarehouseId = this.warehouses[0]._id; // Selecciona el primer almacén por defecto
+      console.log('Almacén inicial seleccionado:', this.selectedWarehouseId);
+      
+      // Cargar productos y estadísticas iniciales
+      await this.loadProducts();
+      this.productStats = this.calculateProductStats(this.products);
+      this.warehouseStats = await this.calculateWarehouseStats(this.products);
+      
+      // Generar gráficos después de cargar los datos
+      this.generateWarehouseChartPrimeNG();
+      this.generateStockChart();
+    } else {
+      console.warn('No se encontraron almacenes disponibles.');
+    }
+  }
+  
 
   ngAfterViewInit(): void {
     if (this.selectedWarehouseId) {
@@ -365,25 +389,28 @@ export class StatisticsComponent implements OnInit {
     this.loadProducts()
     .then(() => {
       // Generar el gráfico de stock después de cargar los productos
+      this.calculateWarehouseStats(this.products); 
       this.generateStockChart();  // Generar la nueva gráfica
-      this.generateWarehouseChartPrimeNG(); // Aquí usas la función que ya definiste para el gráfico del almacén
       this.generateProductCharts();
-      this.generateMonthlyEarningsChart()
+      this.generateMonthlyEarningsChart();
+      this.generateWarehouseChartPrimeNG(); // Aquí usas la función que ya definiste para el gráfico del almacén
     })
     .catch((error) => {
       console.error('Error al cargar productos:', error);
     });
+
+
     // Actualiza la vista seleccionada según la acción
     switch (action) {
       case 'warehouseStats':
         // Cargar estadísticas del almacén
-        this.calculateWarehouseStats(this.products); // Asegúrate de que esta función esté definida
+        this.calculateWarehouseStats(this.products); 
         this.selectedView = 'warehouseStats'; // Establecer la vista a 'warehouseStats'
         break;
 
       case 'charts':
         // Generar gráficos relacionados con el almacén
-        // this.generateWarehouseChartPrimeNG(); // Aquí usas la función que ya definiste para el gráfico del almacén
+        this.generateWarehouseChartPrimeNG(); // Aquí usas la función que ya definiste para el gráfico del almacén
         this.selectedView = 'charts'; // Establecer la vista a 'charts'
         break;
 
@@ -546,7 +573,7 @@ export class StatisticsComponent implements OnInit {
         responsive: true,
         plugins: {
           legend: {
-            position: 'top',
+            position: 'left',
           },
         },
       };
