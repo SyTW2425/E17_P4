@@ -1,14 +1,14 @@
-  import { Component, OnInit } from '@angular/core';
-  import { CommonModule, CurrencyPipe } from '@angular/common';
-  import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
-  import { WarehouseService } from '../../services/warehouse-service/warehouse.service';
-  import { ProductService } from '../../services/product-service/product.service';
-  import { AuthService } from '../../services/auth/auth.service';
-  import { PermissionPipe } from '../../components/pipes/permissions.pipe'
-  import { DialogModule } from 'primeng/dialog'
-  import { ButtonModule } from 'primeng/button'
-  import { CheckboxModule } from 'primeng/checkbox';
-  import { TableModule } from 'primeng/table';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule, CurrencyPipe } from '@angular/common';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
+import { WarehouseService } from '../../services/warehouse-service/warehouse.service';
+import { ProductService } from '../../services/product-service/product.service';
+import { AuthService } from '../../services/auth/auth.service';
+import { PermissionPipe } from '../../components/pipes/permissions.pipe'
+import { DialogModule } from 'primeng/dialog'
+import { ButtonModule } from 'primeng/button'
+import { CheckboxModule } from 'primeng/checkbox';
+import { TableModule } from 'primeng/table';
 import { FloatLabelModule } from "primeng/floatlabel"
 import { PaginatorModule } from 'primeng/paginator';
 import { MenuModule } from 'primeng/menu';
