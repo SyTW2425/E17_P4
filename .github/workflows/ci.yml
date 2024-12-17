@@ -3,10 +3,10 @@ name: CI Pipeline
 on:
   push:
     branches:
-      - merge3
+      - desarrollo
   pull_request:
     branches:
-      - merge3
+      - desarrollo
 
 jobs:
   build-and-test:
