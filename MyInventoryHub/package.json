@@ -5,7 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "watch": "ng build --watch --configuration development",
+    "watch": "ng build --watch=false --configuration development",
     "test": "ng test --watch=false",
     "serve:ssr:MyInventoryHub": "node dist/my-inventory-hub/server/server.mjs"
   },
