@@ -23,7 +23,7 @@ import { IftaLabelModule } from 'primeng/iftalabel';
   selector: 'app-tables',
   standalone: true,
   imports: [CommonModule, CurrencyPipe, ReactiveFormsModule, FormsModule, PermissionPipe, DialogModule, ButtonModule, CheckboxModule,TableModule, FloatLabelModule,
-    PaginatorModule, MenuModule, IconField, InputIcon,InputTextModule,IftaLabelModule ],
+    PaginatorModule, MenuModule, InputTextModule, IftaLabelModule ],
   templateUrl: './tables.component.html',
   styleUrls: ['./tables.component.css']
 })
@@ -39,7 +39,7 @@ export default class TablesComponent implements OnInit {
   employeeUpdateForm: FormGroup;
   productForm: FormGroup;
   productUpdateForm: FormGroup;
-  newEmployeeForm: FormGroup | undefined;
+  newEmployeeForm: FormGroup;
   employeeForm: FormGroup;
   token: string | null = null; 
   isFormOpen: boolean = false;
@@ -105,6 +105,10 @@ export default class TablesComponent implements OnInit {
       unit: [null],
       spoil: [null],
       supplier: ['', Validators.required],
+    });
+    this.newEmployeeForm = this.fb.group({
+      employeeUserName: ['', Validators.required],
+      newPermissions: ['', Validators.required],
     });
   }
 
@@ -556,6 +560,24 @@ export default class TablesComponent implements OnInit {
       );
       return employee;
     }
-
+    openAddEmployee(warehouseId: any) : void{
+      this.selectedWarehouseId = warehouseId;
+      this.isAddEmployeeFormOpen = true;
+    }
+    applyGlobalFilter(dt: Table) {
+      if (this.globalFilterValue) {
+        dt.filterGlobal(this.globalFilterValue, 'contains');
+      } else {
+        dt.clear();
+      }
+    }
+    applyColumnFilter(dt: Table, field: string, value: string) {
+      if (value) {
+        dt.filter(value, field, 'contains');
+      } else {
+        dt.filter('', field, 'contains');
+      }
+    }    
 }
+
 
