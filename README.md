@@ -87,10 +87,9 @@ Este proyecto utiliza **GitHub Actions** para integrar y verificar cambios autom
 
 ![CI Pipeline](https://github.com/SyTW2425/E17_P4/actions/workflows/ci.yml/badge.svg)
 
-
-
-
-## Licencia
-
-Este proyecto está bajo la licencia MIT. Consulta el archivo `LICENSE` para más información.
+--- 
+### Autores
+- **Joel Aday Dorta Hernández** 
+- **Ancor González Carballo** 
+- **Jonathan Martínez Pérez**
 
