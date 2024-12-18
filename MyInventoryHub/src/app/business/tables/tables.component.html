@@ -1,50 +1,57 @@
 <div class="container">
+
   <!-- Formulario para crear un almacén -->
   <div class="card mb-4" *ngIf="isOwner">
     <div class="card-header">
       <h4>Gestión de Almacenes</h4>
     </div>
   
-    <!-- Otro menu -->
+    <!-- Otro menú -->
     <div class="card-body">
+      <h5 class="text-secondary mb-3">Crear nuevo almacén</h5>
 
-      <h5 class="text-secondary mb-3">
-        Crear nuevo almacén
-      </h5>
       <form [formGroup]="warehouseForm" (ngSubmit)="createWarehouse()" class="warehouse-form-inline">
         <!-- Campo: Nombre del Almacén -->
-        <div class="warehouse-form-group">
-          <p-floatlabel variant="on">
-            <input id="name" pInputText formControlName="name"/>
-            <label for="name">Nombre del Almacén</label>
-          </p-floatlabel>
-          <div *ngIf="warehouseForm.get('name')?.invalid && warehouseForm.get('name')?.touched" class="text-danger">
+        <div class="warehouse-form-group mb-3">
+          <label for="name" class="form-label">Nombre del Almacén</label>
+          <input 
+            id="name" 
+            type="text" 
+            class="form-control rounded border px-3 py-2" 
+            formControlName="name" 
+            placeholder="Ingrese el nombre"
+          />
+          <div *ngIf="warehouseForm.get('name')?.invalid && warehouseForm.get('name')?.touched" class="text-danger mt-1">
             El nombre es obligatorio.
           </div>
         </div>
 
         <!-- Campo: Ubicación -->
-        <div class="warehouse-form-group">
-          <p-floatlabel variant="on">
-            <input id="location" pInputText formControlName="location" />
-            <label for="location">Ubicación</label>
-          </p-floatlabel>
-          <div *ngIf="warehouseForm.get('location')?.invalid && warehouseForm.get('location')?.touched"
-            class="text-danger">
+        <div class="warehouse-form-group mb-3">
+          <label for="location" class="form-label">Ubicación</label>
+          <input 
+            id="location" 
+            type="text" 
+            class="form-control rounded border px-3 py-2" 
+            formControlName="location" 
+            placeholder="Ingrese la ubicación"
+          />
+          <div *ngIf="warehouseForm.get('location')?.invalid && warehouseForm.get('location')?.touched" class="text-danger mt-1">
             La ubicación es obligatoria.
           </div>
         </div>
 
         <!-- Botón de envío -->
-        <div class="warehouse-form-group warehouse-form-button">
-          <button type="submit" class="btn btn-primary" [disabled]="warehouseForm.invalid">
+        <div class="warehouse-form-group warehouse-form-button mt-3">
+          <button 
+            type="submit" 
+            class="btn btn-primary" 
+            [disabled]="warehouseForm.invalid">
             Crear Almacén
           </button>
         </div>
       </form>
     </div>
-
-    <!-- hasta aqui -->
   </div>
 
   <!-- Tabla de almacenes -->
@@ -415,6 +422,7 @@
     </div>
     <div class="flex justify-content-end gap-2">
       <p-button label="Cancelar" severity="secondary" (onClick)="isFormOpen = false" />
+      &nbsp;
       <p-button label="Guardar" type="submit" [disabled]="warehouseUpdateForm.invalid" />
     </div>
   </form>
@@ -443,6 +451,7 @@
   <!-- GUARDAR PERMISOS -->
   <div class="flex justify-content-end gap-2">
     <p-button label="Cancelar" severity="secondary" (onClick)="isUpdateEmployeeFormOpen = false" />
+    &nbsp;
     <p-button label="Guardar" (onClick)="updateEmployeePermissions()" [disabled]="permissionsEmployee.length == 0" />
   </div>
   <!-- </form> -->
@@ -519,6 +528,7 @@
 
     <div class="flex justify-content-end gap-2">
       <p-button label="Cancelar" severity="secondary" (onClick)="isProductModalVisible = false" />
+      &nbsp;
       <p-button label="Añadir Producto" type="submit" [disabled]="productForm.invalid" />
     </div>
   </form>
@@ -609,6 +619,7 @@
     <!-- Botones -->
     <div class="flex justify-content-end gap-2">
       <p-button label="Cancelar" severity="secondary" (onClick)="isUpdateProductFormOpen = false" />
+      &nbsp;
       <p-button label="Actualizar Producto" type="submit" [disabled]="productUpdateForm.invalid" />
     </div>
   </form>
