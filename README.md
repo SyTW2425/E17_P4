@@ -53,7 +53,7 @@ MyInventoryHub es una aplicación web destinada a la **gestión de inventarios**
    ```
 
 3. **Configurar variables de entorno:**
-   - Crear un archivo `.env` en la carpeta `backend` con el siguiente contenido:
+Crear un archivo `.env` en la carpeta `backend` con el siguiente contenido:
      ```env
      MONGO_URI=mongodb://127.0.0.1:27017/myInventoryHub
      PORT=3000
